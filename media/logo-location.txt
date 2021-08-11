@@ -1,0 +1,7 @@
+/teleport @p -10730.9 111.55 -2863.9 66.7 2.9
+seed: banana [-1396355227]
+version: 1.16.5
+type: amplified
+render-distance: 25
+brightness: moody
+biome-blend: off
