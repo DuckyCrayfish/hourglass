@@ -21,18 +21,21 @@ package net.lavabucket.hourglass.client.gui;
 
 import static net.lavabucket.hourglass.config.HourglassConfig.CLIENT_CONFIG;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import java.util.Arrays;
 
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.gui.widget.list.OptionsRowList;
-import net.minecraft.client.settings.BooleanOption;
-import net.minecraft.client.settings.IteratableOption;
-import net.minecraft.client.settings.SliderPercentageOption;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.fml.ExtensionPoint;
+import com.mojang.blaze3d.vertex.PoseStack;
+
+import net.minecraft.client.CycleOption;
+import net.minecraft.client.ProgressOption;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.OptionsList;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fmlclient.ConfigGuiHandler;
+import net.minecraftforge.fmlclient.ConfigGuiHandler.ConfigGuiFactory;
 
 public final class ConfigScreen extends Screen {
     private static final int TITLE_MARGIN = 8;
@@ -44,15 +47,14 @@ public final class ConfigScreen extends Screen {
     private static final int BUTTON_HEIGHT = 20;
     private static final int DONE_BUTTON_BOTTOM_MARGIN = 6;
 
-    private static final TranslationTextComponent TEXT_TITLE = new TranslationTextComponent("hourglass.configgui.title");
-    private static final TranslationTextComponent TEXT_DONE = new TranslationTextComponent("gui.done");
-    private static final TranslationTextComponent TEXT_CLOCK_ALIGNMENT = new TranslationTextComponent("hourglass.configgui.clockAlignment");
-    private static final TranslationTextComponent TEXT_CLOCK_SCALE = new TranslationTextComponent("hourglass.configgui.clockScale");
-    private static final TranslationTextComponent TEXT_CLOCK_MARGIN = new TranslationTextComponent("hourglass.configgui.clockMargin");
-    private static final TranslationTextComponent TEXT_PREVENT_CLOCK_WOBBLE = new TranslationTextComponent("hourglass.configgui.preventClockWobble");
+    private static final TranslatableComponent TEXT_TITLE = new TranslatableComponent("hourglass.configgui.title");
+    private static final TranslatableComponent TEXT_CLOCK_ALIGNMENT = new TranslatableComponent("hourglass.configgui.clockAlignment");
+    private static final TranslatableComponent TEXT_CLOCK_SCALE = new TranslatableComponent("hourglass.configgui.clockScale");
+    private static final TranslatableComponent TEXT_CLOCK_MARGIN = new TranslatableComponent("hourglass.configgui.clockMargin");
+    private static final TranslatableComponent TEXT_PREVENT_CLOCK_WOBBLE = new TranslatableComponent("hourglass.configgui.preventClockWobble");
 
     protected Screen lastScreen;
-    protected OptionsRowList optionsList;
+    protected OptionsList optionsList;
     protected Button doneButton;
 
     private ScreenAlignment clockAlignment;
@@ -61,8 +63,8 @@ public final class ConfigScreen extends Screen {
     private boolean preventClockWobble;
 
     public static void register(ModLoadingContext context) {
-        context.registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY,
-                () -> (mc, screen) -> new ConfigScreen(screen));
+        context.registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class,
+                () -> new ConfigGuiFactory((mc, screen) -> new ConfigScreen(screen)));
     }
 
     public ConfigScreen(Screen lastScreen) {
@@ -74,40 +76,41 @@ public final class ConfigScreen extends Screen {
     protected void init() {
         fetchSettings();
 
-        optionsList = new OptionsRowList(minecraft, width, height, OPTIONS_LIST_MARGIN,
+        optionsList = new OptionsList(minecraft, width, height, OPTIONS_LIST_MARGIN,
                 height - OPTIONS_LIST_BOTTOM_MARGIN, OPTION_HEIGHT);
 
-        optionsList.addBig(new IteratableOption(TEXT_CLOCK_ALIGNMENT.getKey(),
-                (settings, value) -> clockAlignment = ScreenAlignment.values()[
-                        (clockAlignment.ordinal() + value) % ScreenAlignment.values().length],
-                (settings, option) -> genericValueTextComponent(TEXT_CLOCK_ALIGNMENT,
-                        new TranslationTextComponent(clockAlignment.getKey()))));
+        optionsList.addBig(CycleOption.create(TEXT_CLOCK_ALIGNMENT.getKey(),
+                Arrays.asList(ScreenAlignment.values()),
+                value -> new TranslatableComponent(value.getKey()),
+                options -> clockAlignment,
+                (options, option, value) -> clockAlignment = value));
 
-        optionsList.addBig(new SliderPercentageOption(TEXT_CLOCK_SCALE.getKey(), 0.0, 128, 4.0F,
+        optionsList.addBig(new ProgressOption(TEXT_CLOCK_SCALE.getKey(), 0.0, 128, 4.0F,
                 settings -> (double) clockScale,
                 (settings, value) -> clockScale = value.intValue(),
                 (settings, option) -> pixelValueTextComponent(TEXT_CLOCK_SCALE, option.get(settings))));
 
-        optionsList.addBig(new SliderPercentageOption(TEXT_CLOCK_MARGIN.getKey(), 0.0, 128, 4.0F,
+        optionsList.addBig(new ProgressOption(TEXT_CLOCK_MARGIN.getKey(), 0.0, 128, 4.0F,
                 settings -> (double) clockMargin,
                 (settings, value) -> clockMargin = value.intValue(),
                 (settings, option) -> pixelValueTextComponent(TEXT_CLOCK_MARGIN, option.get(settings))));
 
-        optionsList.addBig(new BooleanOption(TEXT_PREVENT_CLOCK_WOBBLE.getKey(),
+        optionsList.addBig(CycleOption.createOnOff(
+                TEXT_PREVENT_CLOCK_WOBBLE.getKey(),
                 settings -> preventClockWobble,
-                (settings, value) -> preventClockWobble = value));
+                (options, option, value) -> preventClockWobble = value));
 
         addWidget(optionsList);
 
         doneButton = new Button((width - BUTTON_WIDTH) / 2,
                 height - BUTTON_HEIGHT - DONE_BUTTON_BOTTOM_MARGIN,
-                BUTTON_WIDTH, BUTTON_HEIGHT, TEXT_DONE, button -> onClose());
+                BUTTON_WIDTH, BUTTON_HEIGHT, CommonComponents.GUI_DONE, button -> onClose());
 
-        addButton(doneButton);
+        addRenderableWidget(doneButton);
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         renderBackground(matrixStack);
         optionsList.render(matrixStack, mouseX, mouseY, partialTicks);
         drawCenteredString(matrixStack, font, title.getString(), width / 2, TITLE_MARGIN, 0xFFFFFF);
@@ -134,13 +137,13 @@ public final class ConfigScreen extends Screen {
         CLIENT_CONFIG.preventClockWobble.set(preventClockWobble);
     }
 
-    public static TranslationTextComponent genericValueTextComponent(Object... args) {
-        return new TranslationTextComponent("options.generic_value", args);
+    public static TranslatableComponent genericValueTextComponent(Object... args) {
+        return new TranslatableComponent("options.generic_value", args);
     }
 
-    public static TranslationTextComponent pixelValueTextComponent(ITextComponent name, double count) {
+    public static TranslatableComponent pixelValueTextComponent(Component name, double count) {
         return genericValueTextComponent(name,
-                new TranslationTextComponent("hourglass.configgui.pixels", (int) count));
+                new TranslatableComponent("hourglass.configgui.pixels", (int) count));
     }
 
 }

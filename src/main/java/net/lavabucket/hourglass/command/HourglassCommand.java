@@ -19,7 +19,7 @@
 
 package net.lavabucket.hourglass.command;
 
-import static net.minecraft.command.Commands.literal;
+import static net.minecraft.commands.Commands.literal;
 
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
@@ -30,9 +30,9 @@ import com.mojang.brigadier.context.CommandContext;
 import net.lavabucket.hourglass.command.config.ConfigCommand;
 import net.lavabucket.hourglass.command.config.ConfigCommandEntry;
 import net.lavabucket.hourglass.config.ConfigSynchronizer;
-import net.minecraft.command.CommandSource;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -74,9 +74,9 @@ public class HourglassCommand {
      * @param context  the context from the query command
      * @param entry  the entry that was queried by the user
      */
-    public static <T> void onQuerySuccess(CommandContext<CommandSource> context, ConfigCommandEntry<T> entry) {
+    public static <T> void onQuerySuccess(CommandContext<CommandSourceStack> context, ConfigCommandEntry<T> entry) {
 
-        ITextComponent response = new TranslationTextComponent("commands.hourglass.config.query",
+        Component response = new TranslatableComponent("commands.hourglass.config.query",
                 entry.getIdentifier(),
                 entry.getConfigValue().get().toString());
 
@@ -90,12 +90,12 @@ public class HourglassCommand {
      * @param context  the context from the modify command
      * @param entry  the entry that was modified by the user
      */
-    public static <T> void onModifySuccess(CommandContext<CommandSource> context, ConfigCommandEntry<T> entry) {
+    public static <T> void onModifySuccess(CommandContext<CommandSourceStack> context, ConfigCommandEntry<T> entry) {
         // Force a config sync, as the file watcher does not always catch the change. This may
         // cause the config update to send twice.
         ConfigSynchronizer.syncConfigWithClients();
 
-        ITextComponent response = new TranslationTextComponent("commands.hourglass.config.set",
+        Component response = new TranslatableComponent("commands.hourglass.config.set",
                 entry.getIdentifier(),
                 entry.getConfigValue().get());
 
@@ -109,8 +109,8 @@ public class HourglassCommand {
      * @param context  the context from the modify command
      * @param entry  the entry that the user tried to modify
      */
-    public static <T> void onModifyFailure(CommandContext<CommandSource> context, ConfigCommandEntry<T> entry) {
-        ITextComponent response = new TranslationTextComponent("commands.hourglass.config.failure",
+    public static <T> void onModifyFailure(CommandContext<CommandSourceStack> context, ConfigCommandEntry<T> entry) {
+        Component response = new TranslatableComponent("commands.hourglass.config.failure",
                 entry.getIdentifier(),
                 entry.getConfigValue().get());
 

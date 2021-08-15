@@ -19,23 +19,26 @@
 
 package net.lavabucket.hourglass.client.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
+import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import org.apache.commons.lang3.BooleanUtils;
 
 import net.lavabucket.hourglass.config.HourglassConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.SleepInMultiplayerScreen;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.gui.screens.InBedChatScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
+import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.client.event.GuiScreenEvent.DrawScreenEvent;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
@@ -65,7 +68,7 @@ public class SleepGui {
                 && !minecraft.isPaused()) {
 
             // Render a clock every tick to prevent clock wobble after getting in bed.
-            minecraft.getItemRenderer().getModel(clock, minecraft.level, minecraft.player);
+            minecraft.getItemRenderer().getModel(clock, minecraft.level, minecraft.player, 0);
         }
     }
 
@@ -76,7 +79,7 @@ public class SleepGui {
      */
     @SubscribeEvent
     public static void onGuiEvent(DrawScreenEvent.Post event) {
-        if (event.getGui() instanceof SleepInMultiplayerScreen
+        if (event.getGui() instanceof InBedChatScreen
                 && BooleanUtils.isTrue(HourglassConfig.SERVER_CONFIG.displayBedClock.get())) {
 
             renderSleepInterface(event.getGui().getMinecraft());
@@ -90,7 +93,7 @@ public class SleepGui {
      */
     public static void renderSleepInterface(Minecraft minecraft) {
         Screen screen = minecraft.screen;
-        if (!(screen instanceof SleepInMultiplayerScreen)) {
+        if (!(screen instanceof InBedChatScreen)) {
             return;
         }
 
@@ -137,24 +140,31 @@ public class SleepGui {
     @SuppressWarnings("deprecation")
     public static void renderClock(Minecraft minecraft, float x, float y, float scale) {
         ItemRenderer itemRenderer = minecraft.getItemRenderer();
-        IBakedModel model = itemRenderer.getItemModelShaper().getItemModel(Items.CLOCK);
-        model = model.getOverrides().resolve(model, clock, minecraft.level, minecraft.player);
+        BakedModel model = itemRenderer.getItemModelShaper().getItemModel(Items.CLOCK);
+        model = model.getOverrides().resolve(model, clock, minecraft.level, minecraft.player, 0);
 
-        // Replicate ItemRenderer#renderAndDecorateItem(ItemStack, int, int);
-        RenderSystem.pushMatrix();
-        RenderSystem.enableRescaleNormal();
-        RenderSystem.translatef(x, y, 0);
-        RenderSystem.scalef(scale, -scale, scale);
-        MatrixStack matrixStack = new MatrixStack();
-        IRenderTypeBuffer.Impl buffer = minecraft.renderBuffers().bufferSource();
-        RenderHelper.setupForFlatItems();
+        // ItemRenderer#renderAndDecorateItem(ItemStack, int, int)
+        RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        PoseStack posestack = RenderSystem.getModelViewStack();
+        posestack.pushPose();
+        posestack.translate(x, y, 0);
+        posestack.scale(scale, -scale, scale);
+        RenderSystem.applyModelViewMatrix();
+        PoseStack posestack1 = new PoseStack();
+        BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        Lighting.setupForFlatItems();
 
-        itemRenderer.render(clock, ItemCameraTransforms.TransformType.GUI, false, matrixStack,
-                buffer, 15728880, OverlayTexture.NO_OVERLAY, model);
+        itemRenderer.render(clock, TransformType.GUI, false, posestack1, bufferSource, 15728880,
+                OverlayTexture.NO_OVERLAY, model);
 
-        buffer.endBatch();
-        RenderHelper.setupFor3DItems();
-        RenderSystem.popMatrix();
+        bufferSource.endBatch();
+        RenderSystem.enableDepthTest();
+        Lighting.setupFor3DItems();
+        posestack.popPose();
+        RenderSystem.applyModelViewMatrix();
     }
 
 }

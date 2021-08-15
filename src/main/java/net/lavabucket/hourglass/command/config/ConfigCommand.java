@@ -31,8 +31,8 @@ import com.mojang.brigadier.context.CommandContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 
 /**
@@ -45,9 +45,9 @@ public class ConfigCommand {
     private static final Logger LOGGER = LogManager.getLogger();
 
     protected final Map<String, ConfigCommandEntry<?>> entries;
-    protected BiConsumer<CommandContext<CommandSource>, ConfigCommandEntry<?>> querySuccessHandler;
-    protected BiConsumer<CommandContext<CommandSource>, ConfigCommandEntry<?>> modifySuccessHandler;
-    protected BiConsumer<CommandContext<CommandSource>, ConfigCommandEntry<?>> modifyFailureHandler;
+    protected BiConsumer<CommandContext<CommandSourceStack>, ConfigCommandEntry<?>> querySuccessHandler;
+    protected BiConsumer<CommandContext<CommandSourceStack>, ConfigCommandEntry<?>> modifySuccessHandler;
+    protected BiConsumer<CommandContext<CommandSourceStack>, ConfigCommandEntry<?>> modifyFailureHandler;
 
     /**
      * Creates a new instance.
@@ -91,7 +91,7 @@ public class ConfigCommand {
      * @return this, for chaining
      */
     public ConfigCommand setQuerySuccessHandler(
-            BiConsumer<CommandContext<CommandSource>, ConfigCommandEntry<?>> listener) {
+            BiConsumer<CommandContext<CommandSourceStack>, ConfigCommandEntry<?>> listener) {
         this.querySuccessHandler = listener;
         return this;
     }
@@ -104,7 +104,7 @@ public class ConfigCommand {
      * @return this, for chaining
      */
     public ConfigCommand setModifySuccessHandler(
-            BiConsumer<CommandContext<CommandSource>, ConfigCommandEntry<?>> listener) {
+            BiConsumer<CommandContext<CommandSourceStack>, ConfigCommandEntry<?>> listener) {
         this.modifySuccessHandler = listener;
         return this;
     }
@@ -117,7 +117,7 @@ public class ConfigCommand {
      * @return this, for chaining
      */
     public ConfigCommand setModifyFailureHandler(
-            BiConsumer<CommandContext<CommandSource>, ConfigCommandEntry<?>> listener) {
+            BiConsumer<CommandContext<CommandSourceStack>, ConfigCommandEntry<?>> listener) {
         this.modifyFailureHandler = listener;
         return this;
     }
@@ -129,7 +129,7 @@ public class ConfigCommand {
      * @param parent the parent to build config commands off of
      * @return the parent, for additional chaining
      */
-    public ArgumentBuilder<CommandSource, ?> build(ArgumentBuilder<CommandSource, ?> parent) {
+    public ArgumentBuilder<CommandSourceStack, ?> build(ArgumentBuilder<CommandSourceStack, ?> parent) {
 
         for (ConfigCommandEntry<?> entry : entries.values()) {
             parent.then(Commands.literal(entry.getIdentifier())
@@ -150,7 +150,7 @@ public class ConfigCommand {
      * @param entry the ConfigCommandEntry holding the config value to be retrieved
      * @return 1 if a success handler was successfully called, 0 otherwise
      */
-    protected <T> int queryConfigCommand(CommandContext<CommandSource> context,
+    protected <T> int queryConfigCommand(CommandContext<CommandSourceStack> context,
             ConfigCommandEntry<T> entry) {
         if (this.querySuccessHandler != null) {
             this.querySuccessHandler.accept(context, entry);
@@ -170,7 +170,7 @@ public class ConfigCommand {
      * @param entry the ConfigCommandEntry holding the config value to be changed
      * @return 1 if successful, 0 otherwise
      */
-    protected <T> int modifyConfigCommand(CommandContext<CommandSource> context,
+    protected <T> int modifyConfigCommand(CommandContext<CommandSourceStack> context,
             ConfigCommandEntry<T> entry) {
 
         T argument;

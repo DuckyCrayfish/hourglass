@@ -26,9 +26,9 @@ import org.apache.commons.lang3.BooleanUtils;
 import net.lavabucket.hourglass.config.HourglassConfig;
 import net.lavabucket.hourglass.time.ServerTimeHandler;
 import net.lavabucket.hourglass.time.SleepState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameRules;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.world.SleepFinishedTimeEvent;
@@ -43,7 +43,7 @@ public class HourglassMessages {
      */
     @SubscribeEvent
     public static void onSleepingCheckEvent(SleepingTimeCheckEvent event) {
-        PlayerEntity player = event.getPlayer();
+        Player player = event.getPlayer();
         if (!player.level.isClientSide() && player.isSleeping() && player.getSleepTimer() == 1
                 && player.level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
             sendSleepMessage(event.getPlayer());
@@ -57,7 +57,7 @@ public class HourglassMessages {
      */
     @SubscribeEvent
     public static void onPlayerWakeUpEvent(PlayerWakeUpEvent event) {
-        PlayerEntity player = event.getPlayer();
+        Player player = event.getPlayer();
         if (event.getPlayer().level.isClientSide() == false && event.updateWorld() == true
                 && player.level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
             sendWakeMessage(event.getPlayer());
@@ -71,8 +71,8 @@ public class HourglassMessages {
      */
     @SubscribeEvent
     public static void onSleepFinishedEvent(SleepFinishedTimeEvent event) {
-        if (event.getWorld() instanceof ServerWorld) {
-            sendMorningMessage((ServerWorld) event.getWorld());
+        if (event.getWorld() instanceof ServerLevel) {
+            sendMorningMessage((ServerLevel) event.getWorld());
         }
     }
 
@@ -85,7 +85,7 @@ public class HourglassMessages {
      *
      * @param player  the player who started sleeping
      */
-    public static void sendSleepMessage(PlayerEntity player) {
+    public static void sendSleepMessage(Player player) {
         String templateMessage = SERVER_CONFIG.inBedMessage.get();
         ServerTimeHandler timeHandler = ServerTimeHandler.instance;
         if (templateMessage.isEmpty() || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())
@@ -101,7 +101,7 @@ public class HourglassMessages {
                 .setVariable("totalPlayers", Integer.toString(sleepState.totalPlayerCount))
                 .setVariable("sleepingPlayers", Integer.toString(sleepState.sleepingPlayerCount))
                 .setVariable("sleepingPercentage", Integer.toString((int) (100D * sleepState.getRatio())))
-                .bake().send(SERVER_CONFIG.bedMessageTarget.get(), (ServerWorld) player.level);
+                .bake().send(SERVER_CONFIG.bedMessageTarget.get(), (ServerLevel) player.level);
     }
 
     /**
@@ -113,7 +113,7 @@ public class HourglassMessages {
      *
      * @param player  the player who left their bed
      */
-    public static void sendWakeMessage(PlayerEntity player) {
+    public static void sendWakeMessage(Player player) {
         String templateMessage = SERVER_CONFIG.outOfBedMessage.get();
         ServerTimeHandler timeHandler = ServerTimeHandler.instance;
         if (templateMessage.isEmpty() || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())
@@ -129,7 +129,7 @@ public class HourglassMessages {
                 .setVariable("totalPlayers", Integer.toString(sleepState.totalPlayerCount))
                 .setVariable("sleepingPlayers", Integer.toString(sleepState.sleepingPlayerCount - 1))
                 .setVariable("sleepingPercentage", Integer.toString((int) (100D * sleepState.getRatio())))
-                .bake().send(SERVER_CONFIG.bedMessageTarget.get(), (ServerWorld) player.level);
+                .bake().send(SERVER_CONFIG.bedMessageTarget.get(), (ServerLevel) player.level);
     }
 
     /**
@@ -142,7 +142,7 @@ public class HourglassMessages {
      *
      * @param world  the world that night has passed in
      */
-    public static void sendMorningMessage(ServerWorld world) {
+    public static void sendMorningMessage(ServerLevel world) {
         String templateMessage = SERVER_CONFIG.morningMessage.get();
         ServerTimeHandler timeHandler = ServerTimeHandler.instance;
         if (templateMessage.isEmpty() || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())

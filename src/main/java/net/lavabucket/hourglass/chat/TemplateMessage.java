@@ -27,17 +27,17 @@ import javax.annotation.Nullable;
 import org.apache.logging.log4j.core.lookup.MapLookup;
 import org.apache.logging.log4j.core.lookup.StrSubstitutor;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.ChatType;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.Util;
+import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 
 public class TemplateMessage {
 
     private ChatType type = ChatType.SYSTEM;
-    private ITextComponent message;
+    private Component message;
     private String template;
     public HashMap<String, String> variables;
     public StrSubstitutor substitutor;
@@ -97,7 +97,7 @@ public class TemplateMessage {
      *
      * @return the message
      */
-    public ITextComponent getMessage() {
+    public Component getMessage() {
         return this.message;
     }
 
@@ -108,13 +108,13 @@ public class TemplateMessage {
      */
     public TemplateMessage bake() {
         this.substitutor.setVariableResolver(new MapLookup(this.variables));
-        this.message = new StringTextComponent(this.substitutor.replace(this.template));
+        this.message = new TextComponent(this.substitutor.replace(this.template));
         return this;
     }
 
     /**
      * Sends the message to the specified targets. This method is only allowed if the target argument
-     * is MessageTarget.ALL. Otherwise, use {@link #send(MessageTarget, ServerWorld)}.
+     * is MessageTarget.ALL. Otherwise, use {@link #send(MessageTarget, ServerLevel)}.
      *
      * @param target the target of the message
      */
@@ -129,7 +129,7 @@ public class TemplateMessage {
      * @param target the target of the message
      * @param world the world to send targeted message to, if applicable
      */
-    public void send(MessageTarget target, @Nullable ServerWorld world) {
+    public void send(MessageTarget target, @Nullable ServerLevel world) {
         if (target != MessageTarget.ALL && world == null) {
             throw new IllegalArgumentException("World must be specified unless target is MessageTarget.ALL.");
         }
@@ -137,9 +137,9 @@ public class TemplateMessage {
         if (target == MessageTarget.ALL) {
             world.getServer().getPlayerList().broadcastMessage(this.message, type, Util.NIL_UUID);
         } else {
-            Stream<ServerPlayerEntity> players = world.players().stream();
+            Stream<ServerPlayer> players = world.players().stream();
             if (target == MessageTarget.SLEEPING) {
-                players = players.filter(ServerPlayerEntity::isSleeping);
+                players = players.filter(ServerPlayer::isSleeping);
             }
             players.forEach(player -> player.sendMessage(this.message, type, Util.NIL_UUID));
         }

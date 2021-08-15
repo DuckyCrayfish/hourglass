@@ -21,8 +21,8 @@ package net.lavabucket.hourglass.client;
 
 import net.lavabucket.hourglass.time.TimeUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.world.GameRules;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.level.GameRules;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.RenderTickEvent;
@@ -36,7 +36,7 @@ public class TimeInterpolator {
 
     public static TimeInterpolator instance;
 
-    public ClientWorld world;
+    public ClientLevel world;
     private boolean initialized;
     private long lastTime;
     private long targetTime;
@@ -53,8 +53,8 @@ public class TimeInterpolator {
      */
     @SubscribeEvent
     public static void onWorldLoad(WorldEvent.Load event) {
-        if (event.getWorld() instanceof ClientWorld) {
-            ClientWorld world = (ClientWorld) event.getWorld();
+        if (event.getWorld() instanceof ClientLevel) {
+            ClientLevel world = (ClientLevel) event.getWorld();
             instance = new TimeInterpolator(world);
         }
     }
@@ -69,8 +69,8 @@ public class TimeInterpolator {
      */
     @SubscribeEvent
     public static void onWorldUnload(WorldEvent.Unload event) {
-        if (event.getWorld() instanceof ClientWorld) {
-            ClientWorld world = (ClientWorld) event.getWorld();
+        if (event.getWorld() instanceof ClientLevel) {
+            ClientLevel world = (ClientLevel) event.getWorld();
             if (instance != null && instance.world.equals(world)) {
                 instance = null;
             }
@@ -89,7 +89,7 @@ public class TimeInterpolator {
     @SubscribeEvent
     public static void onRenderTickEvent(RenderTickEvent event) {
         Minecraft minecraft = Minecraft.getInstance();
-        ClientWorld world = minecraft.level;
+        ClientLevel world = minecraft.level;
         if (event.phase == Phase.START
                 && !minecraft.isPaused()
                 && world != null
@@ -109,7 +109,7 @@ public class TimeInterpolator {
     @SubscribeEvent
     public static void OnClientTickEvent(ClientTickEvent event) {
         Minecraft minecraft = Minecraft.getInstance();
-        ClientWorld world = minecraft.level;
+        ClientLevel world = minecraft.level;
 
         if (event.phase == Phase.END
                 && !minecraft.isPaused()
@@ -123,9 +123,9 @@ public class TimeInterpolator {
     /**
      * Creates a new instance.
      *
-     * @param world  the ClientWorld whose time this object should manage
+     * @param world  the ClientLevel whose time this object should manage
      */
-    public TimeInterpolator(ClientWorld world) {
+    public TimeInterpolator(ClientLevel world) {
         this.world = world;
         this.initialized = false;
     }

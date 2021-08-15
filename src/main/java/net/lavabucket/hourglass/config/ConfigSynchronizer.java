@@ -28,16 +28,18 @@ import org.apache.logging.log4j.LogManager;
 
 import net.lavabucket.hourglass.HourglassMod;
 import net.lavabucket.hourglass.network.PacketHandler;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.config.ModConfig.Type;
-import net.minecraftforge.fml.network.PacketDistributor;
-import net.minecraftforge.fml.network.FMLHandshakeMessages.S2CConfigData;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.minecraftforge.fmllegacy.network.ConfigSync;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.FMLHandshakeMessages.S2CConfigData;
+import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
+import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 
 /**
  * A very quick and very dirty method of synchronizing server configuration with clients.
@@ -55,7 +57,7 @@ public class ConfigSynchronizer {
      * @param event  the config reload event, provided by the event bus
      */
     @SubscribeEvent
-	public static void onModConfigEvent(final ModConfig.Reloading event) {
+	public static void onModConfigEvent(final ModConfigEvent.Reloading event) {
 		final ModConfig config = event.getConfig();
         final MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
 		if (server != null
@@ -82,7 +84,7 @@ public class ConfigSynchronizer {
      * @param config  the config data object to encode
      * @param buffer  the buffer to write the object to
      */
-    public static void encode(S2CConfigData config, PacketBuffer buffer) {
+    public static void encode(S2CConfigData config, FriendlyByteBuf buffer) {
         buffer.writeUtf(config.getFileName());
         buffer.writeByteArray(config.getBytes());
     }
@@ -93,7 +95,7 @@ public class ConfigSynchronizer {
      * @param buffer  the buffer to read the object data from
      * @return  the config data object that was read from the buffer
      */
-    public static S2CConfigData decode(PacketBuffer buffer) {
+    public static S2CConfigData decode(FriendlyByteBuf buffer) {
         return S2CConfigData.decode(buffer);
     }
 
@@ -105,7 +107,7 @@ public class ConfigSynchronizer {
      * @param context  the network message context
      */
     public static void handle(S2CConfigData configData, Supplier<Context> context) {
-        ConfigTracker.INSTANCE.receiveSyncedConfig(configData, context);
+        ConfigSync.INSTANCE.receiveSyncedConfig(configData, context);
         context.get().setPacketHandled(true);
     }
 

@@ -23,8 +23,8 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 
 /**
@@ -118,7 +118,7 @@ public class ConfigCommandEntry<T> {
      *
      * @return an ArgumentBuilder, for chaining
      */
-    public RequiredArgumentBuilder<CommandSource, T> createArgument() {
+    public RequiredArgumentBuilder<CommandSourceStack, T> createArgument() {
         return Commands.argument(this.getArgumentName(), this.getArgumentType());
     }
 

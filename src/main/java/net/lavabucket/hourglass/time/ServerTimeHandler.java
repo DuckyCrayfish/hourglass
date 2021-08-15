@@ -28,14 +28,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.lavabucket.hourglass.HourglassMod;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.play.server.SUpdateTimePacket;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.DerivedWorldInfo;
-import net.minecraft.world.storage.IServerWorldInfo;
+import net.minecraft.network.protocol.game.ClientboundSetTimePacket;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.DerivedLevelData;
+import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -51,7 +51,7 @@ public class ServerTimeHandler {
 
     public static ServerTimeHandler instance;
 
-    public ServerWorld world;
+    public ServerLevel world;
     public SleepState sleepState;
     public double timeDecimalAccumulator;
 
@@ -76,10 +76,10 @@ public class ServerTimeHandler {
      */
     @SubscribeEvent
     public static void onWorldLoad(WorldEvent.Load event) {
-        if (event.getWorld() instanceof ServerWorld) {
-            ServerWorld world = (ServerWorld) event.getWorld();
-            if (world.dimension().equals(World.OVERWORLD)) {
-                instance = new ServerTimeHandler((ServerWorld) event.getWorld());
+        if (event.getWorld() instanceof ServerLevel) {
+            ServerLevel world = (ServerLevel) event.getWorld();
+            if (world.dimension().equals(Level.OVERWORLD)) {
+                instance = new ServerTimeHandler((ServerLevel) event.getWorld());
             }
         }
     }
@@ -91,9 +91,9 @@ public class ServerTimeHandler {
      */
     @SubscribeEvent
     public static void onWorldUnload(WorldEvent.Unload event) {
-        if (event.getWorld() instanceof ServerWorld) {
-            ServerWorld world = (ServerWorld) event.getWorld();
-            if (world.dimension().equals(World.OVERWORLD)) {
+        if (event.getWorld() instanceof ServerLevel) {
+            ServerLevel world = (ServerLevel) event.getWorld();
+            if (world.dimension().equals(Level.OVERWORLD)) {
                 instance = null;
             }
         }
@@ -107,9 +107,9 @@ public class ServerTimeHandler {
     @SubscribeEvent
     public static void onWorldTick(TickEvent.WorldTickEvent event) {
         if (event.side == LogicalSide.SERVER
-                && event.world instanceof ServerWorld
+                && event.world instanceof ServerLevel
                 && ServerTimeHandler.instance != null
-                && event.world.dimension().equals(World.OVERWORLD)) {
+                && event.world.dimension().equals(Level.OVERWORLD)) {
 
             if (event.phase == TickEvent.Phase.START) {
                 instance.tick();
@@ -122,9 +122,9 @@ public class ServerTimeHandler {
     /**
      * Creates a new instance.
      *
-     * @param world  the ServerWorld whose time this object should manage
+     * @param world  the ServerLevel whose time this object should manage
      */
-    public ServerTimeHandler(ServerWorld world) {
+    public ServerTimeHandler(ServerLevel world) {
         this.world = world;
         this.timeDecimalAccumulator = 0;
         this.sleepState = new SleepState();
@@ -264,7 +264,7 @@ public class ServerTimeHandler {
      * @param timeDelta  the amount of time to progress the weather cycle
      */
     private void progressWeather(int timeDelta) {
-        IServerWorldInfo levelData = VanillaTimeHelper.getServerLevelData(world);
+        ServerLevelData levelData = VanillaTimeHelper.getServerLevelData(world);
         if (levelData == null
                 || sleepState.allAwake()
                 || !world.dimensionType().hasSkyLight()
@@ -315,7 +315,8 @@ public class ServerTimeHandler {
         double percentageSleeping = sleepState.getRatio();
         double sleepSpeedMin = SERVER_CONFIG.sleepSpeedMin.get();
         double sleepSpeedMax = SERVER_CONFIG.sleepSpeedMax.get();
-        double multiplier = MathHelper.lerp(percentageSleeping, sleepSpeedMin, sleepSpeedMax);
+        double multiplier = Mth.lerp(percentageSleeping, sleepSpeedMin, sleepSpeedMax);
+
         return multiplier;
     }
 
@@ -326,7 +327,7 @@ public class ServerTimeHandler {
      */
     public SleepState calculateSleepState() {
         SleepState newSleepState = new SleepState();
-        List<ServerPlayerEntity> players = world.getPlayers(player -> !player.isSpectator());
+        List<ServerPlayer> players = world.getPlayers(player -> !player.isSpectator());
         newSleepState.totalPlayerCount = players.size();
         newSleepState.sleepingPlayerCount =
                 (int) players.stream().filter(player -> player.isSleeping()).count();
@@ -340,15 +341,15 @@ public class ServerTimeHandler {
         long gameTime = world.getGameTime();
         long dayTime = world.getDayTime();
         boolean ruleDaylight = world.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
-        SUpdateTimePacket timePacket = new SUpdateTimePacket(gameTime, dayTime, ruleDaylight);
+        ClientboundSetTimePacket timePacket = new ClientboundSetTimePacket(gameTime, dayTime, ruleDaylight);
 
-        if (world.dimension().equals(World.OVERWORLD)) {
+        if (world.dimension().equals(Level.OVERWORLD)) {
             // broadcast to overworld and derived worlds
-            List<ServerPlayerEntity> playerList = world.getServer().getPlayerList().getPlayers();
+            List<ServerPlayer> playerList = world.getServer().getPlayerList().getPlayers();
 
             for(int i = 0; i < playerList.size(); ++i) {
-                ServerPlayerEntity player = playerList.get(i);
-                if (player.level == world || player.level.getLevelData() instanceof DerivedWorldInfo) {
+                ServerPlayer player = playerList.get(i);
+                if (player.level == world || player.level.getLevelData() instanceof DerivedLevelData) {
                     player.connection.send(timePacket);
                 }
             }

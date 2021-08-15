@@ -27,9 +27,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.lavabucket.hourglass.HourglassMod;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.IServerWorldInfo;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.players.SleepStatus;
+import net.minecraft.world.level.storage.ServerLevelData;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 /**
  * Helper that uses reflection to access private or protected vanilla members.
@@ -37,66 +38,74 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 public class VanillaTimeHelper {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Field allPlayersSleeping = ObfuscationReflectionHelper.findField(ServerWorld.class, "field_73068_P");
-    private static final Field serverLevelData = ObfuscationReflectionHelper.findField(ServerWorld.class, "field_241103_E_");
-    private static final Method wakeUpAllPlayers = ObfuscationReflectionHelper.findMethod(ServerWorld.class, "func_229856_ab_");
-    private static final Method stopWeather = ObfuscationReflectionHelper.findMethod(ServerWorld.class, "func_73051_P");
+    private static final Field sleepStatus = ObfuscationReflectionHelper.findField(ServerLevel.class, "f_143245_");
+    private static final Field serverLevelData = ObfuscationReflectionHelper.findField(ServerLevel.class, "f_8549_");
+    private static final Method wakeUpAllPlayers = ObfuscationReflectionHelper.findMethod(ServerLevel.class, "m_8804_");
 
     static {
-        allPlayersSleeping.setAccessible(true);
+        sleepStatus.setAccessible(true);
         serverLevelData.setAccessible(true);
         wakeUpAllPlayers.setAccessible(true);
-        stopWeather.setAccessible(true);
     }
 
     /**
      * Call at the beginning of every world-tick on the server to prevent the vanilla sleep mechanic.
      *
-     * @param world  the ServerWorld to prevent sleep on
+     * @param world  the level to prevent sleep on
      */
-    public static void preventVanillaSleep(ServerWorld world) {
+    public static void preventVanillaSleep(ServerLevel world) {
+        SleepStatus status;
         try {
-            allPlayersSleeping.setBoolean(world, false);
+            status = (SleepStatus) sleepStatus.get(world);
         } catch (IllegalAccessException e) {
-            LOGGER.warn(HourglassMod.MARKER, "Error preventing vanilla sleep - could not access ServerWorld#allPlayersSleeping field.");
+            LOGGER.warn(HourglassMod.MARKER, "Error preventing vanilla sleep - could not access ServerLevel#allPlayersSleeping field.");
+            return;
         }
+
+        status.removeAllSleepers();
     }
 
     /**
-     * Invoke the vanilla {@link net.minecraft.world.server.ServerWorld#stopWeather()} private method.
+     * Emulate the vanilla functionality for stopping weather.
      *
-     * @param world  the ServerWorld to invoke the method on
+     * @param world  the level to stop weather in
      */
-    public static void stopWeather(ServerWorld world) {
+    public static void stopWeather(ServerLevel world) {
+        ServerLevelData levelData;
         try {
-            stopWeather.invoke(world);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            LOGGER.error(HourglassMod.MARKER, "Failed to stop weather - could not access ServerWorld#stopWeather() method.", e);
+            levelData = (ServerLevelData) serverLevelData.get(world);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            LOGGER.error(HourglassMod.MARKER, "Error accelerating weather - Failed to retrieve server level data.", e);
+            return;
         }
+        levelData.setRainTime(0);
+        levelData.setRaining(false);
+        levelData.setThunderTime(0);
+        levelData.setThundering(false);
     }
 
     /**
-     * Invokes the vanilla {@link net.minecraft.world.server.ServerWorld#wakeUpAllPlayers()} private method.
+     * Invokes the vanilla {@link net.minecraft.world.server.ServerLevel#wakeUpAllPlayers()} private method.
      * Wakes all currently sleeping players.
      *
-     * @param world  the ServerWorld to wake all sleeping players on
+     * @param world  the ServerLevel to wake all sleeping players on
      */
-    public static void wakeUpAllPlayers(ServerWorld world) {
+    public static void wakeUpAllPlayers(ServerLevel world) {
         try {
             wakeUpAllPlayers.invoke(world);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            LOGGER.error(HourglassMod.MARKER, "Failed to wake players - could not access ServerWorld#wakeAllPlayers() method.", e);
+            LOGGER.error(HourglassMod.MARKER, "Failed to wake players - could not access ServerLevel#wakeAllPlayers() method.", e);
         }
     }
 
     /**
-     * Retrieves the {@link net.minecraft.world.server.ServerWorld#serverLevelData} protected field.
+     * Retrieves the {@link net.minecraft.world.server.ServerLevel#serverLevelData} protected field.
      *
-     * @param world  the ServerWorld to fetch the field of
+     * @param world  the ServerLevel to fetch the field of
      */
-    public static IServerWorldInfo getServerLevelData(ServerWorld world) {
+    public static ServerLevelData getServerLevelData(ServerLevel world) {
         try {
-            return (IServerWorldInfo) serverLevelData.get(world);
+            return (ServerLevelData) serverLevelData.get(world);
         } catch (IllegalArgumentException | IllegalAccessException e) {
             LOGGER.error(HourglassMod.MARKER, "Error accelerating weather - Failed to retrieve server level data.", e);
             return null;
