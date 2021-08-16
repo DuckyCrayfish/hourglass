@@ -21,6 +21,8 @@ package net.lavabucket.hourglass.chat;
 
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
+import org.apache.commons.lang3.BooleanUtils;
+
 import net.lavabucket.hourglass.config.HourglassConfig;
 import net.lavabucket.hourglass.time.ServerTimeHandler;
 import net.lavabucket.hourglass.time.SleepState;
@@ -85,15 +87,13 @@ public class HourglassMessages {
      */
     public static void sendSleepMessage(PlayerEntity player) {
         String templateMessage = SERVER_CONFIG.inBedMessage.get();
-        if (templateMessage.isEmpty() || ServerTimeHandler.instance == null) {
+        ServerTimeHandler timeHandler = ServerTimeHandler.instance;
+        if (templateMessage.isEmpty() || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())
+                || timeHandler == null || timeHandler.world.players().size() <= 1) {
             return;
         }
 
-        SleepState sleepState = ServerTimeHandler.instance.sleepState;
-
-        if (sleepState.totalPlayerCount == 1) {
-            return;
-        }
+        SleepState sleepState = timeHandler.sleepState;
 
         new TemplateMessage().setTemplate(templateMessage)
                 .setType(SERVER_CONFIG.bedMessageType.get())
@@ -115,15 +115,13 @@ public class HourglassMessages {
      */
     public static void sendWakeMessage(PlayerEntity player) {
         String templateMessage = SERVER_CONFIG.outOfBedMessage.get();
-        if (templateMessage.isEmpty() || ServerTimeHandler.instance == null) {
+        ServerTimeHandler timeHandler = ServerTimeHandler.instance;
+        if (templateMessage.isEmpty() || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())
+                || timeHandler == null || timeHandler.world.players().size() <= 1) {
             return;
         }
 
-        SleepState sleepState = ServerTimeHandler.instance.sleepState;
-
-        if (sleepState.totalPlayerCount == 1) {
-            return;
-        }
+        SleepState sleepState = timeHandler.sleepState;
 
         new TemplateMessage().setTemplate(templateMessage)
                 .setType(SERVER_CONFIG.bedMessageType.get())
@@ -146,11 +144,13 @@ public class HourglassMessages {
      */
     public static void sendMorningMessage(ServerWorld world) {
         String templateMessage = SERVER_CONFIG.morningMessage.get();
-        if (templateMessage.isEmpty() || ServerTimeHandler.instance == null) {
+        ServerTimeHandler timeHandler = ServerTimeHandler.instance;
+        if (templateMessage.isEmpty() || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())
+                || timeHandler == null) {
             return;
         }
 
-        SleepState sleepState = ServerTimeHandler.instance.sleepState;
+        SleepState sleepState = timeHandler.sleepState;
 
         new TemplateMessage().setTemplate(templateMessage)
                 .setType(SERVER_CONFIG.morningMessageType.get())
