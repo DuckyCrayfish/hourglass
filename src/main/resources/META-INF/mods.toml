@@ -43,8 +43,7 @@ authors="DuckyCrayfish" #optional
 
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-Beds accelerate the passage of time smoothly until daytime. Time passes faster depending on the
-percentage of online players who are sleeping.
+Beds accelerate the passage of time smoothly until daytime. Time passes faster depending on the percentage of online players who are sleeping.
 '''
 
 [[dependencies.hourglass]] #optional
