@@ -46,6 +46,8 @@ will cut the speed of time in half, doubling the duration of a full day to 40 mi
 doubling the configured speed to 2.0 will result in a shortened day lasting only 10 minutes from
 one morning to the next.
 
+> _**Note:** Setting daySpeed and nightSpeed to values higher than 3600 may be unsafe for people with photosensitive epilepsy._
+
 ### Default Server Config
 
 ```toml
