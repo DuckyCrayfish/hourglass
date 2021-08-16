@@ -43,7 +43,11 @@ authors="DuckyCrayfish" #optional
 
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-Beds accelerate the passage of time smoothly until daytime. Time passes faster depending on the percentage of online players who are sleeping.
+Hourglass is a Minecraft Forge mod that gives you control over the passage of time. It allows you to customize the length of the day-night cycle and alters the Minecraft sleep mechanic by accelerating the speed of time.
+
+This mod (optionally) replaces the vanilla sleep functionality with a smooth and natural transition to morning by accelerating the passage of time while you're in bed. In multiplayer, time will pass faster depending on the percentage of players who are currently sleeping. This removes the need for any sleep voting system or player threshold, as any number of players can have an impact on the duration of the night.
+
+Hourglass allows for customization of the day-night cycle duration, and can control day and night speed independently. Rather than the vanilla duration of 20 minutes, you can slow down time to make a day in Minecraft last as long as a day in real life, or speed up the passage of nights for a more forgiving experience.
 '''
 
 [[dependencies.hourglass]] #optional
