@@ -36,7 +36,6 @@ import net.minecraft.world.server.ServerWorld;
 
 public class TemplateMessage {
 
-    private MessageTarget target = MessageTarget.ALL;
     private ChatType type = ChatType.SYSTEM;
     private ITextComponent message;
     private String template;
@@ -131,14 +130,15 @@ public class TemplateMessage {
      * @param world the world to send targeted message to, if applicable
      */
     public void send(MessageTarget target, @Nullable ServerWorld world) {
-        if (this.target != MessageTarget.ALL && world == null) {
+        if (target != MessageTarget.ALL && world == null) {
             throw new IllegalArgumentException("World must be specified unless target is MessageTarget.ALL.");
         }
-        if (this.target == MessageTarget.ALL) {
+
+        if (target == MessageTarget.ALL) {
             world.getServer().getPlayerList().broadcastMessage(this.message, type, Util.NIL_UUID);
         } else {
             Stream<ServerPlayerEntity> players = world.players().stream();
-            if (this.target == MessageTarget.SLEEPING) {
+            if (target == MessageTarget.SLEEPING) {
                 players = players.filter(ServerPlayerEntity::isSleeping);
             }
             players.forEach(player -> player.sendMessage(this.message, type, Util.NIL_UUID));
