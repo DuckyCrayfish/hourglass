@@ -152,7 +152,7 @@ public class HourglassConfig {
                             + "sleepingPlayers -> the number of players in the current dimension who were sleeping.\n"
                             + "totalPlayers -> the number of players in the current dimension (spectators are not counted).\n"
                             + "sleepingPercentage -> the percentage of players in the current dimension who were sleeping (does not include % symbol).")
-                    .define("morningMessage", "§e§oTempus fugit!");
+                    .define("morningMessage", "\u00A7e\u00A7oTempus fugit!");
 
             morningMessageType = builder
                     .comment("Sets the message type for the morning message.\n"
@@ -174,7 +174,7 @@ public class HourglassConfig {
                             + "sleepingPlayers -> the number of players in the current dimension who are sleeping.\n"
                             + "totalPlayers -> the number of players in the current dimension (spectators are not counted).\n"
                             + "sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).")
-                    .define("inBedMessage", "§7§o${player} is now sleeping. [${sleepingPlayers}/${totalPlayers}]");
+                    .define("inBedMessage", "\u00A77\u00A7o${player} is now sleeping. [${sleepingPlayers}/${totalPlayers}]");
 
             outOfBedMessage = builder
                     .comment("This message is sent to bedMessageTarget when a player gets out of bed (without being woken up naturally at morning).\n"
@@ -183,7 +183,7 @@ public class HourglassConfig {
                             + "sleepingPlayers -> the number of players in the current dimension who are sleeping.\n"
                             + "totalPlayers -> the number of players in the current dimension (spectators are not counted).\n"
                             + "sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).")
-                    .define("outOfBedMessage", "§7§o${player} has left their bed. [${sleepingPlayers}/${totalPlayers}]");
+                    .define("outOfBedMessage", "\u00A77\u00A7o${player} has left their bed. [${sleepingPlayers}/${totalPlayers}]");
 
             bedMessageType = builder
                     .comment("Sets the message type for inBedMessage and outOfBedMessage.\n"
