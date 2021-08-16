@@ -76,7 +76,7 @@ one morning to the next.
 
 	#The minimum speed at which time passes when only 1 player is sleeping in a full server.
 	#Range: 0.0 ~ 24000.0
-	sleepSpeedMin = 2.0
+	sleepSpeedMin = 1.0
 
 	#The maximum speed at which time passes when all players are sleeping. A value of 120
 	#is approximately equal to the time it takes to sleep in vanilla.
