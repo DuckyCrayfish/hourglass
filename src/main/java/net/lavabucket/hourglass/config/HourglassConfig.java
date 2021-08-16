@@ -158,7 +158,7 @@ public class HourglassConfig {
                     .comment("Sets the message type for the morning message.\n"
                             + "SYSTEM: Appears as a message in the chat. (e.g., \"Respawn point set\")\n"
                             + "GAME_INFO: Game information that appears above the hotbar (e.g., \"You may not rest now, the bed is too far away\").")
-                    .defineEnum("morningMessageType", ChatType.SYSTEM, ChatType.SYSTEM, ChatType.GAME_INFO);
+                    .defineEnum("morningMessageType", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
 
             morningMessageTarget = builder
                     .comment("Sets the target for the morning message.\n"
@@ -174,7 +174,7 @@ public class HourglassConfig {
                             + "sleepingPlayers -> the number of players in the current dimension who are sleeping.\n"
                             + "totalPlayers -> the number of players in the current dimension (spectators are not counted).\n"
                             + "sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).")
-                    .define("inBedMessage", "\u00A77\u00A7o${player} is now sleeping. [${sleepingPlayers}/${totalPlayers}]");
+                    .define("inBedMessage", "${player} is now sleeping. [${sleepingPlayers}/${totalPlayers}]");
 
             outOfBedMessage = builder
                     .comment("This message is sent to bedMessageTarget when a player gets out of bed (without being woken up naturally at morning).\n"
@@ -183,13 +183,13 @@ public class HourglassConfig {
                             + "sleepingPlayers -> the number of players in the current dimension who are sleeping.\n"
                             + "totalPlayers -> the number of players in the current dimension (spectators are not counted).\n"
                             + "sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).")
-                    .define("outOfBedMessage", "\u00A77\u00A7o${player} has left their bed. [${sleepingPlayers}/${totalPlayers}]");
+                    .define("outOfBedMessage", "${player} has left their bed. [${sleepingPlayers}/${totalPlayers}]");
 
             bedMessageType = builder
                     .comment("Sets the message type for inBedMessage and outOfBedMessage.\n"
                             + "SYSTEM: Appears as a message in the chat (e.g., \"Respawn point set\").\n"
                             + "GAME_INFO: Game information that appears above the hotbar (e.g., \"You may not rest now, the bed is too far away\").")
-                    .defineEnum("bedMessageType", ChatType.SYSTEM, ChatType.SYSTEM, ChatType.GAME_INFO);
+                    .defineEnum("bedMessageType", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
 
             bedMessageTarget = builder
                     .comment("Sets the target for inBedMessage and outOfBedMessage.\n"

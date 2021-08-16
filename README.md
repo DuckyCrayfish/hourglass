@@ -109,7 +109,7 @@ one morning to the next.
 	#SYSTEM: Appears as a message in the chat. (e.g., "Respawn point set")
 	#GAME_INFO: Game information that appears above the hotbar (e.g., "You may not rest now, the bed is too far away").
 	#Allowed Values: SYSTEM, GAME_INFO
-	morningMessageType = "SYSTEM"
+	morningMessageType = "GAME_INFO"
 
 	#Sets the target for the morning message.
 	#ALL: Send the message to all players on the server.
@@ -124,7 +124,7 @@ one morning to the next.
 	#sleepingPlayers -> the number of players in the current dimension who are sleeping.
 	#totalPlayers -> the number of players in the current dimension (spectators are not counted).
 	#sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).
-	inBedMessage = "§7§o${player} is now sleeping. [${sleepingPlayers}/${totalPlayers}]"
+	inBedMessage = "${player} is now sleeping. [${sleepingPlayers}/${totalPlayers}]"
 
 	#This message is sent to bedMessageTarget when a player gets out of bed (without being woken up naturally at morning).
 	#Available variables:
@@ -132,13 +132,13 @@ one morning to the next.
 	#sleepingPlayers -> the number of players in the current dimension who are sleeping.
 	#totalPlayers -> the number of players in the current dimension (spectators are not counted).
 	#sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).
-	outOfBedMessage = "§7§o${player} has left their bed. [${sleepingPlayers}/${totalPlayers}]"
+	outOfBedMessage = "${player} has left their bed. [${sleepingPlayers}/${totalPlayers}]"
 
 	#Sets the message type for inBedMessage and outOfBedMessage.
 	#SYSTEM: Appears as a message in the chat (e.g., "Respawn point set").
 	#GAME_INFO: Game information that appears above the hotbar (e.g., "You may not rest now, the bed is too far away").
 	#Allowed Values: SYSTEM, GAME_INFO
-	bedMessageType = "SYSTEM"
+	bedMessageType = "GAME_INFO"
 
 	#Sets the target for inBedMessage and outOfBedMessage.
 	#ALL: Send the message to all players on the server.
