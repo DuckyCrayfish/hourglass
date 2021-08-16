@@ -29,6 +29,8 @@ If the `<value>` argument is omitted, displays the config option's current value
 
 ## Support
 
+[![](http://cf.way2muchnoise.eu/versions/hourglass.svg)](https://www.curseforge.com/minecraft/mc-mods/hourglass)
+
 The Overworld is currently the only dimension supported. However, most dimensions in Minecraft
 (including custom dimensions) derive their time information from the Overworld and will therefore
 elapse time at the same rate.
