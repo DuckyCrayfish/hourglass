@@ -15,6 +15,10 @@ speed independently. Rather than the vanilla duration of 20 minutes, you can slo
 a day in Minecraft last as long as a day in real life, or speed up the passage of nights for a more
 forgiving experience.
 
+Download it on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/hourglass).
+
+[![](http://cf.way2muchnoise.eu/title/hourglass.svg)](https://www.curseforge.com/minecraft/mc-mods/hourglass)
+
 ## Commands
 
 #### `/hourglass config <config-key> [<value>]`
