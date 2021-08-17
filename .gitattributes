@@ -4,4 +4,4 @@
 src/generated/**/.cache/cache text eol=lf
 src/generated/**/*.json text eol=lf
 
-src/resources/META-INF/mods.toml text eol=lf
+src/main/resources/META-INF/mods.toml text eol=lf
