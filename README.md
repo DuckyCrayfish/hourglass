@@ -73,9 +73,9 @@ one morning to the next.
 	accelerateWeather = true
 
 [sleep]
-	#Enables or disables the sleep feature of this mod. Enabling this setting will modify the vanilla
-	#sleep functionality and may conflict with other sleep mods. If disabled, the remaining settings
-	#in this section will not apply.
+    #Enables or disables the sleep feature of this mod. Enabling this setting will modify the vanilla
+    #sleep functionality and may conflict with other sleep mods. If disabled, the settings in the
+    #messages section and the remaining settings in this section will not apply.
 	enableSleepFeature = true
 
 	#The minimum speed at which time passes when only 1 player is sleeping in a full server.
