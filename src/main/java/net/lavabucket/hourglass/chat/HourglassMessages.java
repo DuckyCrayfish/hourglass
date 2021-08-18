@@ -24,8 +24,8 @@ import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 import org.apache.commons.lang3.BooleanUtils;
 
 import net.lavabucket.hourglass.config.HourglassConfig;
+import net.lavabucket.hourglass.time.HourglassSleepStatus;
 import net.lavabucket.hourglass.time.ServerTimeHandler;
-import net.lavabucket.hourglass.time.SleepState;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
@@ -93,14 +93,14 @@ public class HourglassMessages {
             return;
         }
 
-        SleepState sleepState = timeHandler.sleepState;
+        HourglassSleepStatus sleepStatus = timeHandler.sleepStatus;
 
         new TemplateMessage().setTemplate(templateMessage)
                 .setType(SERVER_CONFIG.bedMessageType.get())
                 .setVariable("player", player.getGameProfile().getName())
-                .setVariable("totalPlayers", Integer.toString(sleepState.totalPlayerCount))
-                .setVariable("sleepingPlayers", Integer.toString(sleepState.sleepingPlayerCount))
-                .setVariable("sleepingPercentage", Integer.toString((int) (100D * sleepState.getRatio())))
+                .setVariable("totalPlayers", Integer.toString(sleepStatus.amountActive()))
+                .setVariable("sleepingPlayers", Integer.toString(sleepStatus.amountSleeping()))
+                .setVariable("sleepingPercentage", Integer.toString((int) (100D * sleepStatus.getRatio())))
                 .bake().send(SERVER_CONFIG.bedMessageTarget.get(), (ServerLevel) player.level);
     }
 
@@ -121,14 +121,14 @@ public class HourglassMessages {
             return;
         }
 
-        SleepState sleepState = timeHandler.sleepState;
+        HourglassSleepStatus sleepStatus = timeHandler.sleepStatus;
 
         new TemplateMessage().setTemplate(templateMessage)
                 .setType(SERVER_CONFIG.bedMessageType.get())
                 .setVariable("player", player.getGameProfile().getName())
-                .setVariable("totalPlayers", Integer.toString(sleepState.totalPlayerCount))
-                .setVariable("sleepingPlayers", Integer.toString(sleepState.sleepingPlayerCount - 1))
-                .setVariable("sleepingPercentage", Integer.toString((int) (100D * sleepState.getRatio())))
+                .setVariable("totalPlayers", Integer.toString(sleepStatus.amountActive()))
+                .setVariable("sleepingPlayers", Integer.toString(sleepStatus.amountSleeping() - 1))
+                .setVariable("sleepingPercentage", Integer.toString((int) (100D * sleepStatus.getRatio())))
                 .bake().send(SERVER_CONFIG.bedMessageTarget.get(), (ServerLevel) player.level);
     }
 
@@ -150,13 +150,13 @@ public class HourglassMessages {
             return;
         }
 
-        SleepState sleepState = timeHandler.sleepState;
+        HourglassSleepStatus sleepStatus = timeHandler.sleepStatus;
 
         new TemplateMessage().setTemplate(templateMessage)
                 .setType(SERVER_CONFIG.morningMessageType.get())
-                .setVariable("totalPlayers", Integer.toString(sleepState.totalPlayerCount))
-                .setVariable("sleepingPlayers", Integer.toString(sleepState.sleepingPlayerCount))
-                .setVariable("sleepingPercentage", Integer.toString((int) (100D * sleepState.getRatio())))
+                .setVariable("totalPlayers", Integer.toString(sleepStatus.amountActive()))
+                .setVariable("sleepingPlayers", Integer.toString(sleepStatus.amountSleeping()))
+                .setVariable("sleepingPercentage", Integer.toString((int) (100D * sleepStatus.getRatio())))
                 .bake().send(SERVER_CONFIG.morningMessageTarget.get(), world);
 
         // JSON version to implement later:

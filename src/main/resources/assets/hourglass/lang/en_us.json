@@ -16,7 +16,5 @@
   "hourglass.configgui.screenAlignment.bottomCenter": "Bottom Center",
   "hourglass.configgui.screenAlignment.bottomLeft": "Bottom Left",
   "hourglass.configgui.screenAlignment.centerLeft": "Center Left",
-  "hourglass.configgui.screenAlignment.centerCenter": "Center Center",
-  "sleep.players_sleeping": "",
-  "sleep.skipping_night": ""
+  "hourglass.configgui.screenAlignment.centerCenter": "Center Center"
 }

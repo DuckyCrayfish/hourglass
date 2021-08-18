@@ -49,20 +49,18 @@ public class VanillaTimeHelper {
     }
 
     /**
-     * Call at the beginning of every world-tick on the server to prevent the vanilla sleep mechanic.
+     * Sets the private final field sleepStatus of {@link ServerLevel}.
      *
-     * @param world  the level to prevent sleep on
+     * @param world  the object whose field should be set
+     * @param newStatus  the new field
      */
-    public static void preventVanillaSleep(ServerLevel world) {
-        SleepStatus status;
+    public static void setSleepStatus(ServerLevel world, SleepStatus newStatus) {
         try {
-            status = (SleepStatus) sleepStatus.get(world);
-        } catch (IllegalAccessException e) {
-            LOGGER.warn(HourglassMod.MARKER, "Error preventing vanilla sleep - could not access ServerLevel#allPlayersSleeping field.");
+            sleepStatus.set(world, newStatus);
+        } catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
+            LOGGER.error(HourglassMod.MARKER, "Error setting sleep status.", e);
             return;
         }
-
-        status.removeAllSleepers();
     }
 
     /**

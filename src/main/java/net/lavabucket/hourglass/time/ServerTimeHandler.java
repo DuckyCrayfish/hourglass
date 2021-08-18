@@ -52,7 +52,7 @@ public class ServerTimeHandler {
     public static ServerTimeHandler instance;
 
     public ServerLevel world;
-    public SleepState sleepState;
+    public HourglassSleepStatus sleepStatus;
     public double timeDecimalAccumulator;
 
     /**
@@ -127,7 +127,8 @@ public class ServerTimeHandler {
     public ServerTimeHandler(ServerLevel world) {
         this.world = world;
         this.timeDecimalAccumulator = 0;
-        this.sleepState = new SleepState();
+        this.sleepStatus = new HourglassSleepStatus(() -> SERVER_CONFIG.enableSleepFeature.get());
+        VanillaTimeHelper.setSleepStatus(world, this.sleepStatus);
     }
 
     /**
@@ -148,7 +149,6 @@ public class ServerTimeHandler {
             return;
         }
 
-        sleepState = calculateSleepState();
         long oldTime = world.getDayTime();
         long time = elapseTime();
         preventTimeOverflow();
@@ -156,12 +156,10 @@ public class ServerTimeHandler {
 
         progressWeather((int) (time - oldTime));
         if (BooleanUtils.isTrue(SERVER_CONFIG.enableSleepFeature.get())) {
-            VanillaTimeHelper.preventVanillaSleep(world);
-            if (!sleepState.allAwake() && TimeUtils.crossedMorning(oldTime, time)) {
+            if (!sleepStatus.allAwake() && TimeUtils.crossedMorning(oldTime, time)) {
                 LOGGER.debug(HourglassMod.MARKER, "Sleep cycle complete on dimension: {}.", world.dimension().location());
                 net.minecraftforge.event.ForgeEventFactory.onSleepFinished(world, time, time);
                 VanillaTimeHelper.wakeUpAllPlayers(world);
-                sleepState.sleepingPlayerCount = 0;
 
                 if (world.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)
                         && BooleanUtils.isTrue(SERVER_CONFIG.clearWeatherOnWake.get())) {
@@ -235,7 +233,7 @@ public class ServerTimeHandler {
 
         // day to night transition
         long distanceToDayStart = TimeUtils.DAYTIME_START - currentTimeOfDay;
-        if (sleepState.allAwake() && currentTimeOfDay < TimeUtils.DAYTIME_START && timeToAdd > distanceToDayStart) {
+        if (sleepStatus.allAwake() && currentTimeOfDay < TimeUtils.DAYTIME_START && timeToAdd > distanceToDayStart) {
             double newMultiplier = getMultiplier(oldTime + timeToAdd);
             double percentagePassedBoundary = (timeToAdd + timeDecimalAccumulator - distanceToDayStart) / multiplier;
 
@@ -246,7 +244,7 @@ public class ServerTimeHandler {
 
         // morning transition
         long distanceToMorning = TimeUtils.DAY_LENGTH - currentTimeOfDay;
-        if (!sleepState.allAwake() && timeToAdd > distanceToMorning) {
+        if (!sleepStatus.allAwake() && timeToAdd > distanceToMorning) {
             double newMultiplier = SERVER_CONFIG.daySpeed.get();
             double percentagePassedBoundary = (timeToAdd + timeDecimalAccumulator - distanceToMorning) / multiplier;
 
@@ -266,7 +264,7 @@ public class ServerTimeHandler {
     private void progressWeather(int timeDelta) {
         ServerLevelData levelData = VanillaTimeHelper.getServerLevelData(world);
         if (levelData == null
-                || sleepState.allAwake()
+                || sleepStatus.allAwake()
                 || !world.dimensionType().hasSkyLight()
                 || !world.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)
                 || BooleanUtils.isFalse(SERVER_CONFIG.accelerateWeather.get())
@@ -300,7 +298,7 @@ public class ServerTimeHandler {
      * @return  the time speed multiplier
      */
     public double getMultiplier(long time) {
-        if (BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get()) || sleepState.allAwake()) {
+        if (BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get()) || sleepStatus.allAwake()) {
             if (TimeUtils.isSunUp(time)) {
                 return SERVER_CONFIG.daySpeed.get();
             } else {
@@ -308,30 +306,16 @@ public class ServerTimeHandler {
             }
         }
 
-        if (sleepState.allAsleep() && SERVER_CONFIG.sleepSpeedAll.get() >= 0) {
+        if (sleepStatus.allAsleep() && SERVER_CONFIG.sleepSpeedAll.get() >= 0) {
             return SERVER_CONFIG.sleepSpeedAll.get();
         }
 
-        double percentageSleeping = sleepState.getRatio();
+        double percentageSleeping = sleepStatus.getRatio();
         double sleepSpeedMin = SERVER_CONFIG.sleepSpeedMin.get();
         double sleepSpeedMax = SERVER_CONFIG.sleepSpeedMax.get();
         double multiplier = Mth.lerp(percentageSleeping, sleepSpeedMin, sleepSpeedMax);
 
         return multiplier;
-    }
-
-    /**
-     * Calculates the current SleepState.
-     *
-     * @return  the current SleepState
-     */
-    public SleepState calculateSleepState() {
-        SleepState newSleepState = new SleepState();
-        List<ServerPlayer> players = world.getPlayers(player -> !player.isSpectator());
-        newSleepState.totalPlayerCount = players.size();
-        newSleepState.sleepingPlayerCount =
-                (int) players.stream().filter(player -> player.isSleeping()).count();
-        return newSleepState;
     }
 
     /**
