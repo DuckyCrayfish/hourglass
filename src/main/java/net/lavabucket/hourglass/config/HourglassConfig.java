@@ -113,8 +113,8 @@ public class HourglassConfig {
 
             enableSleepFeature = builder
                     .comment("Enables or disables the sleep feature of this mod. Enabling this setting will modify the vanilla\n"
-                            + "sleep functionality and may conflict with other sleep mods. If disabled, the remaining settings\n"
-                            + "in this section will not apply.")
+                            + "sleep functionality and may conflict with other sleep mods. If disabled, the settings in the\n"
+                            + "messages section and the remaining settings in this section will not apply.")
                     .define("enableSleepFeature", true);
 
             sleepSpeedMin = builder
