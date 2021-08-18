@@ -97,6 +97,19 @@ one morning to the next.
 	#Note: This setting is ignored if game rule doWeatherCycle is false.
 	clearWeatherOnWake = true
 
+    #When true, accelerates the random tick speed while sleeping. This allows things like crops and
+    #grass to grow at the same rate as time is passing overnight. The modified random tick speed is the
+    #sleep.baseRandomTickSpeed value times the current time speed. This means that as time moves faster, crops grow faster.
+    #More information on the effects of random tick speed can be found here:
+    #https://minecraft.fandom.com/wiki/Tick#Random_tick
+    #WARNING: This setting manipulates the randomTickSpeed game rule. To modify the base random tick speed,
+    #use the sleep.baseRandomTickSpeed config setting instead of changing the game rule directly.
+    accelerateRandomTickSpeed = false
+
+    #The base random tick speed to use when sleep.accelerateRandomTickSpeed config is enabled.
+	#Range: > 0
+    baseRandomTickSpeed = 3
+
 #This section defines settings for notification messages.
 #All messages in this section support Minecraft formatting codes (https://minecraft.fandom.com/wiki/Formatting_codes).
 #All messages in this section support variable substitution in the following format: ${variableName}

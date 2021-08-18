@@ -59,13 +59,15 @@ public class HourglassConfig {
         public final DoubleValue daySpeed;
         public final DoubleValue nightSpeed;
         public final BooleanValue displayBedClock;
+        public final BooleanValue accelerateWeather;
 
         public final BooleanValue enableSleepFeature;
         public final DoubleValue sleepSpeedMin;
         public final DoubleValue sleepSpeedMax;
         public final DoubleValue sleepSpeedAll;
-        public final BooleanValue accelerateWeather;
         public final BooleanValue clearWeatherOnWake;
+        public final BooleanValue accelerateRandomTickSpeed;
+        public final IntValue baseRandomTickSpeed;
 
         public final ConfigValue<String> morningMessage;
         public final EnumValue<ChatType> morningMessageType;
@@ -136,6 +138,20 @@ public class HourglassConfig {
                             + "Set to 'false' to allow weather to pass realistically overnight if accelerateWeather is enabled.\n"
                             + "Note: This setting is ignored if game rule doWeatherCycle is false.")
                     .define("clearWeatherOnWake", true);
+
+            accelerateRandomTickSpeed = builder
+                    .comment("When true, accelerates the random tick speed while sleeping. This allows things like crops and\n"
+                            + "grass to grow at the same rate as time is passing overnight. The modified random tick speed is the\n"
+                            + "sleep.baseRandomTickSpeed value times the current time speed. This means that as time moves faster, crops grow faster.\n"
+                            + "More information on the effects of random tick speed can be found here:\n"
+                            + "https://minecraft.fandom.com/wiki/Tick#Random_tick\n"
+                            + "WARNING: This setting manipulates the randomTickSpeed game rule. To modify the base random tick speed,\n"
+                            + "use the sleep.baseRandomTickSpeed config setting instead of changing the game rule directly.")
+                    .define("accelerateRandomTicking", false);
+
+            baseRandomTickSpeed = builder
+                    .comment("The base random tick speed to use when sleep.accelerateRandomTickSpeed config is enabled.")
+                    .defineInRange("baseRandomTickSpeed", 3, 0, Integer.MAX_VALUE);
 
             builder.pop();
 

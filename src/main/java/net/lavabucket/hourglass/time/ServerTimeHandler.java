@@ -21,15 +21,21 @@ package net.lavabucket.hourglass.time;
 
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
+import java.util.HashMap;
 import java.util.List;
+
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.context.ParsedArgument;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.lavabucket.hourglass.HourglassMod;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.play.server.SUpdateTimePacket;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
@@ -151,10 +157,12 @@ public class ServerTimeHandler {
         sleepState = calculateSleepState();
         long oldTime = world.getDayTime();
         long time = elapseTime();
+        int elapsedTime = (int) (time - oldTime);
         preventTimeOverflow();
         broadcastTime();
 
-        progressWeather((int) (time - oldTime));
+        progressWeather(elapsedTime);
+        updateRandomTickSpeed(elapsedTime);
         if (BooleanUtils.isTrue(SERVER_CONFIG.enableSleepFeature.get())) {
             VanillaTimeHelper.preventVanillaSleep(world);
             if (!sleepState.allAwake() && TimeUtils.crossedMorning(oldTime, time)) {
@@ -289,6 +297,35 @@ public class ServerTimeHandler {
                 levelData.setRainTime(Math.max(1, rainTime - timeDelta));
             }
         }
+    }
+
+    /**
+     * Updates the random tick speed based on configuration values if sleep.accelerateRandomTickSpeed
+     * config is enabled.
+     *
+     * @param elapsedTime the amount of time that has elapsed during this tick
+     */
+    private void updateRandomTickSpeed(int elapsedTime) {
+        if (BooleanUtils.isFalse(SERVER_CONFIG.accelerateRandomTickSpeed.get())) {
+            return;
+        }
+
+        MinecraftServer server = world.getServer();
+        int speed = SERVER_CONFIG.baseRandomTickSpeed.get();
+
+        if (!sleepState.allAwake()) {
+            speed *= elapsedTime;
+        }
+
+        // Vanilla code is missing integer gamerule setter due to tree-shaking. Dirty workaround:
+        CommandSource commandSource = new CommandSource(null, null, null, null, 0, null, null, world.getServer(), null);
+
+        HashMap<String, ParsedArgument<CommandSource, ?>> arguments = new HashMap<>();
+        arguments.put("value", new ParsedArgument<CommandSource,Integer>(0, 0, speed));
+
+        CommandContext<CommandSource> commandContext = new CommandContext<CommandSource>(commandSource, null, arguments, null, null, null, null, null, null, false);
+
+        server.getGameRules().getRule(GameRules.RULE_RANDOMTICKING).setFromArgument(commandContext, "value");
     }
 
     /**
