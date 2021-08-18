@@ -29,6 +29,7 @@ import org.apache.logging.log4j.Logger;
 
 import net.lavabucket.hourglass.HourglassMod;
 import net.minecraft.network.protocol.game.ClientboundSetTimePacket;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -151,10 +152,12 @@ public class ServerTimeHandler {
 
         long oldTime = world.getDayTime();
         long time = elapseTime();
+        int elapsedTime = (int) (time - oldTime);
         preventTimeOverflow();
         broadcastTime();
 
-        progressWeather((int) (time - oldTime));
+        progressWeather(elapsedTime);
+        updateRandomTickSpeed(elapsedTime);
         if (BooleanUtils.isTrue(SERVER_CONFIG.enableSleepFeature.get())) {
             if (!sleepStatus.allAwake() && TimeUtils.crossedMorning(oldTime, time)) {
                 LOGGER.debug(HourglassMod.MARKER, "Sleep cycle complete on dimension: {}.", world.dimension().location());
@@ -286,6 +289,26 @@ public class ServerTimeHandler {
             if (rainTime > 0) {
                 levelData.setRainTime(Math.max(1, rainTime - timeDelta));
             }
+        }
+    }
+
+    /**
+     * Updates the random tick speed based on configuration values if sleep.accelerateRandomTickSpeed
+     * config is enabled.
+     *
+     * @param elapsedTime the amount of time that has elapsed during this tick
+     */
+    private void updateRandomTickSpeed(int elapsedTime) {
+        if (BooleanUtils.isFalse(SERVER_CONFIG.accelerateRandomTickSpeed.get())) {
+            return;
+        }
+
+        MinecraftServer server = world.getServer();
+        int baseSpeed = SERVER_CONFIG.baseRandomTickSpeed.get();
+        if (sleepStatus.allAwake()) {
+            server.getGameRules().getRule(GameRules.RULE_RANDOMTICKING).set(baseSpeed, server);
+        } else {
+            server.getGameRules().getRule(GameRules.RULE_RANDOMTICKING).set(baseSpeed * elapsedTime, server);
         }
     }
 

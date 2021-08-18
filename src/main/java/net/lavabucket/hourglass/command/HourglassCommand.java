@@ -25,6 +25,7 @@ import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 
 import net.lavabucket.hourglass.command.config.ConfigCommand;
@@ -60,7 +61,9 @@ public class HourglassCommand {
                 .register(SERVER_CONFIG.sleepSpeedAll, DoubleArgumentType.doubleArg(-1, 24000), Double.class)
                 .register(SERVER_CONFIG.accelerateWeather, BoolArgumentType.bool(), Boolean.class)
                 .register(SERVER_CONFIG.clearWeatherOnWake, BoolArgumentType.bool(), Boolean.class)
-                .register(SERVER_CONFIG.displayBedClock, BoolArgumentType.bool(), Boolean.class);
+                .register(SERVER_CONFIG.displayBedClock, BoolArgumentType.bool(), Boolean.class)
+                .register(SERVER_CONFIG.accelerateRandomTickSpeed, BoolArgumentType.bool(), Boolean.class)
+                .register(SERVER_CONFIG.baseRandomTickSpeed, IntegerArgumentType.integer(0), Integer.class);
 
         event.getDispatcher().register(literal("hourglass")
                 .requires(source -> source.hasPermission(2))
