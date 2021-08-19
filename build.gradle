@@ -13,7 +13,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.17.1-1.1.0.0'
+version = '1.17.1-1.1.1.0'
 group = 'net.lavabucket.forge.hourglass' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'hourglass'
 
@@ -149,7 +149,7 @@ jar {
         attributes([
             "Specification-Title"     : "hourglass",
             "Specification-Vendor"    : "lavabucket.net",
-            "Specification-Version"   : "1.1.0.0",
+            "Specification-Version"   : "1.1.1.0",
             "Implementation-Title"    : project.name,
             "Implementation-Version"  : project.jar.archiveVersion,
             "Implementation-Vendor"   : "lavabucket.net",
