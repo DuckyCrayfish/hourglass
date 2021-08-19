@@ -4,28 +4,26 @@ Hourglass is a Minecraft Forge mod that gives you control over the passage of ti
 customize the length of the day-night cycle and alters the Minecraft sleep mechanic by accelerating
 the speed of time.
 
-This mod (optionally) replaces the vanilla sleep functionality with a smooth and natural transition
-to morning by accelerating the passage of time while you're in bed. In multiplayer, time will pass
+Download it on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/hourglass).
+
+[![](http://cf.way2muchnoise.eu/full_hourglass_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/hourglass)
+
+## Features
+
+This mod (optionally) **replaces the vanilla sleep functionality with a smooth and natural transition
+to morning** by accelerating the passage of time while you're in bed. In multiplayer, time will pass
 faster depending on the percentage of players who are currently sleeping. This removes the need for
 any sleep voting system or player threshold, as any number of players can have an impact on the
 duration of the night.
 
-Hourglass allows for customization of the day-night cycle duration, and can control day and night
+While sleeping, Hourglass can **speed up the growth of crops, trees, and grass** by modifying the
+game's [random tick](https://minecraft.fandom.com/wiki/Tick#Random_tick) speed. This feature can be
+enabled using commands or config.
+
+Hourglass allows for **customization of the day-night cycle duration**, and can control day and night
 speed independently. Rather than the vanilla duration of 20 minutes, you can slow down time to make
 a day in Minecraft last as long as a day in real life, or speed up the passage of nights for a more
 forgiving experience.
-
-Download it on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/hourglass).
-
-[![](http://cf.way2muchnoise.eu/title/hourglass.svg)](https://www.curseforge.com/minecraft/mc-mods/hourglass)
-
-## Commands
-
-#### `/hourglass config <config-key> [<value>]`
-
-Many of the config options can be changed in-game via this command.
-
-If the `<value>` argument is omitted, displays the config option's current value.
 
 ## Support
 
@@ -38,7 +36,17 @@ elapse time at the same rate.
 This mod does not save data to world files and can safely be safely removed from a Minecraft
 installation.
 
+## Commands
+
+#### `/hourglass config <config-key> [<value>]`
+
+Many config options can be changed in-game via this command.
+
+If the `<value>` argument is omitted, this command will display the config option's current value.
+
 ## Configuration
+
+All configuration values can be changed at runtime without reloading the game.
 
 When customizing Hourglass, the **speed of time** is controlled using a multiplier. A value of 1 is equivalent
 to vanilla speed (20 minutes for a full day-night cycle). Setting daySpeed and nightSpeed to 0.5
