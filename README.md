@@ -81,9 +81,9 @@ one morning to the next.
 	accelerateWeather = true
 
 [sleep]
-    #Enables or disables the sleep feature of this mod. Enabling this setting will modify the vanilla
-    #sleep functionality and may conflict with other sleep mods. If disabled, the settings in the
-    #messages section and the remaining settings in this section will not apply.
+	#Enables or disables the sleep feature of this mod. Enabling this setting will modify the vanilla
+	#sleep functionality and may conflict with other sleep mods. If disabled, the settings in the
+	#messages section and the remaining settings in this section will not apply.
 	enableSleepFeature = true
 
 	#The minimum speed at which time passes when only 1 player is sleeping in a full server.
@@ -101,22 +101,22 @@ one morning to the next.
 	sleepSpeedAll = -1.0
 
 	#Set to 'true' for the weather to clear when players wake up in the morning as it does in vanilla.
-    #Set to 'false' to allow weather to pass realistically overnight if accelerateWeather is enabled.
+	#Set to 'false' to allow weather to pass realistically overnight if accelerateWeather is enabled.
 	#Note: This setting is ignored if game rule doWeatherCycle is false.
 	clearWeatherOnWake = true
 
-    #When true, accelerates the random tick speed while sleeping. This allows things like crops and
-    #grass to grow at the same rate as time is passing overnight. The modified random tick speed is the
-    #sleep.baseRandomTickSpeed value times the current time speed. This means that as time moves faster, crops grow faster.
-    #More information on the effects of random tick speed can be found here:
-    #https://minecraft.fandom.com/wiki/Tick#Random_tick
-    #WARNING: This setting manipulates the randomTickSpeed game rule. To modify the base random tick speed,
-    #use the sleep.baseRandomTickSpeed config setting instead of changing the game rule directly.
-    accelerateRandomTickSpeed = false
+	#When true, accelerates the random tick speed while sleeping. This allows things like crops and
+	#grass to grow at the same rate as time is passing overnight. The modified random tick speed is the
+	#sleep.baseRandomTickSpeed value times the current time speed. This means that as time moves faster, crops grow faster.
+	#More information on the effects of random tick speed can be found here:
+	#https://minecraft.fandom.com/wiki/Tick#Random_tick
+	#WARNING: This setting manipulates the randomTickSpeed game rule. To modify the base random tick speed,
+	#use the sleep.baseRandomTickSpeed config setting instead of changing the game rule directly.
+	accelerateRandomTickSpeed = false
 
-    #The base random tick speed to use when sleep.accelerateRandomTickSpeed config is enabled.
+	#The base random tick speed to use when sleep.accelerateRandomTickSpeed config is enabled.
 	#Range: > 0
-    baseRandomTickSpeed = 3
+	baseRandomTickSpeed = 3
 
 #This section defines settings for notification messages.
 #All messages in this section support Minecraft formatting codes (https://minecraft.fandom.com/wiki/Formatting_codes).

@@ -25,3 +25,7 @@ indent_style = unset
 indent_size = unset
 insert_final_newline = unset
 trim_trailing_whitespace = unset
+
+[README.md]
+indent_style = tab
+indent_size = tab
