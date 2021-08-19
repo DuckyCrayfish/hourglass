@@ -1,13 +1,13 @@
-# ![Hourglass](./media/logo-wide-588x256.png)
+![Hourglass](./media/logo-wide-588x256.png)
+
+[![CurseForge Downloads](http://cf.way2muchnoise.eu/full_hourglass_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/hourglass)
+![GitHub license](https://img.shields.io/github/license/DuckyCrayfish/hourglass?color=blue)
 
 Hourglass is a Minecraft Forge mod that gives you control over the passage of time. It allows you to
 customize the length of the day-night cycle and alters the Minecraft sleep mechanic by accelerating
 the speed of time.
 
 Download it on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/hourglass).
-
-[![CurseForge Downloads](http://cf.way2muchnoise.eu/full_hourglass_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/hourglass)
-![GitHub license](https://img.shields.io/github/license/DuckyCrayfish/hourglass?color=blue)
 
 ## Features
 
