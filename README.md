@@ -6,7 +6,8 @@ the speed of time.
 
 Download it on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/hourglass).
 
-[![](http://cf.way2muchnoise.eu/full_hourglass_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/hourglass)
+[![CurseForge Downloads](http://cf.way2muchnoise.eu/full_hourglass_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/hourglass)
+![GitHub license](https://img.shields.io/github/license/DuckyCrayfish/hourglass?color=blue)
 
 ## Features
 
