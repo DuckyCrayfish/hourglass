@@ -41,7 +41,7 @@ duration of the night.
 
 While sleeping, Hourglass can **speed up the growth of crops, trees, and grass** by modifying the
 game's [random tick](https://minecraft.fandom.com/wiki/Tick#Random_tick) speed. This feature can be
-enabled using commands or config.
+enabled by setting the `accelerateRandomTickSpeed` config option via command or file.
 
 Hourglass allows for **customization of the day-night cycle duration**, and can control day and night
 speed independently. Rather than the vanilla duration of 20 minutes, you can slow down time to make
