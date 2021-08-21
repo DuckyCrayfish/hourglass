@@ -1,13 +1,35 @@
-![Hourglass](./media/logo-wide-588x256.png)
+<p align="center">
+	<a href="https://www.curseforge.com/minecraft/mc-mods/hourglass">
+		<img src="media/logo-wide-588x256.png" alt="Hourglass Logo" width="549" height="249">
+	</a>
+</p>
 
-[![CurseForge Downloads](http://cf.way2muchnoise.eu/full_hourglass_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/hourglass)
-![GitHub license](https://img.shields.io/github/license/DuckyCrayfish/hourglass?color=blue)
+<p align="center">
+</p>
 
-Hourglass is a Minecraft Forge mod that gives you control over the passage of time. It allows you to
-customize the length of the day-night cycle and alters the Minecraft sleep mechanic by accelerating
-the speed of time.
+<p align="center">
+	<a href="https://www.curseforge.com/minecraft/mc-mods/hourglass">
+		<img src="http://cf.way2muchnoise.eu/versions/hourglass.svg">
+	</a>
+	&nbsp;
+	<a href="LICENSE">
+		<img src="https://img.shields.io/github/license/DuckyCrayfish/hourglass?color=blue">
+	</a>
+	&nbsp;
+	<a href="https://www.curseforge.com/minecraft/mc-mods/hourglass">
+		<img src="http://cf.way2muchnoise.eu/full_hourglass_downloads.svg">
+	</a>
+</p>
 
-Download it on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/hourglass).
+<p align="center">
+	Hourglass is a Minecraft Forge mod that gives you control over the passage of time. It allows you to
+	customize the length of the day-night cycle and alters the Minecraft sleep mechanic by accelerating
+	the speed of time.
+</p>
+
+<p align="center">
+Download it on <a href="https://www.curseforge.com/minecraft/mc-mods/hourglass">CurseForge</a>.
+</p>
 
 ## Features
 
@@ -27,8 +49,6 @@ a day in Minecraft last as long as a day in real life, or speed up the passage o
 forgiving experience.
 
 ## Support
-
-[![](http://cf.way2muchnoise.eu/versions/hourglass.svg)](https://www.curseforge.com/minecraft/mc-mods/hourglass)
 
 The Overworld is currently the only dimension supported. However, most dimensions in Minecraft
 (including custom dimensions) derive their time information from the Overworld and will therefore
