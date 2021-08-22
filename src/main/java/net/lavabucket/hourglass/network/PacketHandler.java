@@ -72,7 +72,7 @@ public class PacketHandler {
         }
         @Override
         public void accept(MSG msg, Supplier<Context> context) {
-            context.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> handler.accept(msg, context)));
+            context.get().enqueueWork(() -> DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> handler.accept(msg, context)));
             context.get().setPacketHandled(true);
         }
     }

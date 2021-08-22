@@ -59,7 +59,7 @@ public class ConfigSynchronizer {
 		final ModConfig config = event.getConfig();
         final MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
 		if (server != null
-                && server.isRunning()
+                && server.isServerRunning()
                 && config.getSpec() == HourglassConfig.SERVER_SPEC) {
 
             syncConfigWithClients();
@@ -83,7 +83,7 @@ public class ConfigSynchronizer {
      * @param buffer  the buffer to write the object to
      */
     public static void encode(S2CConfigData config, PacketBuffer buffer) {
-        buffer.writeUtf(config.getFileName());
+        buffer.writeString(config.getFileName());
         buffer.writeByteArray(config.getBytes());
     }
 

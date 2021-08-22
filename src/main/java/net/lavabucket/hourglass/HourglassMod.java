@@ -61,7 +61,7 @@ public class HourglassMod {
         forgeEventBus.register(HourglassMessages.class);
 		forgeEventBus.register(HourglassCommand.class);
 
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientEventInitializer::register);
+        DistExecutor.runWhenOn(Dist.CLIENT, () -> ClientEventInitializer::register);
     }
 
 }

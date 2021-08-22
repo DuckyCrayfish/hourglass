@@ -44,8 +44,8 @@ public class HourglassMessages {
     @SubscribeEvent
     public static void onSleepingCheckEvent(SleepingTimeCheckEvent event) {
         PlayerEntity player = event.getPlayer();
-        if (!player.level.isClientSide() && player.isSleeping() && player.getSleepTimer() == 1
-                && player.level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
+        if (!player.world.isRemote() && player.isSleeping() && player.getSleepTimer() == 1
+                && player.world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)) {
             sendSleepMessage(event.getPlayer());
         }
     }
@@ -58,8 +58,8 @@ public class HourglassMessages {
     @SubscribeEvent
     public static void onPlayerWakeUpEvent(PlayerWakeUpEvent event) {
         PlayerEntity player = event.getPlayer();
-        if (event.getPlayer().level.isClientSide() == false && event.updateWorld() == true
-                && player.level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
+        if (event.getPlayer().world.isRemote() == false && event.updateWorld() == true
+                && player.world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)) {
             sendWakeMessage(event.getPlayer());
         }
     }
@@ -89,7 +89,7 @@ public class HourglassMessages {
         String templateMessage = SERVER_CONFIG.inBedMessage.get();
         ServerTimeHandler timeHandler = ServerTimeHandler.instance;
         if (templateMessage.isEmpty() || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())
-                || timeHandler == null || timeHandler.world.players().size() <= 1) {
+                || timeHandler == null || timeHandler.world.getPlayers().size() <= 1) {
             return;
         }
 
@@ -101,7 +101,7 @@ public class HourglassMessages {
                 .setVariable("totalPlayers", Integer.toString(sleepState.totalPlayerCount))
                 .setVariable("sleepingPlayers", Integer.toString(sleepState.sleepingPlayerCount))
                 .setVariable("sleepingPercentage", Integer.toString((int) (100D * sleepState.getRatio())))
-                .bake().send(SERVER_CONFIG.bedMessageTarget.get(), (ServerWorld) player.level);
+                .bake().send(SERVER_CONFIG.bedMessageTarget.get(), (ServerWorld) player.world);
     }
 
     /**
@@ -117,7 +117,7 @@ public class HourglassMessages {
         String templateMessage = SERVER_CONFIG.outOfBedMessage.get();
         ServerTimeHandler timeHandler = ServerTimeHandler.instance;
         if (templateMessage.isEmpty() || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())
-                || timeHandler == null || timeHandler.world.players().size() <= 1) {
+                || timeHandler == null || timeHandler.world.getPlayers().size() <= 1) {
             return;
         }
 
@@ -129,7 +129,7 @@ public class HourglassMessages {
                 .setVariable("totalPlayers", Integer.toString(sleepState.totalPlayerCount))
                 .setVariable("sleepingPlayers", Integer.toString(sleepState.sleepingPlayerCount - 1))
                 .setVariable("sleepingPercentage", Integer.toString((int) (100D * sleepState.getRatio())))
-                .bake().send(SERVER_CONFIG.bedMessageTarget.get(), (ServerWorld) player.level);
+                .bake().send(SERVER_CONFIG.bedMessageTarget.get(), (ServerWorld) player.world);
     }
 
     /**

@@ -32,7 +32,6 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -61,11 +60,11 @@ public class SleepGui {
         if (event.phase == Phase.START
                 && BooleanUtils.isTrue(HourglassConfig.SERVER_CONFIG.displayBedClock.get())
                 && BooleanUtils.isTrue(HourglassConfig.CLIENT_CONFIG.preventClockWobble.get())
-                && minecraft.level != null
-                && !minecraft.isPaused()) {
+                && minecraft.world != null
+                && !minecraft.isGamePaused()) {
 
             // Render a clock every tick to prevent clock wobble after getting in bed.
-            minecraft.getItemRenderer().getModel(clock, minecraft.level, minecraft.player);
+            minecraft.getItemRenderer().getItemModelWithOverrides(clock, minecraft.world, minecraft.player);
         }
     }
 
@@ -89,7 +88,7 @@ public class SleepGui {
      * @param minecraft  the current Minecraft instance
      */
     public static void renderSleepInterface(Minecraft minecraft) {
-        Screen screen = minecraft.screen;
+        Screen screen = minecraft.currentScreen;
         if (!(screen instanceof SleepInMultiplayerScreen)) {
             return;
         }
@@ -137,8 +136,8 @@ public class SleepGui {
     @SuppressWarnings("deprecation")
     public static void renderClock(Minecraft minecraft, float x, float y, float scale) {
         ItemRenderer itemRenderer = minecraft.getItemRenderer();
-        IBakedModel model = itemRenderer.getItemModelShaper().getItemModel(Items.CLOCK);
-        model = model.getOverrides().resolve(model, clock, minecraft.level, minecraft.player);
+        IBakedModel model = itemRenderer.getItemModelMesher().getItemModel(Items.CLOCK);
+        model = model.getOverrides().getModelWithOverrides(model, clock, minecraft.world, minecraft.player);
 
         // Replicate ItemRenderer#renderAndDecorateItem(ItemStack, int, int);
         RenderSystem.pushMatrix();
@@ -146,14 +145,14 @@ public class SleepGui {
         RenderSystem.translatef(x, y, 0);
         RenderSystem.scalef(scale, -scale, scale);
         MatrixStack matrixStack = new MatrixStack();
-        IRenderTypeBuffer.Impl buffer = minecraft.renderBuffers().bufferSource();
-        RenderHelper.setupForFlatItems();
+        IRenderTypeBuffer.Impl buffer = minecraft.getRenderTypeBuffers().getBufferSource();
+        RenderHelper.setupGuiFlatDiffuseLighting();
 
-        itemRenderer.render(clock, ItemCameraTransforms.TransformType.GUI, false, matrixStack,
-                buffer, 15728880, OverlayTexture.NO_OVERLAY, model);
+        itemRenderer.renderItem(clock, net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType.GUI,
+                false, matrixStack, buffer, 15728880, OverlayTexture.NO_OVERLAY, model);
 
-        buffer.endBatch();
-        RenderHelper.setupFor3DItems();
+        buffer.finish();
+        RenderHelper.setupGui3DDiffuseLighting();
         RenderSystem.popMatrix();
     }
 

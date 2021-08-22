@@ -34,8 +34,8 @@ import net.lavabucket.hourglass.config.ConfigSynchronizer;
 import net.minecraft.command.CommandSource;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 
 /**
  * This class is used to create and register all commands used in this mod with Forge.
@@ -48,7 +48,7 @@ public class HourglassCommand {
      * @param event the RegisterCommandsEvent supplied by the event bus.
      */
     @SubscribeEvent
-    public static void onRegisterCommandEvent(RegisterCommandsEvent event) {
+    public static void onRegisterCommandEvent(FMLServerStartingEvent event) {
         ConfigCommand configCommand = new ConfigCommand()
                 .setQuerySuccessHandler(HourglassCommand::onQuerySuccess)
                 .setModifySuccessHandler(HourglassCommand::onModifySuccess)
@@ -65,8 +65,8 @@ public class HourglassCommand {
                 .register(SERVER_CONFIG.accelerateRandomTickSpeed, BoolArgumentType.bool(), Boolean.class)
                 .register(SERVER_CONFIG.baseRandomTickSpeed, IntegerArgumentType.integer(0), Integer.class);
 
-        event.getDispatcher().register(literal("hourglass")
-                .requires(source -> source.hasPermission(2))
+        event.getCommandDispatcher().register(literal("hourglass")
+                .requires(source -> source.hasPermissionLevel(2))
                 .then(configCommand.build(literal("config"))));
     }
 
@@ -83,7 +83,7 @@ public class HourglassCommand {
                 entry.getIdentifier(),
                 entry.getConfigValue().get().toString());
 
-        context.getSource().sendSuccess(response, false);
+        context.getSource().sendFeedback(response, false);
     }
 
     /**
@@ -102,7 +102,7 @@ public class HourglassCommand {
                 entry.getIdentifier(),
                 entry.getConfigValue().get());
 
-        context.getSource().sendSuccess(response, true);
+        context.getSource().sendFeedback(response, true);
     }
 
     /**
@@ -117,7 +117,7 @@ public class HourglassCommand {
                 entry.getIdentifier(),
                 entry.getConfigValue().get());
 
-        context.getSource().sendFailure(response);
+        context.getSource().sendErrorMessage(response);
     }
 
 }

@@ -89,9 +89,9 @@ public class TimeInterpolator {
     @SubscribeEvent
     public static void onRenderTickEvent(RenderTickEvent event) {
         Minecraft minecraft = Minecraft.getInstance();
-        ClientWorld world = minecraft.level;
+        ClientWorld world = minecraft.world;
         if (event.phase == Phase.START
-                && !minecraft.isPaused()
+                && !minecraft.isGamePaused()
                 && world != null
                 && instance != null
                 && instance.world.equals(world)) {
@@ -109,10 +109,10 @@ public class TimeInterpolator {
     @SubscribeEvent
     public static void OnClientTickEvent(ClientTickEvent event) {
         Minecraft minecraft = Minecraft.getInstance();
-        ClientWorld world = minecraft.level;
+        ClientWorld world = minecraft.world;
 
         if (event.phase == Phase.END
-                && !minecraft.isPaused()
+                && !minecraft.isGamePaused()
                 && world != null
                 && instance != null) {
 
@@ -241,7 +241,7 @@ public class TimeInterpolator {
      * this method at the end of every tick to undo this.
      */
     private void undoVanillaTimeTicks() {
-        if (world.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
+        if (world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)) {
             world.setDayTime(world.getDayTime() - 1);
         }
     }

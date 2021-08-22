@@ -28,7 +28,6 @@ import org.apache.logging.log4j.core.lookup.MapLookup;
 import org.apache.logging.log4j.core.lookup.StrSubstitutor;
 
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.Util;
 import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -134,15 +133,16 @@ public class TemplateMessage {
             throw new IllegalArgumentException("World must be specified unless target is MessageTarget.ALL.");
         }
 
+        Stream<ServerPlayerEntity> playerStream;
         if (target == MessageTarget.ALL) {
-            world.getServer().getPlayerList().broadcastMessage(this.message, type, Util.NIL_UUID);
+            playerStream = world.getServer().getPlayerList().getPlayers().stream();
         } else {
-            Stream<ServerPlayerEntity> players = world.players().stream();
+            playerStream = world.getPlayers().stream();
             if (target == MessageTarget.SLEEPING) {
-                players = players.filter(ServerPlayerEntity::isSleeping);
+                playerStream = playerStream.filter(ServerPlayerEntity::isSleeping);
             }
-            players.forEach(player -> player.sendMessage(this.message, type, Util.NIL_UUID));
         }
+        playerStream.forEach(player -> player.sendMessage(this.message, type));
     }
 
     /**

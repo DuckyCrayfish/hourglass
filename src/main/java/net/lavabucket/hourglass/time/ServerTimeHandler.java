@@ -38,10 +38,10 @@ import net.minecraft.network.play.server.SUpdateTimePacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.DerivedWorldInfo;
-import net.minecraft.world.storage.IServerWorldInfo;
+import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -69,7 +69,7 @@ public class ServerTimeHandler {
      */
     @SubscribeEvent
     public static void onSleepingCheckEvent(SleepingTimeCheckEvent event) {
-        long time = event.getPlayer().level.getDayTime() % 24000;
+        long time = event.getPlayer().world.getDayTime() % 24000;
         if (time >= 23460 || time == 0) {
             event.setResult(Result.ALLOW);
         }
@@ -84,7 +84,7 @@ public class ServerTimeHandler {
     public static void onWorldLoad(WorldEvent.Load event) {
         if (event.getWorld() instanceof ServerWorld) {
             ServerWorld world = (ServerWorld) event.getWorld();
-            if (world.dimension().equals(World.OVERWORLD)) {
+            if (world.getDimension().getType().equals(DimensionType.OVERWORLD)) {
                 instance = new ServerTimeHandler((ServerWorld) event.getWorld());
             }
         }
@@ -99,7 +99,7 @@ public class ServerTimeHandler {
     public static void onWorldUnload(WorldEvent.Unload event) {
         if (event.getWorld() instanceof ServerWorld) {
             ServerWorld world = (ServerWorld) event.getWorld();
-            if (world.dimension().equals(World.OVERWORLD)) {
+            if (world.getDimension().getType().equals(DimensionType.OVERWORLD)) {
                 instance = null;
             }
         }
@@ -115,7 +115,7 @@ public class ServerTimeHandler {
         if (event.side == LogicalSide.SERVER
                 && event.world instanceof ServerWorld
                 && ServerTimeHandler.instance != null
-                && event.world.dimension().equals(World.OVERWORLD)) {
+                && event.world.getDimension().getType().equals(DimensionType.OVERWORLD)) {
 
             if (event.phase == TickEvent.Phase.START) {
                 instance.tick();
@@ -141,7 +141,7 @@ public class ServerTimeHandler {
      * this method at the end of every tick to undo vanilla time increment.
      */
     private void undoVanillaTimeTicks() {
-        if (world.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
+        if (world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)) {
             world.setDayTime(world.getDayTime() - 1);
         }
     }
@@ -150,7 +150,7 @@ public class ServerTimeHandler {
      * Performs all time, sleep, and weather calculations. Should run once per tick.
      */
     public void tick() {
-        if (world.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT) == false) {
+        if (world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE) == false) {
             return;
         }
 
@@ -166,12 +166,12 @@ public class ServerTimeHandler {
         if (BooleanUtils.isTrue(SERVER_CONFIG.enableSleepFeature.get())) {
             VanillaTimeHelper.preventVanillaSleep(world);
             if (!sleepState.allAwake() && TimeUtils.crossedMorning(oldTime, time)) {
-                LOGGER.debug(HourglassMod.MARKER, "Sleep cycle complete on dimension: {}.", world.dimension().location());
+                LOGGER.debug(HourglassMod.MARKER, "Sleep cycle complete on dimension: {}.", world.getDimension().getType().getRegistryName());
                 net.minecraftforge.event.ForgeEventFactory.onSleepFinished(world, time, time);
                 VanillaTimeHelper.wakeUpAllPlayers(world);
                 sleepState.sleepingPlayerCount = 0;
 
-                if (world.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)
+                if (world.getGameRules().getBoolean(GameRules.DO_WEATHER_CYCLE)
                         && BooleanUtils.isTrue(SERVER_CONFIG.clearWeatherOnWake.get())) {
                     VanillaTimeHelper.stopWeather(world);
                 }
@@ -272,11 +272,11 @@ public class ServerTimeHandler {
      * @param timeDelta  the amount of time to progress the weather cycle
      */
     private void progressWeather(int timeDelta) {
-        IServerWorldInfo levelData = VanillaTimeHelper.getServerLevelData(world);
+        WorldInfo levelData = world.getWorldInfo();
         if (levelData == null
                 || sleepState.allAwake()
-                || !world.dimensionType().hasSkyLight()
-                || !world.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)
+                || !world.getDimension().getType().hasSkyLight()
+                || !world.getGameRules().getBoolean(GameRules.DO_WEATHER_CYCLE)
                 || BooleanUtils.isFalse(SERVER_CONFIG.accelerateWeather.get())
                 || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())) {
             return;
@@ -325,7 +325,7 @@ public class ServerTimeHandler {
 
         CommandContext<CommandSource> commandContext = new CommandContext<CommandSource>(commandSource, null, arguments, null, null, null, null, null, null, false);
 
-        server.getGameRules().getRule(GameRules.RULE_RANDOMTICKING).setFromArgument(commandContext, "value");
+        server.getGameRules().get(GameRules.RANDOM_TICK_SPEED).updateValue(commandContext, "value");
     }
 
     /**
@@ -376,22 +376,22 @@ public class ServerTimeHandler {
     public void broadcastTime() {
         long gameTime = world.getGameTime();
         long dayTime = world.getDayTime();
-        boolean ruleDaylight = world.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
+        boolean ruleDaylight = world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE);
         SUpdateTimePacket timePacket = new SUpdateTimePacket(gameTime, dayTime, ruleDaylight);
 
-        if (world.dimension().equals(World.OVERWORLD)) {
+        if (world.getDimension().getType().equals(DimensionType.OVERWORLD)) {
             // broadcast to overworld and derived worlds
             List<ServerPlayerEntity> playerList = world.getServer().getPlayerList().getPlayers();
 
             for(int i = 0; i < playerList.size(); ++i) {
                 ServerPlayerEntity player = playerList.get(i);
-                if (player.level == world || player.level.getLevelData() instanceof DerivedWorldInfo) {
-                    player.connection.send(timePacket);
+                if (player.world == world || player.world.getWorldInfo() instanceof DerivedWorldInfo) {
+                    player.connection.sendPacket(timePacket);
                 }
             }
         } else {
             // broadcast to this world
-            world.getServer().getPlayerList().broadcastAll(timePacket, world.dimension());
+            world.getServer().getPlayerList().sendPacketToAllPlayersInDimension(timePacket, world.getDimension().getType());
         }
 
     }
