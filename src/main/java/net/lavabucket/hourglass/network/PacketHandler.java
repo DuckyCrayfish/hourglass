@@ -19,7 +19,6 @@
 
 package net.lavabucket.hourglass.network;
 
-import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -30,7 +29,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
@@ -58,8 +56,7 @@ public class PacketHandler {
                 ConfigSynchronizer.getMessageClass(),
                 ConfigSynchronizer::encode,
                 ConfigSynchronizer::decode,
-                ConfigSynchronizer::handle,
-                Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+                ConfigSynchronizer::handle);
     }
 
     /**
