@@ -76,22 +76,22 @@ public final class ConfigScreen extends Screen {
         optionsList = new OptionsRowList(minecraft, width, height, OPTIONS_LIST_MARGIN,
                 height - OPTIONS_LIST_BOTTOM_MARGIN, OPTION_HEIGHT);
 
-        optionsList.addOption(new IteratableOption(KEY_CLOCK_ALIGNMENT,
+        optionsList.func_214333_a(new IteratableOption(KEY_CLOCK_ALIGNMENT,
                 (settings, value) -> clockAlignment = ScreenAlignment.values()[
                         (clockAlignment.ordinal() + value) % ScreenAlignment.values().length],
                 (settings, option) -> option.getDisplayString() + I18n.format(clockAlignment.getKey())));
 
-        optionsList.addOption(new SliderPercentageOption(KEY_CLOCK_SCALE, 0.0, 128, 4.0F,
+        optionsList.func_214333_a(new SliderPercentageOption(KEY_CLOCK_SCALE, 0.0, 128, 4.0F,
                 settings -> (double) clockScale,
                 (settings, value) -> clockScale = value.intValue(),
                 (settings, option) -> option.getDisplayString() + I18n.format(KEY_PIXELS, (int) option.get(settings))));
 
-        optionsList.addOption(new SliderPercentageOption(KEY_CLOCK_MARGIN, 0.0, 128, 4.0F,
+        optionsList.func_214333_a(new SliderPercentageOption(KEY_CLOCK_MARGIN, 0.0, 128, 4.0F,
                 settings -> (double) clockMargin,
                 (settings, value) -> clockMargin = value.intValue(),
                 (settings, option) -> option.getDisplayString() + I18n.format(KEY_PIXELS, (int) option.get(settings))));
 
-        optionsList.addOption(new BooleanOption(KEY_PREVENT_CLOCK_WOBBLE,
+        optionsList.func_214333_a(new BooleanOption(KEY_PREVENT_CLOCK_WOBBLE,
                 settings -> preventClockWobble,
                 (settings, value) -> preventClockWobble = value));
 

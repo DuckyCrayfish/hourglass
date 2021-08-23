@@ -325,7 +325,7 @@ public class ServerTimeHandler {
 
         CommandContext<CommandSource> commandContext = new CommandContext<CommandSource>(commandSource, null, arguments, null, null, null, null, null, null, false);
 
-        server.getGameRules().get(GameRules.RANDOM_TICK_SPEED).updateValue(commandContext, "value");
+        server.getGameRules().get(GameRules.RANDOM_TICK_SPEED).func_223554_b(commandContext, "value");
     }
 
     /**

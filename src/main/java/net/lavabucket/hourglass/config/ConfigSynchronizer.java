@@ -55,7 +55,7 @@ public class ConfigSynchronizer {
      * @param event  the config reload event, provided by the event bus
      */
     @SubscribeEvent
-	public static void onModConfigEvent(final ModConfig.Reloading event) {
+	public static void onModConfigEvent(final ModConfig.ConfigReloading event) {
 		final ModConfig config = event.getConfig();
         final MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
 		if (server != null

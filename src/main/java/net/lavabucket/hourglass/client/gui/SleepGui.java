@@ -145,14 +145,14 @@ public class SleepGui {
         RenderSystem.translatef(x, y, 0);
         RenderSystem.scalef(scale, -scale, scale);
         MatrixStack matrixStack = new MatrixStack();
-        IRenderTypeBuffer.Impl buffer = minecraft.getRenderTypeBuffers().getBufferSource();
-        RenderHelper.setupGuiFlatDiffuseLighting();
+        IRenderTypeBuffer.Impl buffer = minecraft.func_228019_au_().func_228487_b_();
+        RenderHelper.func_227783_c_();
 
-        itemRenderer.renderItem(clock, net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType.GUI,
-                false, matrixStack, buffer, 15728880, OverlayTexture.NO_OVERLAY, model);
+        itemRenderer.func_229111_a_(clock, net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType.GUI,
+                false, matrixStack, buffer, 15728880, OverlayTexture.field_229196_a_, model);
 
-        buffer.finish();
-        RenderHelper.setupGui3DDiffuseLighting();
+        buffer.func_228461_a_();
+        RenderHelper.func_227784_d_();
         RenderSystem.popMatrix();
     }
 
