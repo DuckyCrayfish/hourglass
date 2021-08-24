@@ -48,7 +48,13 @@ speed independently. Rather than the vanilla duration of 20 minutes, you can slo
 a day in Minecraft last as long as a day in real life, or speed up the passage of nights for a more
 forgiving experience.
 
-## Support
+## Compatibility
+
+Hourglass has been tested to be compatible with the following mods:
+
+* [Comforts](https://www.curseforge.com/minecraft/mc-mods/comforts)
+* [Serene Seasons](https://www.curseforge.com/minecraft/mc-mods/serene-seasons)
+* [Enhanced Celestials](https://www.curseforge.com/minecraft/mc-mods/enhanced-celestials)
 
 The Overworld is currently the only dimension supported. However, most dimensions in Minecraft
 (including custom dimensions) derive their time information from the Overworld and will therefore
