@@ -56,7 +56,7 @@ public class TimeServiceManager {
         if (event.getWorld() instanceof ServerLevel) {
             ServerLevel world = (ServerLevel) event.getWorld();
             if (world.dimension().equals(Level.OVERWORLD)) {
-                service = new TimeService((ServerLevel) event.getWorld());
+                service = new TimeService(world);
             }
         }
     }
@@ -95,6 +95,5 @@ public class TimeServiceManager {
             }
         }
     }
-
 
 }

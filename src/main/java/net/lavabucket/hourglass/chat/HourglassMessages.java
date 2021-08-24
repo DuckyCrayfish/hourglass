@@ -47,7 +47,7 @@ public class HourglassMessages {
         Player player = event.getPlayer();
         if (!player.level.isClientSide() && player.isSleeping() && player.getSleepTimer() == 1
                 && player.level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
-            sendSleepMessage(event.getPlayer());
+            sendSleepMessage(player);
         }
     }
 
@@ -59,9 +59,9 @@ public class HourglassMessages {
     @SubscribeEvent
     public static void onPlayerWakeUpEvent(PlayerWakeUpEvent event) {
         Player player = event.getPlayer();
-        if (event.getPlayer().level.isClientSide() == false && event.updateWorld() == true
+        if (player.level.isClientSide() == false && event.updateWorld() == true
                 && player.level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
-            sendWakeMessage(event.getPlayer());
+            sendWakeMessage(player);
         }
     }
 
@@ -88,13 +88,14 @@ public class HourglassMessages {
      */
     public static void sendSleepMessage(Player player) {
         String templateMessage = SERVER_CONFIG.inBedMessage.get();
-        TimeService timeHandler = TimeServiceManager.service;
-        if (templateMessage.isEmpty() || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())
-                || timeHandler == null || timeHandler.world.players().size() <= 1) {
+        TimeService timeService = TimeServiceManager.service;
+        if (templateMessage.isEmpty() || timeService == null
+                || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())
+                || timeService.world.players().size() <= 1) {
             return;
         }
 
-        HourglassSleepStatus sleepStatus = timeHandler.sleepStatus;
+        HourglassSleepStatus sleepStatus = timeService.sleepStatus;
 
         new TemplateMessage().setTemplate(templateMessage)
                 .setType(SERVER_CONFIG.bedMessageType.get())
@@ -116,13 +117,14 @@ public class HourglassMessages {
      */
     public static void sendWakeMessage(Player player) {
         String templateMessage = SERVER_CONFIG.outOfBedMessage.get();
-        TimeService timeHandler = TimeServiceManager.service;
-        if (templateMessage.isEmpty() || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())
-                || timeHandler == null || timeHandler.world.players().size() <= 1) {
+        TimeService timeService = TimeServiceManager.service;
+        if (templateMessage.isEmpty() || timeService == null
+                || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())
+                || timeService.world.players().size() <= 1) {
             return;
         }
 
-        HourglassSleepStatus sleepStatus = timeHandler.sleepStatus;
+        HourglassSleepStatus sleepStatus = timeService.sleepStatus;
 
         new TemplateMessage().setTemplate(templateMessage)
                 .setType(SERVER_CONFIG.bedMessageType.get())
@@ -145,13 +147,13 @@ public class HourglassMessages {
      */
     public static void sendMorningMessage(ServerLevel world) {
         String templateMessage = SERVER_CONFIG.morningMessage.get();
-        TimeService timeHandler = TimeServiceManager.service;
-        if (templateMessage.isEmpty() || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())
-                || timeHandler == null) {
+        TimeService timeService = TimeServiceManager.service;
+        if (templateMessage.isEmpty() || timeService == null
+                || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())) {
             return;
         }
 
-        HourglassSleepStatus sleepStatus = timeHandler.sleepStatus;
+        HourglassSleepStatus sleepStatus = timeService.sleepStatus;
 
         new TemplateMessage().setTemplate(templateMessage)
                 .setType(SERVER_CONFIG.morningMessageType.get())

@@ -48,18 +48,18 @@ public class HourglassMod {
      * Mod entry point.
      */
     public HourglassMod() {
-		final ModLoadingContext modLoadingContext = ModLoadingContext.get();
-		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-		final IEventBus forgeEventBus = MinecraftForge.EVENT_BUS;
+        final ModLoadingContext modLoadingContext = ModLoadingContext.get();
+        final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        final IEventBus forgeEventBus = MinecraftForge.EVENT_BUS;
 
-		HourglassConfig.register(modLoadingContext);
+        HourglassConfig.register(modLoadingContext);
 
-		modEventBus.register(PacketHandler.class);
-		modEventBus.register(ConfigSynchronizer.class);
+        modEventBus.register(PacketHandler.class);
+        modEventBus.register(ConfigSynchronizer.class);
 
         forgeEventBus.register(TimeServiceManager.class);
         forgeEventBus.register(HourglassMessages.class);
-		forgeEventBus.register(HourglassCommand.class);
+        forgeEventBus.register(HourglassCommand.class);
 
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientEventInitializer::register);
     }
