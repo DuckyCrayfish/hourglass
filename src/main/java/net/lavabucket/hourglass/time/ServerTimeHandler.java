@@ -365,8 +365,10 @@ public class ServerTimeHandler {
         SleepState newSleepState = new SleepState();
         List<ServerPlayerEntity> players = world.getPlayers(player -> !player.isSpectator());
         newSleepState.totalPlayerCount = players.size();
-        newSleepState.sleepingPlayerCount =
-                (int) players.stream().filter(player -> player.isSleeping()).count();
+        newSleepState.sleepingPlayerCount = (int) players.stream().filter(player -> {
+            // Wait until sleep timer is greater than 0 to improve compatibility with other mods.
+            return player.isSleeping() && player.getSleepTimer() > 0;
+        }).count();
         return newSleepState;
     }
 
