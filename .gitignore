@@ -7,7 +7,7 @@ bin
 .project
 
 # vscode
-.vscode/*
+.vscode
 
 # idea
 out
