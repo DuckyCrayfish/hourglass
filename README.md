@@ -48,7 +48,13 @@ speed independently. Rather than the vanilla duration of 20 minutes, you can slo
 a day in Minecraft last as long as a day in real life, or speed up the passage of nights for a more
 forgiving experience.
 
-## Support
+## Compatibility
+
+Hourglass has been tested to be compatible with the following mods:
+
+* [Comforts](https://www.curseforge.com/minecraft/mc-mods/comforts)
+* [Serene Seasons](https://www.curseforge.com/minecraft/mc-mods/serene-seasons)
+* [Enhanced Celestials](https://www.curseforge.com/minecraft/mc-mods/enhanced-celestials)
 
 The Overworld is currently the only dimension supported. However, most dimensions in Minecraft
 (including custom dimensions) derive their time information from the Overworld and will therefore
@@ -75,7 +81,7 @@ will cut the speed of time in half, doubling the duration of a full day to 40 mi
 doubling the configured speed to 2.0 will result in a shortened day lasting only 10 minutes from
 one morning to the next.
 
-> _**Note:** Setting daySpeed and nightSpeed to values higher than 3600 may be unsafe for people with photosensitive epilepsy._
+> _**Warning:** Setting daySpeed and nightSpeed to values higher than 3600 may be unsafe for people with photosensitive epilepsy._
 
 ### Default Server Config
 
