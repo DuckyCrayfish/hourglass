@@ -195,8 +195,7 @@ public class TimeService {
      */
     private void progressWeather(int timeDelta) {
         ServerLevelData levelData = (ServerLevelData) world.getLevelData();
-        if (levelData == null
-                || sleepStatus.allAwake()
+        if (sleepStatus.allAwake()
                 || !world.dimensionType().hasSkyLight()
                 || !world.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)
                 || BooleanUtils.isFalse(SERVER_CONFIG.accelerateWeather.get())
@@ -232,13 +231,13 @@ public class TimeService {
             return;
         }
 
-        MinecraftServer server = world.getServer();
-        int baseSpeed = SERVER_CONFIG.baseRandomTickSpeed.get();
-        if (sleepStatus.allAwake()) {
-            server.getGameRules().getRule(GameRules.RULE_RANDOMTICKING).set(baseSpeed, server);
-        } else {
-            server.getGameRules().getRule(GameRules.RULE_RANDOMTICKING).set(baseSpeed * elapsedTime, server);
+        int speed = SERVER_CONFIG.baseRandomTickSpeed.get();
+        if (!sleepStatus.allAwake()) {
+            speed *= elapsedTime;
         }
+
+        MinecraftServer server = world.getServer();
+        server.getGameRules().getRule(GameRules.RULE_RANDOMTICKING).set(speed, server);
     }
 
     /**

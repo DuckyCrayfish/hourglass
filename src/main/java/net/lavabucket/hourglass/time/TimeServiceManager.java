@@ -68,11 +68,8 @@ public class TimeServiceManager {
      */
     @SubscribeEvent
     public static void onWorldUnload(WorldEvent.Unload event) {
-        if (event.getWorld() instanceof ServerLevel) {
-            ServerLevel world = (ServerLevel) event.getWorld();
-            if (world.dimension().equals(Level.OVERWORLD)) {
-                service = null;
-            }
+        if (service != null && service.world == event.getWorld()) {
+            service = null;
         }
     }
 
@@ -83,11 +80,7 @@ public class TimeServiceManager {
      */
     @SubscribeEvent
     public static void onWorldTick(TickEvent.WorldTickEvent event) {
-        if (event.side == LogicalSide.SERVER
-                && event.world instanceof ServerLevel
-                && service != null
-                && event.world.dimension().equals(Level.OVERWORLD)) {
-
+        if (event.side == LogicalSide.SERVER && service != null && service.world == event.world) {
             if (event.phase == TickEvent.Phase.START) {
                 service.tick();
             } else {
