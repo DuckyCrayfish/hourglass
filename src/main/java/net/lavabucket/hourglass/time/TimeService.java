@@ -58,7 +58,7 @@ public class TimeService {
         this.world = world;
         this.timeDecimalAccumulator = 0;
         this.sleepStatus = new HourglassSleepStatus(() -> SERVER_CONFIG.enableSleepFeature.get());
-        VanillaTimeHelper.setSleepStatus(world, this.sleepStatus);
+        VanillaAccessHelper.setSleepStatus(world, this.sleepStatus);
     }
 
     /**
@@ -91,11 +91,11 @@ public class TimeService {
             if (!sleepStatus.allAwake() && TimeUtils.crossedMorning(oldTime, time)) {
                 LOGGER.debug(HourglassMod.MARKER, "Sleep cycle complete on dimension: {}.", world.dimension().location());
                 net.minecraftforge.event.ForgeEventFactory.onSleepFinished(world, time, time);
-                VanillaTimeHelper.wakeUpAllPlayers(world);
+                VanillaAccessHelper.wakeUpAllPlayers(world);
 
                 if (world.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)
                         && BooleanUtils.isTrue(SERVER_CONFIG.clearWeatherOnWake.get())) {
-                    VanillaTimeHelper.stopWeather(world);
+                    VanillaAccessHelper.stopWeather(world);
                 }
             }
         }

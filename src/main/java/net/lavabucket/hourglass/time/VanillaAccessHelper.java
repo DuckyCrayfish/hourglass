@@ -35,7 +35,7 @@ import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 /**
  * Helper that uses reflection to access private or protected vanilla members.
  */
-public class VanillaTimeHelper {
+public class VanillaAccessHelper {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Field sleepStatus = ObfuscationReflectionHelper.findField(ServerLevel.class, "f_143245_");
