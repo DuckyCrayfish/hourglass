@@ -22,7 +22,9 @@ package net.lavabucket.hourglass.utils;
 /**
  * This class contains static utility methods and variables regarding time.
  */
-public class TimeUtils {
+public final class TimeUtils {
+
+    private TimeUtils() {}
 
     /** The tick duration of a full Minecraft day. */
     public static final int DAY_LENGTH = 24000;
