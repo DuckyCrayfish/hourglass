@@ -44,13 +44,13 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fml.LogicalSide;
 
-public class ServerTimeHandler {
+public class TimeService {
 
     private static final Logger LOGGER = LogManager.getLogger();
     // The largest number of lunar cycles that can be stored in an int
     private static final int overflowThreshold = 11184 * TimeUtils.LUNAR_CYCLE_LENGTH;
 
-    public static ServerTimeHandler instance;
+    public static TimeService instance;
 
     public ServerLevel world;
     public HourglassSleepStatus sleepStatus;
@@ -80,7 +80,7 @@ public class ServerTimeHandler {
         if (event.getWorld() instanceof ServerLevel) {
             ServerLevel world = (ServerLevel) event.getWorld();
             if (world.dimension().equals(Level.OVERWORLD)) {
-                instance = new ServerTimeHandler((ServerLevel) event.getWorld());
+                instance = new TimeService((ServerLevel) event.getWorld());
             }
         }
     }
@@ -109,7 +109,7 @@ public class ServerTimeHandler {
     public static void onWorldTick(TickEvent.WorldTickEvent event) {
         if (event.side == LogicalSide.SERVER
                 && event.world instanceof ServerLevel
-                && ServerTimeHandler.instance != null
+                && TimeService.instance != null
                 && event.world.dimension().equals(Level.OVERWORLD)) {
 
             if (event.phase == TickEvent.Phase.START) {
@@ -125,7 +125,7 @@ public class ServerTimeHandler {
      *
      * @param world  the ServerLevel whose time this object should manage
      */
-    public ServerTimeHandler(ServerLevel world) {
+    public TimeService(ServerLevel world) {
         this.world = world;
         this.timeDecimalAccumulator = 0;
         this.sleepStatus = new HourglassSleepStatus(() -> SERVER_CONFIG.enableSleepFeature.get());
@@ -342,7 +342,7 @@ public class ServerTimeHandler {
     }
 
     /**
-     * Broadcasts the current time to all players in {@link ServerTimeHandler#world}.
+     * Broadcasts the current time to all players in {@link TimeService#world}.
      */
     public void broadcastTime() {
         long gameTime = world.getGameTime();

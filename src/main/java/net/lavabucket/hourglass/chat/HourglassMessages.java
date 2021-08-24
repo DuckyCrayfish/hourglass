@@ -25,7 +25,7 @@ import org.apache.commons.lang3.BooleanUtils;
 
 import net.lavabucket.hourglass.config.HourglassConfig;
 import net.lavabucket.hourglass.time.HourglassSleepStatus;
-import net.lavabucket.hourglass.time.ServerTimeHandler;
+import net.lavabucket.hourglass.time.TimeService;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
@@ -87,7 +87,7 @@ public class HourglassMessages {
      */
     public static void sendSleepMessage(Player player) {
         String templateMessage = SERVER_CONFIG.inBedMessage.get();
-        ServerTimeHandler timeHandler = ServerTimeHandler.instance;
+        TimeService timeHandler = TimeService.instance;
         if (templateMessage.isEmpty() || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())
                 || timeHandler == null || timeHandler.world.players().size() <= 1) {
             return;
@@ -115,7 +115,7 @@ public class HourglassMessages {
      */
     public static void sendWakeMessage(Player player) {
         String templateMessage = SERVER_CONFIG.outOfBedMessage.get();
-        ServerTimeHandler timeHandler = ServerTimeHandler.instance;
+        TimeService timeHandler = TimeService.instance;
         if (templateMessage.isEmpty() || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())
                 || timeHandler == null || timeHandler.world.players().size() <= 1) {
             return;
@@ -144,7 +144,7 @@ public class HourglassMessages {
      */
     public static void sendMorningMessage(ServerLevel world) {
         String templateMessage = SERVER_CONFIG.morningMessage.get();
-        ServerTimeHandler timeHandler = ServerTimeHandler.instance;
+        TimeService timeHandler = TimeService.instance;
         if (templateMessage.isEmpty() || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())
                 || timeHandler == null) {
             return;
