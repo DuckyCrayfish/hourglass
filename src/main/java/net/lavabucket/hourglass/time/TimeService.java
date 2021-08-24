@@ -37,88 +37,17 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.DerivedLevelData;
 import net.minecraft.world.level.storage.ServerLevelData;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.eventbus.api.Event.Result;
-import net.minecraftforge.fml.LogicalSide;
 
 public class TimeService {
 
     private static final Logger LOGGER = LogManager.getLogger();
+
     // The largest number of lunar cycles that can be stored in an int
     private static final int overflowThreshold = 11184 * TimeUtils.LUNAR_CYCLE_LENGTH;
-
-    public static TimeService instance;
 
     public ServerLevel world;
     public HourglassSleepStatus sleepStatus;
     public double timeDecimalAccumulator;
-
-    /**
-     * Called from the Forge EventBus during a SleepingTimeCheckEvent, a forge event that is
-     * called once per tick for every player who is currently sleeping.
-     *
-     * @param event the event provided by forge from the EventBus
-     */
-    @SubscribeEvent
-    public static void onSleepingCheckEvent(SleepingTimeCheckEvent event) {
-        long time = event.getPlayer().level.getDayTime() % 24000;
-        if (time >= 23460 || time == 0) {
-            event.setResult(Result.ALLOW);
-        }
-    }
-
-    /**
-     * Event listener that is called when a new world is loaded.
-     *
-     * @param event  the event provided by the Forge event bus
-     */
-    @SubscribeEvent
-    public static void onWorldLoad(WorldEvent.Load event) {
-        if (event.getWorld() instanceof ServerLevel) {
-            ServerLevel world = (ServerLevel) event.getWorld();
-            if (world.dimension().equals(Level.OVERWORLD)) {
-                instance = new TimeService((ServerLevel) event.getWorld());
-            }
-        }
-    }
-
-    /**
-     * Event listener that is called when a world is unloaded.
-     *
-     * @param event  the event provided by the Forge event bus
-     */
-    @SubscribeEvent
-    public static void onWorldUnload(WorldEvent.Unload event) {
-        if (event.getWorld() instanceof ServerLevel) {
-            ServerLevel world = (ServerLevel) event.getWorld();
-            if (world.dimension().equals(Level.OVERWORLD)) {
-                instance = null;
-            }
-        }
-    }
-
-    /**
-     * Event listener that is called every tick per world.
-     *
-     * @param event  the event provided by the Forge event bus
-     */
-    @SubscribeEvent
-    public static void onWorldTick(TickEvent.WorldTickEvent event) {
-        if (event.side == LogicalSide.SERVER
-                && event.world instanceof ServerLevel
-                && TimeService.instance != null
-                && event.world.dimension().equals(Level.OVERWORLD)) {
-
-            if (event.phase == TickEvent.Phase.START) {
-                instance.tick();
-            } else {
-                instance.undoVanillaTimeTicks();
-            }
-        }
-    }
 
     /**
      * Creates a new instance.
@@ -136,7 +65,7 @@ public class TimeService {
      * The vanilla server increments time every tick. This mod conflicts with vanilla time. Call
      * this method at the end of every tick to undo vanilla time increment.
      */
-    private void undoVanillaTimeTicks() {
+    public void undoVanillaTimeTicks() {
         if (world.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
             world.setDayTime(world.getDayTime() - 1);
         }

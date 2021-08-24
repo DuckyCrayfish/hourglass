@@ -28,7 +28,7 @@ import net.lavabucket.hourglass.command.HourglassCommand;
 import net.lavabucket.hourglass.config.ConfigSynchronizer;
 import net.lavabucket.hourglass.config.HourglassConfig;
 import net.lavabucket.hourglass.network.PacketHandler;
-import net.lavabucket.hourglass.time.TimeService;
+import net.lavabucket.hourglass.time.TimeServiceManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -57,7 +57,7 @@ public class HourglassMod {
 		modEventBus.register(PacketHandler.class);
 		modEventBus.register(ConfigSynchronizer.class);
 
-        forgeEventBus.register(TimeService.class);
+        forgeEventBus.register(TimeServiceManager.class);
         forgeEventBus.register(HourglassMessages.class);
 		forgeEventBus.register(HourglassCommand.class);
 
