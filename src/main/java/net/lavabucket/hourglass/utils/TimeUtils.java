@@ -17,7 +17,7 @@
  * along with Hourglass.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.lavabucket.hourglass.time;
+package net.lavabucket.hourglass.utils;
 
 /**
  * This class contains static utility methods and variables regarding time.

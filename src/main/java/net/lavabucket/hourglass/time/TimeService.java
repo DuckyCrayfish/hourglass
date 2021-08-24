@@ -28,6 +28,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.lavabucket.hourglass.HourglassMod;
+import net.lavabucket.hourglass.utils.TimeUtils;
+import net.lavabucket.hourglass.utils.VanillaAccessHelper;
 import net.minecraft.network.protocol.game.ClientboundSetTimePacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;

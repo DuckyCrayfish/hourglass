@@ -19,7 +19,7 @@
 
 package net.lavabucket.hourglass.client;
 
-import net.lavabucket.hourglass.time.TimeUtils;
+import net.lavabucket.hourglass.utils.TimeUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.level.GameRules;

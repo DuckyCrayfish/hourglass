@@ -17,7 +17,7 @@
  * along with Hourglass.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.lavabucket.hourglass.time;
+package net.lavabucket.hourglass.utils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
