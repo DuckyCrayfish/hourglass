@@ -38,6 +38,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.DerivedLevelData;
 import net.minecraft.world.level.storage.ServerLevelData;
 
+/**
+ * Handles the Hourglass time and sleep functionality for a world.
+ */
 public class TimeService {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -292,7 +295,6 @@ public class TimeService {
             // broadcast to this world
             world.getServer().getPlayerList().broadcastAll(timePacket, world.dimension());
         }
-
     }
 
 }

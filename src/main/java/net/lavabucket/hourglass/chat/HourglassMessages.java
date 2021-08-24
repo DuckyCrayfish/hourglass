@@ -80,9 +80,9 @@ public class HourglassMessages {
     /**
      * Sends a message to all targeted players informing them that a player has started sleeping.
      *
-     * The message is set by {@link HourglassConfig#inBedMessage}.
-     * The target is set by {@link HourglassConfig#bedMessageTarget}.
-     * The message type is set by {@link HourglassConfig#bedMessageType}.
+     * The message is set by {@link HourglassConfig.ServerConfig#inBedMessage}.
+     * The target is set by {@link HourglassConfig.ServerConfig#bedMessageTarget}.
+     * The message type is set by {@link HourglassConfig.ServerConfig#bedMessageType}.
      *
      * @param player  the player who started sleeping
      */
@@ -109,9 +109,9 @@ public class HourglassMessages {
     /**
      * Sends a message to all targeted players informing them that a player has left their bed.
      *
-     * The message is set by {@link HourglassConfig#outOfBedMessage}.
-     * The target is set by {@link HourglassConfig#bedMessageTarget}.
-     * The message type is set by {@link HourglassConfig#bedMessageType}.
+     * The message is set by {@link HourglassConfig.ServerConfig#outOfBedMessage}.
+     * The target is set by {@link HourglassConfig.ServerConfig#bedMessageTarget}.
+     * The message type is set by {@link HourglassConfig.ServerConfig#bedMessageType}.
      *
      * @param player  the player who left their bed
      */
@@ -139,9 +139,9 @@ public class HourglassMessages {
      * Sends a message to all targeted players informing them that the night has passed in world
      * after being accelerated by sleeping players.
      *
-     * The message is set by {@link HourglassConfig#morningMessage}.
-     * The target is set by {@link HourglassConfig#morningMessageTarget}.
-     * The message type is set by {@link HourglassConfig#morningMessageType}.
+     * The message is set by {@link HourglassConfig.ServerConfig#morningMessage}.
+     * The target is set by {@link HourglassConfig.ServerConfig#morningMessageTarget}.
+     * The message type is set by {@link HourglassConfig.ServerConfig#morningMessageType}.
      *
      * @param world  the world that night has passed in
      */

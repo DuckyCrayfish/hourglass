@@ -28,6 +28,9 @@ import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 
+/**
+ * Creates {@link TimeService} objects and passes events to them.
+ */
 public class TimeServiceManager {
 
     public static TimeService service;

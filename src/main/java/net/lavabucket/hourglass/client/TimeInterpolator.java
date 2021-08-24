@@ -29,6 +29,10 @@ import net.minecraftforge.event.TickEvent.RenderTickEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+/**
+ * This class detects time updates from the server and interpolates the changes over time to smooth
+ * out any time jumps.
+ */
 public class TimeInterpolator {
 
     // Time changes should be interpolated over one tick

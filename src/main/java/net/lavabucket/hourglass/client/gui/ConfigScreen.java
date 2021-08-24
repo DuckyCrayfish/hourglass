@@ -37,6 +37,9 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fmlclient.ConfigGuiHandler;
 import net.minecraftforge.fmlclient.ConfigGuiHandler.ConfigGuiFactory;
 
+/**
+ * Mod configuration screen, accessed from the mod list in the main menu.
+ */
 public final class ConfigScreen extends Screen {
     private static final int TITLE_MARGIN = 8;
     private static final int OPTIONS_LIST_MARGIN = 24;

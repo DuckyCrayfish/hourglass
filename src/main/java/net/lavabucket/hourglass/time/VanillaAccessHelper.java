@@ -33,13 +33,15 @@ import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 /**
- * Helper that uses reflection to access private or protected vanilla members.
+ * This class helps to circumvent restricted access to vanilla members via reflection or feature
+ * emulation.
  */
 public final class VanillaAccessHelper {
 
     private VanillaAccessHelper() {}
 
     private static final Logger LOGGER = LogManager.getLogger();
+
     private static final Field sleepStatus = ObfuscationReflectionHelper.findField(ServerLevel.class, "f_143245_");
     private static final Method wakeUpAllPlayers = ObfuscationReflectionHelper.findMethod(ServerLevel.class, "m_8804_");
 
@@ -77,8 +79,7 @@ public final class VanillaAccessHelper {
     }
 
     /**
-     * Invokes the vanilla {@link net.minecraft.world.server.ServerLevel#wakeUpAllPlayers()} private method.
-     * Wakes all currently sleeping players.
+     * Performs vanilla morning wakeup functionality to wake up all sleeping players.
      *
      * @param world  the ServerLevel to wake all sleeping players on
      */

@@ -33,6 +33,9 @@ import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.ModLoadingContext;
 
+/**
+ * Configuration class for Hourglass.
+ */
 public class HourglassConfig {
 
     public static final Builder SERVER_BUILDER = new Builder();
@@ -43,16 +46,16 @@ public class HourglassConfig {
     public static final ClientConfig CLIENT_CONFIG = new ClientConfig(CLIENT_BUILDER);
     public static final ForgeConfigSpec CLIENT_SPEC = CLIENT_BUILDER.build();
 
-	/**
-	 * Register this class's configs with the mod context provided. Should be called during mod
-	 * initialization.
-	 *
-	 * @param context the mod loading context to register the configs with.
-	 */
-	public static void register(ModLoadingContext context) {
-		context.registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
-		context.registerConfig(ModConfig.Type.CLIENT, CLIENT_SPEC);
-	}
+    /**
+     * Register this class's configs with the mod context provided. Should be called during mod
+     * initialization.
+     *
+     * @param context the mod loading context to register the configs with.
+     */
+    public static void register(ModLoadingContext context) {
+        context.registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
+        context.registerConfig(ModConfig.Type.CLIENT, CLIENT_SPEC);
+    }
 
     public static class ServerConfig {
 

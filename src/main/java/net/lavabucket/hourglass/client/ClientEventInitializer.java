@@ -33,8 +33,8 @@ import net.minecraftforge.fml.ModLoadingContext;
 public class ClientEventInitializer {
 
     public static void register() {
-		final ModLoadingContext modLoadingContext = ModLoadingContext.get();
-		final IEventBus forgeEventBus = MinecraftForge.EVENT_BUS;
+        final ModLoadingContext modLoadingContext = ModLoadingContext.get();
+        final IEventBus forgeEventBus = MinecraftForge.EVENT_BUS;
 
         ConfigScreen.register(modLoadingContext);
 
