@@ -194,7 +194,7 @@ public class TimeService {
      * @param timeDelta  the amount of time to progress the weather cycle
      */
     private void progressWeather(int timeDelta) {
-        ServerLevelData levelData = VanillaTimeHelper.getServerLevelData(world);
+        ServerLevelData levelData = (ServerLevelData) world.getLevelData();
         if (levelData == null
                 || sleepStatus.allAwake()
                 || !world.dimensionType().hasSkyLight()

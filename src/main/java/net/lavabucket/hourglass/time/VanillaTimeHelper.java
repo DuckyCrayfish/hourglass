@@ -39,12 +39,10 @@ public class VanillaTimeHelper {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Field sleepStatus = ObfuscationReflectionHelper.findField(ServerLevel.class, "f_143245_");
-    private static final Field serverLevelData = ObfuscationReflectionHelper.findField(ServerLevel.class, "f_8549_");
     private static final Method wakeUpAllPlayers = ObfuscationReflectionHelper.findMethod(ServerLevel.class, "m_8804_");
 
     static {
         sleepStatus.setAccessible(true);
-        serverLevelData.setAccessible(true);
         wakeUpAllPlayers.setAccessible(true);
     }
 
@@ -69,13 +67,7 @@ public class VanillaTimeHelper {
      * @param world  the level to stop weather in
      */
     public static void stopWeather(ServerLevel world) {
-        ServerLevelData levelData;
-        try {
-            levelData = (ServerLevelData) serverLevelData.get(world);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            LOGGER.error(HourglassMod.MARKER, "Error accelerating weather - Failed to retrieve server level data.", e);
-            return;
-        }
+        ServerLevelData levelData = (ServerLevelData) world.getLevelData();
         levelData.setRainTime(0);
         levelData.setRaining(false);
         levelData.setThunderTime(0);
@@ -93,20 +85,6 @@ public class VanillaTimeHelper {
             wakeUpAllPlayers.invoke(world);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             LOGGER.error(HourglassMod.MARKER, "Failed to wake players - could not access ServerLevel#wakeAllPlayers() method.", e);
-        }
-    }
-
-    /**
-     * Retrieves the {@link net.minecraft.world.server.ServerLevel#serverLevelData} protected field.
-     *
-     * @param world  the ServerLevel to fetch the field of
-     */
-    public static ServerLevelData getServerLevelData(ServerLevel world) {
-        try {
-            return (ServerLevelData) serverLevelData.get(world);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            LOGGER.error(HourglassMod.MARKER, "Error accelerating weather - Failed to retrieve server level data.", e);
-            return null;
         }
     }
 
