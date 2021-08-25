@@ -44,7 +44,7 @@ public class HourglassMessages {
     @SubscribeEvent
     public static void onSleepingCheckEvent(SleepingTimeCheckEvent event) {
         PlayerEntity player = event.getPlayer();
-        if (!player.level.isClientSide() && player.isSleeping() && player.getSleepTimer() == 1
+        if (!player.level.isClientSide() && player.isSleeping() && player.getSleepTimer() == 2
                 && player.level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
             sendSleepMessage(event.getPlayer());
         }
