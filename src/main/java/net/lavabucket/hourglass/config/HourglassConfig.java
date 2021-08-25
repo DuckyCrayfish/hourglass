@@ -135,7 +135,7 @@ public class HourglassConfig {
 
             clearWeatherOnWake = builder
                     .comment("Set to 'true' for the weather to clear when players wake up in the morning as it does in vanilla.\n"
-                            + "Set to 'false' to allow weather to pass realistically overnight if accelerateWeather is enabled.\n"
+                            + "Set to 'false' to force weather to pass naturally. Adds realism when accelerateWeather is enabled.\n"
                             + "Note: This setting is ignored if game rule doWeatherCycle is false.")
                     .define("clearWeatherOnWake", true);
 

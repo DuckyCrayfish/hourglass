@@ -128,7 +128,7 @@ one morning to the next.
 	sleepSpeedAll = -1.0
 
 	#Set to 'true' for the weather to clear when players wake up in the morning as it does in vanilla.
-	#Set to 'false' to allow weather to pass realistically overnight if accelerateWeather is enabled.
+	#Set to 'false' to force weather to pass naturally. Adds realism when accelerateWeather is enabled.
 	#Note: This setting is ignored if game rule doWeatherCycle is false.
 	clearWeatherOnWake = true
 
