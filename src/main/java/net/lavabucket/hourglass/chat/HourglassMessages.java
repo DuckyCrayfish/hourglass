@@ -44,7 +44,7 @@ public class HourglassMessages {
     @SubscribeEvent
     public static void onSleepingCheckEvent(SleepingTimeCheckEvent event) {
         PlayerEntity player = event.getPlayer();
-        if (!player.world.isRemote() && player.isSleeping() && player.getSleepTimer() == 1
+        if (!player.world.isRemote() && player.isSleeping() && player.getSleepTimer() == 2
                 && player.world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)) {
             sendSleepMessage(event.getPlayer());
         }
