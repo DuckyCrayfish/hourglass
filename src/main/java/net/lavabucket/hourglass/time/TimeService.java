@@ -86,7 +86,7 @@ public class TimeService {
 
         long oldTime = world.getDayTime();
         long time = elapseTime();
-        int elapsedTime = (int) (time - oldTime);
+        long elapsedTime = time - oldTime;
         preventTimeOverflow();
         broadcastTime();
 
@@ -198,7 +198,7 @@ public class TimeService {
      *
      * @param timeDelta  the amount of time to progress the weather cycle
      */
-    private void progressWeather(int timeDelta) {
+    private void progressWeather(long timeDelta) {
         ServerLevelData levelData = (ServerLevelData) world.getLevelData();
         if (sleepStatus.allAwake()
                 || !world.dimensionType().hasSkyLight()
@@ -217,10 +217,10 @@ public class TimeService {
 
         if (clearWeatherTime <= 0) {
             if (thunderTime > 0) {
-                levelData.setThunderTime(Math.max(1, thunderTime - timeDelta));
+                levelData.setThunderTime(Math.max(1, (int) (thunderTime - timeDelta)));
             }
             if (rainTime > 0) {
-                levelData.setRainTime(Math.max(1, rainTime - timeDelta));
+                levelData.setRainTime(Math.max(1, (int) (rainTime - timeDelta)));
             }
         }
     }
@@ -231,7 +231,7 @@ public class TimeService {
      *
      * @param elapsedTime the amount of time that has elapsed during this tick
      */
-    private void updateRandomTickSpeed(int elapsedTime) {
+    private void updateRandomTickSpeed(long elapsedTime) {
         if (BooleanUtils.isFalse(SERVER_CONFIG.accelerateRandomTickSpeed.get())) {
             return;
         }
