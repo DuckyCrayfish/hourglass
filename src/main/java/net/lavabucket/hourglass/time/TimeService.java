@@ -50,9 +50,10 @@ public class TimeService {
     // The largest number of lunar cycles that can be stored in an int
     private static final int overflowThreshold = 11184 * TimeUtils.LUNAR_CYCLE_LENGTH;
 
-    public ServerLevel world;
-    public HourglassSleepStatus sleepStatus;
-    public double timeDecimalAccumulator;
+    public final ServerLevel world;
+    public final HourglassSleepStatus sleepStatus;
+
+    private double timeDecimalAccumulator = 0;
 
     /**
      * Creates a new instance.
@@ -61,8 +62,8 @@ public class TimeService {
      */
     public TimeService(ServerLevel world) {
         this.world = world;
-        this.timeDecimalAccumulator = 0;
         this.sleepStatus = new HourglassSleepStatus(() -> SERVER_CONFIG.enableSleepFeature.get());
+
         VanillaAccessHelper.setSleepStatus(world, this.sleepStatus);
     }
 
