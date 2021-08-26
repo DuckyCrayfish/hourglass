@@ -50,40 +50,40 @@ public class TimeServiceManager {
     }
 
     /**
-     * Event listener that is called when a new world is loaded.
+     * Event listener that is called when a new level is loaded.
      *
      * @param event  the event provided by the Forge event bus
      */
     @SubscribeEvent
     public static void onWorldLoad(WorldEvent.Load event) {
         if (event.getWorld() instanceof ServerLevel) {
-            ServerLevel world = (ServerLevel) event.getWorld();
-            if (world.dimension().equals(Level.OVERWORLD)) {
-                service = new TimeService(world);
+            ServerLevel level = (ServerLevel) event.getWorld();
+            if (level.dimension().equals(Level.OVERWORLD)) {
+                service = new TimeService(level);
             }
         }
     }
 
     /**
-     * Event listener that is called when a world is unloaded.
+     * Event listener that is called when a level is unloaded.
      *
      * @param event  the event provided by the Forge event bus
      */
     @SubscribeEvent
     public static void onWorldUnload(WorldEvent.Unload event) {
-        if (service != null && service.world == event.getWorld()) {
+        if (service != null && service.level == event.getWorld()) {
             service = null;
         }
     }
 
     /**
-     * Event listener that is called every tick per world.
+     * Event listener that is called every tick per level.
      *
      * @param event  the event provided by the Forge event bus
      */
     @SubscribeEvent
     public static void onWorldTick(TickEvent.WorldTickEvent event) {
-        if (event.side == LogicalSide.SERVER && service != null && service.world == event.world) {
+        if (event.side == LogicalSide.SERVER && service != null && service.level == event.world) {
             if (event.phase == TickEvent.Phase.START) {
                 service.tick();
             } else {

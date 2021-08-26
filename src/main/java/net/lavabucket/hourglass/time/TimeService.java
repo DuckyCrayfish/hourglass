@@ -41,7 +41,7 @@ import net.minecraft.world.level.storage.DerivedLevelData;
 import net.minecraft.world.level.storage.ServerLevelData;
 
 /**
- * Handles the Hourglass time and sleep functionality for a world.
+ * Handles the Hourglass time and sleep functionality for a level.
  */
 public class TimeService {
 
@@ -50,7 +50,7 @@ public class TimeService {
     // The largest number of lunar cycles that can be stored in an int
     private static final int overflowThreshold = 11184 * TimeUtils.LUNAR_CYCLE_LENGTH;
 
-    public final ServerLevel world;
+    public final ServerLevel level;
     public final HourglassSleepStatus sleepStatus;
 
     private double timeDecimalAccumulator = 0;
@@ -58,13 +58,13 @@ public class TimeService {
     /**
      * Creates a new instance.
      *
-     * @param world  the ServerLevel whose time this object should manage
+     * @param level  the ServerLevel whose time this object should manage
      */
-    public TimeService(ServerLevel world) {
-        this.world = world;
+    public TimeService(ServerLevel level) {
+        this.level = level;
         this.sleepStatus = new HourglassSleepStatus(() -> SERVER_CONFIG.enableSleepFeature.get());
 
-        VanillaAccessHelper.setSleepStatus(world, this.sleepStatus);
+        VanillaAccessHelper.setSleepStatus(level, this.sleepStatus);
     }
 
     /**
@@ -72,8 +72,8 @@ public class TimeService {
      * this method at the end of every tick to undo vanilla time increment.
      */
     public void undoVanillaTimeTicks() {
-        if (world.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
-            world.setDayTime(world.getDayTime() - 1);
+        if (level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
+            level.setDayTime(level.getDayTime() - 1);
         }
     }
 
@@ -81,11 +81,11 @@ public class TimeService {
      * Performs all time, sleep, and weather calculations. Should run once per tick.
      */
     public void tick() {
-        if (world.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT) == false) {
+        if (level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT) == false) {
             return;
         }
 
-        long oldTime = world.getDayTime();
+        long oldTime = level.getDayTime();
         long time = elapseTime();
         long elapsedTime = time - oldTime;
         preventTimeOverflow();
@@ -95,13 +95,13 @@ public class TimeService {
         updateRandomTickSpeed(elapsedTime);
         if (BooleanUtils.isTrue(SERVER_CONFIG.enableSleepFeature.get())) {
             if (!sleepStatus.allAwake() && TimeUtils.crossedMorning(oldTime, time)) {
-                LOGGER.debug(HourglassMod.MARKER, "Sleep cycle complete on dimension: {}.", world.dimension().location());
-                net.minecraftforge.event.ForgeEventFactory.onSleepFinished(world, time, time);
-                VanillaAccessHelper.wakeUpAllPlayers(world);
+                LOGGER.debug(HourglassMod.MARKER, "Sleep cycle complete on dimension: {}.", level.dimension().location());
+                net.minecraftforge.event.ForgeEventFactory.onSleepFinished(level, time, time);
+                VanillaAccessHelper.wakeUpAllPlayers(level);
 
-                if (world.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)
+                if (level.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)
                         && BooleanUtils.isTrue(SERVER_CONFIG.clearWeatherOnWake.get())) {
-                    VanillaAccessHelper.stopWeather(world);
+                    VanillaAccessHelper.stopWeather(level);
                 }
             }
         }
@@ -112,19 +112,19 @@ public class TimeService {
      * lunar cycle.
      */
     private void preventTimeOverflow() {
-        long time = world.getDayTime();
+        long time = level.getDayTime();
         if (time > overflowThreshold) {
-            world.setDayTime(time - overflowThreshold);
+            level.setDayTime(time - overflowThreshold);
         }
     }
 
     /**
-     * Elapse time in world based on the current time multiplier. Should be called during every tick.
+     * Elapse time in level based on the current time multiplier. Should be called during every tick.
      *
      * @return  the new day time
      */
     private long elapseTime() {
-        long oldTime = world.getDayTime();
+        long oldTime = level.getDayTime();
 
         double multiplier = getMultiplier(oldTime);
         long integralMultiplier = (long) multiplier;
@@ -138,7 +138,7 @@ public class TimeService {
         timeToAdd = correctForOvershoot(timeToAdd);
 
         long newTime = oldTime + timeToAdd;
-        world.setDayTime(newTime); // Subtract 1 to compensate for vanilla
+        level.setDayTime(newTime); // Subtract 1 to compensate for vanilla
         return newTime;
     }
 
@@ -154,7 +154,7 @@ public class TimeService {
      * @return  the corrected time to elapse
      */
     private long correctForOvershoot(long timeToAdd) {
-        long oldTime = world.getDayTime();
+        long oldTime = level.getDayTime();
         long currentTimeOfDay = oldTime % TimeUtils.DAY_LENGTH;
         double multiplier = getMultiplier(oldTime);
 
@@ -195,15 +195,15 @@ public class TimeService {
     }
 
     /**
-     * Accelerate the weather cycle in world.
+     * Accelerate the weather cycle in {@link #level}.
      *
      * @param timeDelta  the amount of time to progress the weather cycle
      */
     private void progressWeather(long timeDelta) {
-        ServerLevelData levelData = (ServerLevelData) world.getLevelData();
+        ServerLevelData levelData = (ServerLevelData) level.getLevelData();
         if (sleepStatus.allAwake()
-                || !world.dimensionType().hasSkyLight()
-                || !world.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)
+                || !level.dimensionType().hasSkyLight()
+                || !level.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)
                 || BooleanUtils.isFalse(SERVER_CONFIG.accelerateWeather.get())
                 || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())) {
             return;
@@ -242,7 +242,7 @@ public class TimeService {
             speed *= elapsedTime;
         }
 
-        MinecraftServer server = world.getServer();
+        MinecraftServer server = level.getServer();
         server.getGameRules().getRule(GameRules.RULE_RANDOMTICKING).set(speed, server);
     }
 
@@ -276,27 +276,27 @@ public class TimeService {
     }
 
     /**
-     * Broadcasts the current time to all players in {@link TimeService#world}.
+     * Broadcasts the current time to all players in {@link TimeService#level}.
      */
     public void broadcastTime() {
-        long gameTime = world.getGameTime();
-        long dayTime = world.getDayTime();
-        boolean ruleDaylight = world.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
+        long gameTime = level.getGameTime();
+        long dayTime = level.getDayTime();
+        boolean ruleDaylight = level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
         ClientboundSetTimePacket timePacket = new ClientboundSetTimePacket(gameTime, dayTime, ruleDaylight);
 
-        if (world.dimension().equals(Level.OVERWORLD)) {
+        if (level.dimension().equals(Level.OVERWORLD)) {
             // broadcast to overworld and derived worlds
-            List<ServerPlayer> playerList = world.getServer().getPlayerList().getPlayers();
+            List<ServerPlayer> playerList = level.getServer().getPlayerList().getPlayers();
 
             for(int i = 0; i < playerList.size(); ++i) {
                 ServerPlayer player = playerList.get(i);
-                if (player.level == world || player.level.getLevelData() instanceof DerivedLevelData) {
+                if (player.level == level || player.level.getLevelData() instanceof DerivedLevelData) {
                     player.connection.send(timePacket);
                 }
             }
         } else {
-            // broadcast to this world
-            world.getServer().getPlayerList().broadcastAll(timePacket, world.dimension());
+            // broadcast to this level
+            level.getServer().getPlayerList().broadcastAll(timePacket, level.dimension());
         }
     }
 

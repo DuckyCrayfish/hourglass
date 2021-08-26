@@ -91,7 +91,7 @@ public class HourglassMessages {
         TimeService timeService = TimeServiceManager.service;
         if (templateMessage.isEmpty() || timeService == null
                 || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())
-                || timeService.world.players().size() <= 1) {
+                || timeService.level.players().size() <= 1) {
             return;
         }
 
@@ -120,7 +120,7 @@ public class HourglassMessages {
         TimeService timeService = TimeServiceManager.service;
         if (templateMessage.isEmpty() || timeService == null
                 || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())
-                || timeService.world.players().size() <= 1) {
+                || timeService.level.players().size() <= 1) {
             return;
         }
 
@@ -136,16 +136,16 @@ public class HourglassMessages {
     }
 
     /**
-     * Sends a message to all targeted players informing them that the night has passed in world
+     * Sends a message to all targeted players informing them that the night has passed in level
      * after being accelerated by sleeping players.
      *
      * The message is set by {@link HourglassConfig.ServerConfig#morningMessage}.
      * The target is set by {@link HourglassConfig.ServerConfig#morningMessageTarget}.
      * The message type is set by {@link HourglassConfig.ServerConfig#morningMessageType}.
      *
-     * @param world  the world that night has passed in
+     * @param level  the level that night has passed in
      */
-    public static void sendMorningMessage(ServerLevel world) {
+    public static void sendMorningMessage(ServerLevel level) {
         String templateMessage = SERVER_CONFIG.morningMessage.get();
         TimeService timeService = TimeServiceManager.service;
         if (templateMessage.isEmpty() || timeService == null
@@ -160,7 +160,7 @@ public class HourglassMessages {
                 .setVariable("totalPlayers", Integer.toString(sleepStatus.amountActive()))
                 .setVariable("sleepingPlayers", Integer.toString(sleepStatus.amountSleeping()))
                 .setVariable("sleepingPercentage", Integer.toString((int) (100D * sleepStatus.getRatio())))
-                .bake().send(SERVER_CONFIG.morningMessageTarget.get(), world);
+                .bake().send(SERVER_CONFIG.morningMessageTarget.get(), level);
 
         // JSON version to implement later:
         // ITextComponent morningMessage = ITextComponent.Serializer.fromJson(HourglassConfig.SERVER.morningMessageJson.get());

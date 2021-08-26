@@ -123,21 +123,21 @@ public class TemplateMessage {
     }
 
     /**
-     * Sends the message to the specified targets. If target is MessageTarget.ALL, world argument
-     * may be null.
+     * Sends the message to the specified targets. If {@code target} is MessageTarget.ALL,
+     * {@code level} may be null.
      *
      * @param target the target of the message
-     * @param world the world to send targeted message to, if applicable
+     * @param level the level to send targeted message to, if applicable
      */
-    public void send(MessageTarget target, @Nullable ServerLevel world) {
-        if (target != MessageTarget.ALL && world == null) {
-            throw new IllegalArgumentException("World must be specified unless target is MessageTarget.ALL.");
+    public void send(MessageTarget target, @Nullable ServerLevel level) {
+        if (target != MessageTarget.ALL && level == null) {
+            throw new IllegalArgumentException("Level must be specified unless target is MessageTarget.ALL.");
         }
 
         if (target == MessageTarget.ALL) {
-            world.getServer().getPlayerList().broadcastMessage(this.message, type, Util.NIL_UUID);
+            level.getServer().getPlayerList().broadcastMessage(this.message, type, Util.NIL_UUID);
         } else {
-            Stream<ServerPlayer> players = world.players().stream();
+            Stream<ServerPlayer> players = level.players().stream();
             if (target == MessageTarget.SLEEPING) {
                 players = players.filter(ServerPlayer::isSleeping);
             }

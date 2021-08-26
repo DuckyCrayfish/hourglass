@@ -53,12 +53,12 @@ public final class VanillaAccessHelper {
     /**
      * Sets the private final field sleepStatus of {@link ServerLevel}.
      *
-     * @param world  the object whose field should be set
+     * @param level  the object whose field should be set
      * @param newStatus  the new field
      */
-    public static void setSleepStatus(ServerLevel world, SleepStatus newStatus) {
+    public static void setSleepStatus(ServerLevel level, SleepStatus newStatus) {
         try {
-            sleepStatus.set(world, newStatus);
+            sleepStatus.set(level, newStatus);
         } catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
             LOGGER.error(HourglassMod.MARKER, "Error setting sleep status.", e);
             return;
@@ -68,10 +68,10 @@ public final class VanillaAccessHelper {
     /**
      * Emulate the vanilla functionality for stopping weather.
      *
-     * @param world  the level to stop weather in
+     * @param level  the level to stop weather in
      */
-    public static void stopWeather(ServerLevel world) {
-        ServerLevelData levelData = (ServerLevelData) world.getLevelData();
+    public static void stopWeather(ServerLevel level) {
+        ServerLevelData levelData = (ServerLevelData) level.getLevelData();
         levelData.setRainTime(0);
         levelData.setRaining(false);
         levelData.setThunderTime(0);
@@ -81,11 +81,11 @@ public final class VanillaAccessHelper {
     /**
      * Performs vanilla morning wakeup functionality to wake up all sleeping players.
      *
-     * @param world  the ServerLevel to wake all sleeping players on
+     * @param level  the level to wake all sleeping players on
      */
-    public static void wakeUpAllPlayers(ServerLevel world) {
+    public static void wakeUpAllPlayers(ServerLevel level) {
         try {
-            wakeUpAllPlayers.invoke(world);
+            wakeUpAllPlayers.invoke(level);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             LOGGER.error(HourglassMod.MARKER, "Failed to wake players - could not access ServerLevel#wakeAllPlayers() method.", e);
         }
