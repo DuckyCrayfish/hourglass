@@ -27,6 +27,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 
@@ -85,14 +86,11 @@ public class TimeServiceManager {
      *
      * @param event  the event provided by the Forge event bus
      */
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onWorldTick(TickEvent.WorldTickEvent event) {
-        if (event.side == LogicalSide.SERVER && service != null && service.level == event.world) {
-            if (event.phase == TickEvent.Phase.START) {
-                service.tick();
-            } else {
-                service.undoVanillaTimeTicks();
-            }
+        if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.START
+                && service != null && service.level == event.world) {
+            service.tick();
         }
     }
 

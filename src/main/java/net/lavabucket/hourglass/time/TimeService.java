@@ -72,16 +72,6 @@ public class TimeService {
     }
 
     /**
-     * The vanilla server increments time every tick. This mod conflicts with vanilla time. Call
-     * this method at the end of every tick to undo vanilla time increment.
-     */
-    public void undoVanillaTimeTicks() {
-        if (level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
-            level.setDayTime(level.getDayTime() - 1);
-        }
-    }
-
-    /**
      * Performs all time, sleep, and weather calculations. Should run once per tick.
      */
     public void tick() {
@@ -110,6 +100,20 @@ public class TimeService {
                 }
             }
         }
+
+        vanillaTimeCompensation();
+    }
+
+    /**
+     * This method compensates for time changes made by the vanilla server every tick.
+     *
+     * The vanilla server increments time at a rate of 1 every tick. Since this functionality
+     * conflicts with this mod's time changes, and this functionality cannot be prevented, this
+     * method should be called at the end of the {@code START} phase of every world tick to undo
+     * this vanilla progression.
+     */
+    private void vanillaTimeCompensation() {
+        level.setDayTime(level.getDayTime() - 1);
     }
 
     /**
@@ -143,7 +147,7 @@ public class TimeService {
         timeToAdd = correctForOvershoot(timeToAdd);
 
         long newTime = oldTime + timeToAdd;
-        level.setDayTime(newTime); // Subtract 1 to compensate for vanilla
+        level.setDayTime(newTime);
         return newTime;
     }
 
