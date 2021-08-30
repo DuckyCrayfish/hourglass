@@ -21,6 +21,7 @@ package net.lavabucket.hourglass.time;
 
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -28,10 +29,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.lavabucket.hourglass.HourglassMod;
+import net.lavabucket.hourglass.time.effects.TimeEffect;
 import net.lavabucket.hourglass.utils.TimeUtils;
 import net.lavabucket.hourglass.utils.VanillaAccessHelper;
 import net.minecraft.network.protocol.game.ClientboundSetTimePacket;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -51,7 +52,9 @@ public class TimeService {
     private static final int overflowThreshold = 11184 * TimeUtils.LUNAR_CYCLE_LENGTH;
 
     public final ServerLevel level;
+    public final ServerLevelData levelData;
     public final HourglassSleepStatus sleepStatus;
+    public final List<TimeEffect> effects;
 
     private double timeDecimalAccumulator = 0;
 
@@ -62,7 +65,9 @@ public class TimeService {
      */
     public TimeService(ServerLevel level) {
         this.level = level;
+        this.levelData = (ServerLevelData) level.getLevelData();
         this.sleepStatus = new HourglassSleepStatus(() -> SERVER_CONFIG.enableSleepFeature.get());
+        this.effects = new ArrayList<>();
 
         VanillaAccessHelper.setSleepStatus(level, this.sleepStatus);
     }
@@ -91,8 +96,9 @@ public class TimeService {
         preventTimeOverflow();
         broadcastTime();
 
-        progressWeather(elapsedTime);
-        updateRandomTickSpeed(elapsedTime);
+        TimeContext context = new TimeContext(this, elapsedTime);
+        effects.forEach(effect -> effect.onTimeTick(context));
+
         if (BooleanUtils.isTrue(SERVER_CONFIG.enableSleepFeature.get())) {
             if (!sleepStatus.allAwake() && TimeUtils.crossedMorning(oldTime, time)) {
                 LOGGER.debug(HourglassMod.MARKER, "Sleep cycle complete on dimension: {}.", level.dimension().location());
@@ -192,58 +198,6 @@ public class TimeService {
         }
 
         return timeToAdd;
-    }
-
-    /**
-     * Accelerate the weather cycle in {@link #level}.
-     *
-     * @param timeDelta  the amount of time to progress the weather cycle
-     */
-    private void progressWeather(long timeDelta) {
-        ServerLevelData levelData = (ServerLevelData) level.getLevelData();
-        if (sleepStatus.allAwake()
-                || !level.dimensionType().hasSkyLight()
-                || !level.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)
-                || BooleanUtils.isFalse(SERVER_CONFIG.accelerateWeather.get())
-                || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())) {
-            return;
-        }
-
-        int clearWeatherTime = levelData.getClearWeatherTime();
-        int thunderTime = levelData.getThunderTime();
-        int rainTime = levelData.getRainTime();
-
-        // Subtract 1 from weather speed to account for vanilla's weather progression of 1 per tick.
-        timeDelta--;
-
-        if (clearWeatherTime <= 0) {
-            if (thunderTime > 0) {
-                levelData.setThunderTime(Math.max(1, (int) (thunderTime - timeDelta)));
-            }
-            if (rainTime > 0) {
-                levelData.setRainTime(Math.max(1, (int) (rainTime - timeDelta)));
-            }
-        }
-    }
-
-    /**
-     * Updates the random tick speed based on configuration values if sleep.accelerateRandomTickSpeed
-     * config is enabled.
-     *
-     * @param elapsedTime the amount of time that has elapsed during this tick
-     */
-    private void updateRandomTickSpeed(long elapsedTime) {
-        if (BooleanUtils.isFalse(SERVER_CONFIG.accelerateRandomTickSpeed.get())) {
-            return;
-        }
-
-        int speed = SERVER_CONFIG.baseRandomTickSpeed.get();
-        if (!sleepStatus.allAwake()) {
-            speed *= elapsedTime;
-        }
-
-        MinecraftServer server = level.getServer();
-        server.getGameRules().getRule(GameRules.RULE_RANDOMTICKING).set(speed, server);
     }
 
     /**

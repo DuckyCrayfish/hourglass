@@ -19,6 +19,8 @@
 
 package net.lavabucket.hourglass.time;
 
+import net.lavabucket.hourglass.time.effects.RandomTickSleepEffect;
+import net.lavabucket.hourglass.time.effects.WeatherSleepEffect;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.TickEvent;
@@ -60,6 +62,8 @@ public class TimeServiceManager {
             ServerLevel level = (ServerLevel) event.getWorld();
             if (level.dimension().equals(Level.OVERWORLD)) {
                 service = new TimeService(level);
+                service.effects.add(new WeatherSleepEffect());
+                service.effects.add(new RandomTickSleepEffect());
             }
         }
     }
