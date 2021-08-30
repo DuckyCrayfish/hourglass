@@ -35,6 +35,9 @@ import net.minecraftforge.fmllegacy.network.NetworkRegistry;
 import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
 import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 
+/**
+ * Network packet registration and management for Hourglass.
+ */
 public class PacketHandler {
 
     public static final ResourceLocation CHANNEL_NAME = new ResourceLocation(HourglassMod.ID, "channel");

@@ -25,7 +25,8 @@ import org.apache.commons.lang3.BooleanUtils;
 
 import net.lavabucket.hourglass.config.HourglassConfig;
 import net.lavabucket.hourglass.time.HourglassSleepStatus;
-import net.lavabucket.hourglass.time.ServerTimeHandler;
+import net.lavabucket.hourglass.time.TimeService;
+import net.lavabucket.hourglass.time.TimeServiceManager;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
@@ -46,7 +47,7 @@ public class HourglassMessages {
         Player player = event.getPlayer();
         if (!player.level.isClientSide() && player.isSleeping() && player.getSleepTimer() == 1
                 && player.level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
-            sendSleepMessage(event.getPlayer());
+            sendSleepMessage(player);
         }
     }
 
@@ -58,9 +59,9 @@ public class HourglassMessages {
     @SubscribeEvent
     public static void onPlayerWakeUpEvent(PlayerWakeUpEvent event) {
         Player player = event.getPlayer();
-        if (event.getPlayer().level.isClientSide() == false && event.updateWorld() == true
+        if (player.level.isClientSide() == false && event.updateWorld() == true
                 && player.level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
-            sendWakeMessage(event.getPlayer());
+            sendWakeMessage(player);
         }
     }
 
@@ -79,21 +80,22 @@ public class HourglassMessages {
     /**
      * Sends a message to all targeted players informing them that a player has started sleeping.
      *
-     * The message is set by {@link HourglassConfig#inBedMessage}.
-     * The target is set by {@link HourglassConfig#bedMessageTarget}.
-     * The message type is set by {@link HourglassConfig#bedMessageType}.
+     * The message is set by {@link HourglassConfig.ServerConfig#inBedMessage}.
+     * The target is set by {@link HourglassConfig.ServerConfig#bedMessageTarget}.
+     * The message type is set by {@link HourglassConfig.ServerConfig#bedMessageType}.
      *
      * @param player  the player who started sleeping
      */
     public static void sendSleepMessage(Player player) {
         String templateMessage = SERVER_CONFIG.inBedMessage.get();
-        ServerTimeHandler timeHandler = ServerTimeHandler.instance;
-        if (templateMessage.isEmpty() || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())
-                || timeHandler == null || timeHandler.world.players().size() <= 1) {
+        TimeService timeService = TimeServiceManager.service;
+        if (templateMessage.isEmpty() || timeService == null
+                || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())
+                || timeService.level.players().size() <= 1) {
             return;
         }
 
-        HourglassSleepStatus sleepStatus = timeHandler.sleepStatus;
+        HourglassSleepStatus sleepStatus = timeService.sleepStatus;
 
         new TemplateMessage().setTemplate(templateMessage)
                 .setType(SERVER_CONFIG.bedMessageType.get())
@@ -107,21 +109,22 @@ public class HourglassMessages {
     /**
      * Sends a message to all targeted players informing them that a player has left their bed.
      *
-     * The message is set by {@link HourglassConfig#outOfBedMessage}.
-     * The target is set by {@link HourglassConfig#bedMessageTarget}.
-     * The message type is set by {@link HourglassConfig#bedMessageType}.
+     * The message is set by {@link HourglassConfig.ServerConfig#outOfBedMessage}.
+     * The target is set by {@link HourglassConfig.ServerConfig#bedMessageTarget}.
+     * The message type is set by {@link HourglassConfig.ServerConfig#bedMessageType}.
      *
      * @param player  the player who left their bed
      */
     public static void sendWakeMessage(Player player) {
         String templateMessage = SERVER_CONFIG.outOfBedMessage.get();
-        ServerTimeHandler timeHandler = ServerTimeHandler.instance;
-        if (templateMessage.isEmpty() || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())
-                || timeHandler == null || timeHandler.world.players().size() <= 1) {
+        TimeService timeService = TimeServiceManager.service;
+        if (templateMessage.isEmpty() || timeService == null
+                || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())
+                || timeService.level.players().size() <= 1) {
             return;
         }
 
-        HourglassSleepStatus sleepStatus = timeHandler.sleepStatus;
+        HourglassSleepStatus sleepStatus = timeService.sleepStatus;
 
         new TemplateMessage().setTemplate(templateMessage)
                 .setType(SERVER_CONFIG.bedMessageType.get())
@@ -133,31 +136,31 @@ public class HourglassMessages {
     }
 
     /**
-     * Sends a message to all targeted players informing them that the night has passed in world
+     * Sends a message to all targeted players informing them that the night has passed in level
      * after being accelerated by sleeping players.
      *
-     * The message is set by {@link HourglassConfig#morningMessage}.
-     * The target is set by {@link HourglassConfig#morningMessageTarget}.
-     * The message type is set by {@link HourglassConfig#morningMessageType}.
+     * The message is set by {@link HourglassConfig.ServerConfig#morningMessage}.
+     * The target is set by {@link HourglassConfig.ServerConfig#morningMessageTarget}.
+     * The message type is set by {@link HourglassConfig.ServerConfig#morningMessageType}.
      *
-     * @param world  the world that night has passed in
+     * @param level  the level that night has passed in
      */
-    public static void sendMorningMessage(ServerLevel world) {
+    public static void sendMorningMessage(ServerLevel level) {
         String templateMessage = SERVER_CONFIG.morningMessage.get();
-        ServerTimeHandler timeHandler = ServerTimeHandler.instance;
-        if (templateMessage.isEmpty() || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())
-                || timeHandler == null) {
+        TimeService timeService = TimeServiceManager.service;
+        if (templateMessage.isEmpty() || timeService == null
+                || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())) {
             return;
         }
 
-        HourglassSleepStatus sleepStatus = timeHandler.sleepStatus;
+        HourglassSleepStatus sleepStatus = timeService.sleepStatus;
 
         new TemplateMessage().setTemplate(templateMessage)
                 .setType(SERVER_CONFIG.morningMessageType.get())
                 .setVariable("totalPlayers", Integer.toString(sleepStatus.amountActive()))
                 .setVariable("sleepingPlayers", Integer.toString(sleepStatus.amountSleeping()))
                 .setVariable("sleepingPercentage", Integer.toString((int) (100D * sleepStatus.getRatio())))
-                .bake().send(SERVER_CONFIG.morningMessageTarget.get(), world);
+                .bake().send(SERVER_CONFIG.morningMessageTarget.get(), level);
 
         // JSON version to implement later:
         // ITextComponent morningMessage = ITextComponent.Serializer.fromJson(HourglassConfig.SERVER.morningMessageJson.get());

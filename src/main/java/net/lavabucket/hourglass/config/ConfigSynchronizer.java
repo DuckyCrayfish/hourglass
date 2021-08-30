@@ -57,16 +57,16 @@ public class ConfigSynchronizer {
      * @param event  the config reload event, provided by the event bus
      */
     @SubscribeEvent
-	public static void onModConfigEvent(final ModConfigEvent.Reloading event) {
-		final ModConfig config = event.getConfig();
+    public static void onModConfigEvent(final ModConfigEvent.Reloading event) {
+        final ModConfig config = event.getConfig();
         final MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-		if (server != null
+        if (server != null
                 && server.isRunning()
                 && config.getSpec() == HourglassConfig.SERVER_SPEC) {
 
             syncConfigWithClients();
-		}
-	}
+        }
+    }
 
     /**
      * Returns the configuration message class. Removes the need to import the message class where
