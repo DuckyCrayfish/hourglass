@@ -21,8 +21,6 @@ package net.lavabucket.hourglass.chat;
 
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
-import org.apache.commons.lang3.BooleanUtils;
-
 import net.lavabucket.hourglass.config.HourglassConfig;
 import net.lavabucket.hourglass.time.HourglassSleepStatus;
 import net.lavabucket.hourglass.time.TimeService;
@@ -90,7 +88,7 @@ public class HourglassMessages {
         String templateMessage = SERVER_CONFIG.inBedMessage.get();
         TimeService timeService = TimeServiceManager.service;
         if (templateMessage.isEmpty() || timeService == null
-                || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())
+                || !SERVER_CONFIG.enableSleepFeature.get()
                 || timeService.level.players().size() <= 1) {
             return;
         }
@@ -119,7 +117,7 @@ public class HourglassMessages {
         String templateMessage = SERVER_CONFIG.outOfBedMessage.get();
         TimeService timeService = TimeServiceManager.service;
         if (templateMessage.isEmpty() || timeService == null
-                || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())
+                || !SERVER_CONFIG.enableSleepFeature.get()
                 || timeService.level.players().size() <= 1) {
             return;
         }
@@ -149,7 +147,7 @@ public class HourglassMessages {
         String templateMessage = SERVER_CONFIG.morningMessage.get();
         TimeService timeService = TimeServiceManager.service;
         if (templateMessage.isEmpty() || timeService == null
-                || BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get())) {
+                || !SERVER_CONFIG.enableSleepFeature.get()) {
             return;
         }
 

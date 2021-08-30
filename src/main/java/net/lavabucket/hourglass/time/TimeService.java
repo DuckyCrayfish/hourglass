@@ -24,7 +24,6 @@ import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -99,14 +98,14 @@ public class TimeService {
         TimeContext context = new TimeContext(this, elapsedTime);
         effects.forEach(effect -> effect.onTimeTick(context));
 
-        if (BooleanUtils.isTrue(SERVER_CONFIG.enableSleepFeature.get())) {
+        if (SERVER_CONFIG.enableSleepFeature.get()) {
             if (!sleepStatus.allAwake() && TimeUtils.crossedMorning(oldTime, time)) {
                 LOGGER.debug(HourglassMod.MARKER, "Sleep cycle complete on dimension: {}.", level.dimension().location());
                 net.minecraftforge.event.ForgeEventFactory.onSleepFinished(level, time, time);
                 VanillaAccessHelper.wakeUpAllPlayers(level);
 
                 if (level.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)
-                        && BooleanUtils.isTrue(SERVER_CONFIG.clearWeatherOnWake.get())) {
+                        && SERVER_CONFIG.clearWeatherOnWake.get()) {
                     VanillaAccessHelper.stopWeather(level);
                 }
             }
@@ -209,7 +208,7 @@ public class TimeService {
      * @return  the time speed multiplier
      */
     public double getMultiplier(long time) {
-        if (BooleanUtils.isFalse(SERVER_CONFIG.enableSleepFeature.get()) || sleepStatus.allAwake()) {
+        if (!SERVER_CONFIG.enableSleepFeature.get() || sleepStatus.allAwake()) {
             if (TimeUtils.isSunUp(time)) {
                 return SERVER_CONFIG.daySpeed.get();
             } else {

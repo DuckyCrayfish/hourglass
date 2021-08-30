@@ -19,15 +19,15 @@
 
 package net.lavabucket.hourglass.client.gui;
 
+import static net.lavabucket.hourglass.config.HourglassConfig.CLIENT_CONFIG;
+import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
+
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import org.apache.commons.lang3.BooleanUtils;
-
-import net.lavabucket.hourglass.config.HourglassConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.InBedChatScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -62,8 +62,8 @@ public class SleepGui {
         Minecraft minecraft = Minecraft.getInstance();
 
         if (event.phase == Phase.START
-                && BooleanUtils.isTrue(HourglassConfig.SERVER_CONFIG.displayBedClock.get())
-                && BooleanUtils.isTrue(HourglassConfig.CLIENT_CONFIG.preventClockWobble.get())
+                && SERVER_CONFIG.displayBedClock.get()
+                && CLIENT_CONFIG.preventClockWobble.get()
                 && minecraft.level != null
                 && !minecraft.isPaused()) {
 
@@ -79,8 +79,7 @@ public class SleepGui {
      */
     @SubscribeEvent
     public static void onGuiEvent(DrawScreenEvent.Post event) {
-        if (event.getGui() instanceof InBedChatScreen
-                && BooleanUtils.isTrue(HourglassConfig.SERVER_CONFIG.displayBedClock.get())) {
+        if (event.getGui() instanceof InBedChatScreen && SERVER_CONFIG.displayBedClock.get()) {
 
             renderSleepInterface(event.getGui().getMinecraft());
         }
@@ -98,9 +97,9 @@ public class SleepGui {
         }
 
         float x, y;
-        int scale = HourglassConfig.CLIENT_CONFIG.clockScale.get();
-        int margin = HourglassConfig.CLIENT_CONFIG.clockMargin.get();
-        ScreenAlignment alignment = HourglassConfig.CLIENT_CONFIG.clockAlignment.get();
+        int scale = CLIENT_CONFIG.clockScale.get();
+        int margin = CLIENT_CONFIG.clockMargin.get();
+        ScreenAlignment alignment = CLIENT_CONFIG.clockAlignment.get();
 
         if (alignment == ScreenAlignment.TOP_LEFT
                 || alignment == ScreenAlignment.CENTER_LEFT

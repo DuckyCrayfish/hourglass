@@ -21,8 +21,6 @@ package net.lavabucket.hourglass.time.effects;
 
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
-import org.apache.commons.lang3.BooleanUtils;
-
 import net.lavabucket.hourglass.time.TimeContext;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.GameRules;
@@ -31,7 +29,7 @@ public class RandomTickSleepEffect extends TimeEffect {
 
     @Override
     public void onTimeTick(TimeContext context) {
-        if (BooleanUtils.isTrue(SERVER_CONFIG.accelerateRandomTickSpeed.get())) {
+        if (SERVER_CONFIG.accelerateRandomTickSpeed.get()) {
             updateRandomTickSpeed(context);
         }
     }

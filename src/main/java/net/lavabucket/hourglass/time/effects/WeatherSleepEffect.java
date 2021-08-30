@@ -21,8 +21,6 @@ package net.lavabucket.hourglass.time.effects;
 
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
-import org.apache.commons.lang3.BooleanUtils;
-
 import net.lavabucket.hourglass.time.TimeContext;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.GameRules;
@@ -74,8 +72,7 @@ public class WeatherSleepEffect extends TimeEffect {
 
     /** {@return true if this effect is enabled in configs} */
     private boolean effectEnabled() {
-        return BooleanUtils.isTrue(SERVER_CONFIG.accelerateWeather.get())
-                && BooleanUtils.isTrue(SERVER_CONFIG.enableSleepFeature.get());
+        return SERVER_CONFIG.accelerateWeather.get() && SERVER_CONFIG.enableSleepFeature.get();
     }
 
 }
