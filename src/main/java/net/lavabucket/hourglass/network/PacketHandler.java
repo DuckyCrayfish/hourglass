@@ -42,8 +42,7 @@ public class PacketHandler {
 
     public static final ResourceLocation CHANNEL_NAME = new ResourceLocation(HourglassMod.ID, "channel");
     public static final String PROTOCOL_VERSION = "1.0";
-    public static final byte TIME_MESSAGE_ID = 1;
-    public static final byte CONFIG_MESSAGE_ID = 2;
+    public static final byte CONFIG_MESSAGE_ID = 1;
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(CHANNEL_NAME,
             () -> PROTOCOL_VERSION,
