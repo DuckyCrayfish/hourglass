@@ -1,5 +1,5 @@
 <p align="center">
-	<a href="https://www.curseforge.com/minecraft/mc-mods/hourglass/files">
+	<a href="https://www.curseforge.com/minecraft/mc-mods/hourglass">
 		<img src="media/logo-wide-588x256.png" alt="Hourglass Logo" width="550">
 	</a>
 </p>
@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-	<a href="https://www.curseforge.com/minecraft/mc-mods/hourglass">
+	<a href="https://www.curseforge.com/minecraft/mc-mods/hourglass/files">
 		<img src="http://cf.way2muchnoise.eu/versions/hourglass.svg">
 	</a>
 	&nbsp;
