@@ -33,6 +33,7 @@ import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.world.SleepFinishedTimeEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+/** This class listens for events and sends out Hourglass chat notifications. */
 public class HourglassMessages {
 
     /**

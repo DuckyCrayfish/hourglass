@@ -19,10 +19,19 @@
 
 package net.lavabucket.hourglass.time.effects;
 
+import net.lavabucket.hourglass.registry.HourglassRegistry;
 import net.lavabucket.hourglass.time.TimeContext;
 import net.lavabucket.hourglass.time.TimeService;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
+/**
+ * Base interface used for time effects.
+ *
+ * A time effect is anything that uses the speed of time to affect something in the game.
+ *
+ * Implementations of this class should be registered to the {@link HourglassRegistry#TIME_EFFECT}
+ * registry.
+ */
 public interface TimeEffect extends IForgeRegistryEntry<TimeEffect> {
 
     /**

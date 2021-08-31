@@ -34,6 +34,10 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
+/**
+ * Message builder for Hourglass notifications, which allow for customizable targets and variable
+ * substitution.
+ */
 public class TemplateMessage {
 
     private ChatType type = ChatType.SYSTEM;

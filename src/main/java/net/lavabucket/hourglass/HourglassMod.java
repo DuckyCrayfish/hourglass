@@ -39,6 +39,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
+/** This class contains the mod entry point, as well as some constants related to the mod itself. */
 @Mod(HourglassMod.ID)
 public class HourglassMod {
 
