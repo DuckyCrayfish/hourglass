@@ -22,7 +22,7 @@ package net.lavabucket.hourglass.chat;
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
 import net.lavabucket.hourglass.config.HourglassConfig;
-import net.lavabucket.hourglass.time.HourglassSleepStatus;
+import net.lavabucket.hourglass.time.SleepStatus;
 import net.lavabucket.hourglass.time.TimeService;
 import net.lavabucket.hourglass.time.TimeServiceManager;
 import net.minecraft.server.level.ServerLevel;
@@ -93,7 +93,7 @@ public class HourglassMessages {
             return;
         }
 
-        HourglassSleepStatus sleepStatus = timeService.sleepStatus;
+        SleepStatus sleepStatus = timeService.sleepStatus;
 
         new TemplateMessage().setTemplate(templateMessage)
                 .setType(SERVER_CONFIG.bedMessageType.get())
@@ -122,7 +122,7 @@ public class HourglassMessages {
             return;
         }
 
-        HourglassSleepStatus sleepStatus = timeService.sleepStatus;
+        SleepStatus sleepStatus = timeService.sleepStatus;
 
         new TemplateMessage().setTemplate(templateMessage)
                 .setType(SERVER_CONFIG.bedMessageType.get())
@@ -151,7 +151,7 @@ public class HourglassMessages {
             return;
         }
 
-        HourglassSleepStatus sleepStatus = timeService.sleepStatus;
+        SleepStatus sleepStatus = timeService.sleepStatus;
 
         new TemplateMessage().setTemplate(templateMessage)
                 .setType(SERVER_CONFIG.morningMessageType.get())

@@ -23,16 +23,16 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.players.SleepStatus;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 
 /**
- * This class mimics a lot of the functionality of {@link SleepStatus}, but includes the ability to
- * conditionally block vanilla sleep functionality. This class also includes a number of utility
- * methods and getters for use in Hourglass.
+ * This class mimics a lot of the functionality of {@link net.minecraft.server.players.SleepStatus},
+ * but includes the ability to conditionally block vanilla sleep functionality.
+ *
+ * This class also includes a number of utility methods and getters for use in Hourglass.
  */
-public class HourglassSleepStatus extends SleepStatus {
+public class SleepStatus extends net.minecraft.server.players.SleepStatus {
     protected int activePlayerCount;
     protected int sleepingPlayerCount;
     protected Supplier<Boolean> preventSleepSupplier;
@@ -43,7 +43,7 @@ public class HourglassSleepStatus extends SleepStatus {
      * @param preventSleepSupplier  a supplier that should return true when vanilla sleep
      * functionality should be blocked, false otherwise.
      */
-    public HourglassSleepStatus(Supplier<Boolean> preventSleepSupplier) {
+    public SleepStatus(Supplier<Boolean> preventSleepSupplier) {
         this.preventSleepSupplier = preventSleepSupplier;
     }
 

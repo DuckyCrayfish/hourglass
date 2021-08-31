@@ -53,7 +53,7 @@ public class TimeService {
 
     public final ServerLevel level;
     public final ServerLevelData levelData;
-    public final HourglassSleepStatus sleepStatus;
+    public final SleepStatus sleepStatus;
 
     private double timeDecimalAccumulator = 0;
 
@@ -65,7 +65,7 @@ public class TimeService {
     public TimeService(ServerLevel level) {
         this.level = level;
         this.levelData = (ServerLevelData) level.getLevelData();
-        this.sleepStatus = new HourglassSleepStatus(() -> SERVER_CONFIG.enableSleepFeature.get());
+        this.sleepStatus = new SleepStatus(() -> SERVER_CONFIG.enableSleepFeature.get());
 
         VanillaAccessHelper.setSleepStatus(level, this.sleepStatus);
     }
