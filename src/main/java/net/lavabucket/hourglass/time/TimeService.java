@@ -21,13 +21,14 @@ package net.lavabucket.hourglass.time;
 
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.lavabucket.hourglass.HourglassMod;
+import net.lavabucket.hourglass.registry.HourglassRegistry;
 import net.lavabucket.hourglass.time.effects.TimeEffect;
 import net.lavabucket.hourglass.utils.TimeUtils;
 import net.lavabucket.hourglass.utils.VanillaAccessHelper;
@@ -53,7 +54,6 @@ public class TimeService {
     public final ServerLevel level;
     public final ServerLevelData levelData;
     public final HourglassSleepStatus sleepStatus;
-    public final List<TimeEffect> effects;
 
     private double timeDecimalAccumulator = 0;
 
@@ -66,7 +66,6 @@ public class TimeService {
         this.level = level;
         this.levelData = (ServerLevelData) level.getLevelData();
         this.sleepStatus = new HourglassSleepStatus(() -> SERVER_CONFIG.enableSleepFeature.get());
-        this.effects = new ArrayList<>();
 
         VanillaAccessHelper.setSleepStatus(level, this.sleepStatus);
     }
@@ -86,7 +85,7 @@ public class TimeService {
         broadcastTime();
 
         TimeContext context = new TimeContext(this, elapsedTime);
-        effects.forEach(effect -> effect.onTimeTick(context));
+        getActiveTimeEffects().forEach(effect -> effect.onTimeTick(context));
 
         if (SERVER_CONFIG.enableSleepFeature.get()) {
             if (!sleepStatus.allAwake() && TimeUtils.crossedMorning(oldTime, time)) {
@@ -255,6 +254,10 @@ public class TimeService {
             // broadcast to this level
             level.getServer().getPlayerList().broadcastAll(timePacket, level.dimension());
         }
+    }
+
+    private Collection<TimeEffect> getActiveTimeEffects() {
+        return HourglassRegistry.TIME_EFFECT.getValues();
     }
 
 }

@@ -20,16 +20,15 @@
 package net.lavabucket.hourglass.time.effects;
 
 import net.lavabucket.hourglass.time.TimeContext;
-import net.lavabucket.hourglass.time.TimeService;
-import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.ForgeRegistryEntry;
 
-public interface TimeEffect extends IForgeRegistryEntry<TimeEffect> {
+/**
+ * {@link TimeEffect} class with empty implementations to allow for TimeEffect implementations that
+ * only override the classes that are needed.
+ */
+public abstract class AbstractTimeEffect extends ForgeRegistryEntry<TimeEffect> implements TimeEffect {
 
-    /**
-     * Method that is called by {@link TimeService} every tick after time has been adjusted.
-     *
-     * @param context the context of the time adjustment
-     */
-    public void onTimeTick(TimeContext context);
+    @Override
+    public void onTimeTick(TimeContext context) {}
 
 }

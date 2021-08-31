@@ -26,7 +26,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.storage.ServerLevelData;
 
-public class WeatherSleepEffect extends TimeEffect {
+/**
+ * Time effect that increases the speed that weather passes at the same rate as the current speed of
+ * time.
+ */
+public class WeatherSleepEffect extends AbstractTimeEffect {
 
     @Override
     public void onTimeTick(TimeContext context) {

@@ -25,7 +25,11 @@ import net.lavabucket.hourglass.time.TimeContext;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.GameRules;
 
-public class RandomTickSleepEffect extends TimeEffect {
+/**
+ * Time effect that increases the random tick speed while players are sleeping, proportionate to
+ * the current speed of time.
+ */
+public class RandomTickSleepEffect extends AbstractTimeEffect {
 
     @Override
     public void onTimeTick(TimeContext context) {
@@ -48,6 +52,5 @@ public class RandomTickSleepEffect extends TimeEffect {
         MinecraftServer server = context.getTimeService().level.getServer();
         server.getGameRules().getRule(GameRules.RULE_RANDOMTICKING).set(speed, server);
     }
-
 
 }
