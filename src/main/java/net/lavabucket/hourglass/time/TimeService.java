@@ -30,12 +30,12 @@ import org.apache.logging.log4j.Logger;
 import net.lavabucket.hourglass.HourglassMod;
 import net.lavabucket.hourglass.registry.HourglassRegistry;
 import net.lavabucket.hourglass.time.effects.TimeEffect;
+import net.lavabucket.hourglass.utils.MathUtils;
 import net.lavabucket.hourglass.utils.TimeUtils;
 import net.lavabucket.hourglass.utils.VanillaAccessHelper;
 import net.minecraft.network.protocol.game.ClientboundSetTimePacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.DerivedLevelData;
@@ -226,7 +226,7 @@ public class TimeService {
         double percentageSleeping = sleepStatus.getRatio();
         double sleepSpeedMin = SERVER_CONFIG.sleepSpeedMin.get();
         double sleepSpeedMax = SERVER_CONFIG.sleepSpeedMax.get();
-        double multiplier = Mth.lerp(percentageSleeping, sleepSpeedMin, sleepSpeedMax);
+        double multiplier = MathUtils.lerp(percentageSleeping, sleepSpeedMin, sleepSpeedMax);
 
         return multiplier;
     }

@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 
 /**
@@ -80,7 +79,7 @@ public class SleepStatus extends net.minecraft.server.players.SleepStatus {
      */
     @Override
     public int sleepersNeeded(int percentageRequired) {
-        return Math.max(1, Mth.ceil((float) (activePlayerCount * percentageRequired) / 100.0F));
+        return Math.max(1, (int) Math.ceil(activePlayerCount * percentageRequired / 100.0D));
     }
 
     /**
