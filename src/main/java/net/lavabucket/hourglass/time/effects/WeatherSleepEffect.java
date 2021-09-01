@@ -22,9 +22,7 @@ package net.lavabucket.hourglass.time.effects;
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
 import net.lavabucket.hourglass.time.TimeContext;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.storage.ServerLevelData;
+import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 
 /**
  * Time effect that increases the speed that weather passes at the same rate as the current speed of
@@ -34,8 +32,8 @@ public class WeatherSleepEffect extends AbstractTimeEffect {
 
     @Override
     public void onTimeTick(TimeContext context) {
-        ServerLevel level = context.getTimeService().level;
-        if (weatherCycleEnabled(level) && effectEnabled()) {
+        ServerLevelWrapper levelWrapper = context.getTimeService().levelWrapper;
+        if (levelWrapper.weatherCycleEnabled() && effectEnabled()) {
             progressWeather(context);
         }
     }
@@ -46,32 +44,22 @@ public class WeatherSleepEffect extends AbstractTimeEffect {
      * @param context  the {@link TimeContext} of the current tick
      */
     private void progressWeather(TimeContext context) {
-        ServerLevelData levelData = context.getTimeService().levelData;
-        int clearWeatherTime = levelData.getClearWeatherTime();
-        int thunderTime = levelData.getThunderTime();
-        int rainTime = levelData.getRainTime();
+        ServerLevelWrapper levelWrapper = context.getTimeService().levelWrapper;
+        int clearWeatherTime = levelWrapper.levelData.getClearWeatherTime();
+        int thunderTime = levelWrapper.levelData.getThunderTime();
+        int rainTime = levelWrapper.levelData.getRainTime();
 
         // Subtract 1 from weather speed to account for vanilla's weather progression of 1 per tick.
         int weatherSpeed = (int) Math.min(Integer.MAX_VALUE, context.getTimeDelta()) - 1;
 
         if (clearWeatherTime <= 0) {
             if (thunderTime > 0) {
-                levelData.setThunderTime(Math.max(1, thunderTime - weatherSpeed));
+                levelWrapper.levelData.setThunderTime(Math.max(1, thunderTime - weatherSpeed));
             }
             if (rainTime > 0) {
-                levelData.setRainTime(Math.max(1, rainTime - weatherSpeed));
+                levelWrapper.levelData.setRainTime(Math.max(1, rainTime - weatherSpeed));
             }
         }
-    }
-
-    /**
-     * {@return true if the weather cycle is running on {@code level}}
-     *
-     * @param level  the level to check
-     */
-    private boolean weatherCycleEnabled(ServerLevel level) {
-        return level.dimensionType().hasSkyLight() &&
-                level.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE);
     }
 
     /** {@return true if this effect is enabled in configs} */

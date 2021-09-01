@@ -27,11 +27,11 @@ import javax.annotation.Nullable;
 import org.apache.logging.log4j.core.lookup.MapLookup;
 import org.apache.logging.log4j.core.lookup.StrSubstitutor;
 
+import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 import net.minecraft.Util;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
 /**
@@ -119,7 +119,7 @@ public class TemplateMessage {
 
     /**
      * Sends the message to the specified targets. This method is only allowed if the target argument
-     * is MessageTarget.ALL. Otherwise, use {@link #send(MessageTarget, ServerLevel)}.
+     * is MessageTarget.ALL. Otherwise, use {@link #send(MessageTarget, ServerLevelWrapper)}.
      *
      * @param target  the target of the message
      */
@@ -134,15 +134,15 @@ public class TemplateMessage {
      * @param target  the target of the message
      * @param level  the level to send targeted message to, if applicable
      */
-    public void send(MessageTarget target, @Nullable ServerLevel level) {
-        if (target != MessageTarget.ALL && level == null) {
+    public void send(MessageTarget target, @Nullable ServerLevelWrapper levelWrapper) {
+        if (target != MessageTarget.ALL && levelWrapper == null) {
             throw new IllegalArgumentException("Level must be specified unless target is MessageTarget.ALL.");
         }
 
         if (target == MessageTarget.ALL) {
-            level.getServer().getPlayerList().broadcastMessage(this.message, type, Util.NIL_UUID);
+            levelWrapper.level.getServer().getPlayerList().broadcastMessage(this.message, type, Util.NIL_UUID);
         } else {
-            Stream<ServerPlayer> players = level.players().stream();
+            Stream<ServerPlayer> players = levelWrapper.level.players().stream();
             if (target == MessageTarget.SLEEPING) {
                 players = players.filter(ServerPlayer::isSleeping);
             }

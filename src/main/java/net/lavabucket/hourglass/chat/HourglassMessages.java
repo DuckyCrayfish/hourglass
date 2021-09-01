@@ -25,7 +25,7 @@ import net.lavabucket.hourglass.config.HourglassConfig;
 import net.lavabucket.hourglass.time.SleepStatus;
 import net.lavabucket.hourglass.time.TimeService;
 import net.lavabucket.hourglass.time.TimeServiceManager;
-import net.minecraft.server.level.ServerLevel;
+import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
@@ -71,8 +71,9 @@ public class HourglassMessages {
      */
     @SubscribeEvent
     public static void onSleepFinishedEvent(SleepFinishedTimeEvent event) {
-        if (event.getWorld() instanceof ServerLevel) {
-            sendMorningMessage((ServerLevel) event.getWorld());
+        if (ServerLevelWrapper.isServerLevel(event.getWorld())) {
+            ServerLevelWrapper levelWrapper = new ServerLevelWrapper(event.getWorld());
+            sendMorningMessage(levelWrapper);
         }
     }
 
@@ -90,7 +91,7 @@ public class HourglassMessages {
         TimeService timeService = TimeServiceManager.service;
         if (templateMessage.isEmpty() || timeService == null
                 || !SERVER_CONFIG.enableSleepFeature.get()
-                || timeService.level.players().size() <= 1) {
+                || timeService.levelWrapper.level.players().size() <= 1) {
             return;
         }
 
@@ -102,7 +103,7 @@ public class HourglassMessages {
                 .setVariable("totalPlayers", Integer.toString(sleepStatus.amountActive()))
                 .setVariable("sleepingPlayers", Integer.toString(sleepStatus.amountSleeping()))
                 .setVariable("sleepingPercentage", Integer.toString((int) (100D * sleepStatus.getRatio())))
-                .bake().send(SERVER_CONFIG.bedMessageTarget.get(), (ServerLevel) player.level);
+                .bake().send(SERVER_CONFIG.bedMessageTarget.get(), new ServerLevelWrapper(player.level));
     }
 
     /**
@@ -119,7 +120,7 @@ public class HourglassMessages {
         TimeService timeService = TimeServiceManager.service;
         if (templateMessage.isEmpty() || timeService == null
                 || !SERVER_CONFIG.enableSleepFeature.get()
-                || timeService.level.players().size() <= 1) {
+                || timeService.levelWrapper.level.players().size() <= 1) {
             return;
         }
 
@@ -131,7 +132,7 @@ public class HourglassMessages {
                 .setVariable("totalPlayers", Integer.toString(sleepStatus.amountActive()))
                 .setVariable("sleepingPlayers", Integer.toString(sleepStatus.amountSleeping() - 1))
                 .setVariable("sleepingPercentage", Integer.toString((int) (100D * sleepStatus.getRatio())))
-                .bake().send(SERVER_CONFIG.bedMessageTarget.get(), (ServerLevel) player.level);
+                .bake().send(SERVER_CONFIG.bedMessageTarget.get(), new ServerLevelWrapper(player.level));
     }
 
     /**
@@ -142,9 +143,9 @@ public class HourglassMessages {
      * The target is set by {@link HourglassConfig.ServerConfig#morningMessageTarget}.
      * The message type is set by {@link HourglassConfig.ServerConfig#morningMessageType}.
      *
-     * @param level  the level that night has passed in
+     * @param levelWrapper  the level that night has passed in
      */
-    public static void sendMorningMessage(ServerLevel level) {
+    public static void sendMorningMessage(ServerLevelWrapper levelWrapper) {
         String templateMessage = SERVER_CONFIG.morningMessage.get();
         TimeService timeService = TimeServiceManager.service;
         if (templateMessage.isEmpty() || timeService == null
@@ -159,7 +160,7 @@ public class HourglassMessages {
                 .setVariable("totalPlayers", Integer.toString(sleepStatus.amountActive()))
                 .setVariable("sleepingPlayers", Integer.toString(sleepStatus.amountSleeping()))
                 .setVariable("sleepingPercentage", Integer.toString((int) (100D * sleepStatus.getRatio())))
-                .bake().send(SERVER_CONFIG.morningMessageTarget.get(), level);
+                .bake().send(SERVER_CONFIG.morningMessageTarget.get(), levelWrapper);
 
         // JSON version to implement later:
         // ITextComponent morningMessage = ITextComponent.Serializer.fromJson(HourglassConfig.SERVER.morningMessageJson.get());

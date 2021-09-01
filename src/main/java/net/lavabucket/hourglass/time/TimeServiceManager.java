@@ -19,7 +19,7 @@
 
 package net.lavabucket.hourglass.time;
 
-import net.minecraft.server.level.ServerLevel;
+import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
@@ -57,10 +57,10 @@ public class TimeServiceManager {
      */
     @SubscribeEvent
     public static void onWorldLoad(WorldEvent.Load event) {
-        if (event.getWorld() instanceof ServerLevel) {
-            ServerLevel level = (ServerLevel) event.getWorld();
-            if (level.dimension().equals(Level.OVERWORLD)) {
-                service = new TimeService(level);
+        if (ServerLevelWrapper.isServerLevel(event.getWorld())) {
+            ServerLevelWrapper wrapper = new ServerLevelWrapper(event.getWorld());
+            if (wrapper.level.dimension().equals(Level.OVERWORLD)) {
+                service = new TimeService(wrapper);
             }
         }
     }
@@ -72,7 +72,7 @@ public class TimeServiceManager {
      */
     @SubscribeEvent
     public static void onWorldUnload(WorldEvent.Unload event) {
-        if (service != null && service.level == event.getWorld()) {
+        if (service != null && service.levelWrapper.level == event.getWorld()) {
             service = null;
         }
     }
@@ -85,7 +85,7 @@ public class TimeServiceManager {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onWorldTick(TickEvent.WorldTickEvent event) {
         if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.START
-                && service != null && service.level == event.world) {
+                && service != null && service.levelWrapper.level == event.world) {
             service.tick();
         }
     }

@@ -32,14 +32,10 @@ import net.lavabucket.hourglass.registry.HourglassRegistry;
 import net.lavabucket.hourglass.time.effects.TimeEffect;
 import net.lavabucket.hourglass.utils.MathUtils;
 import net.lavabucket.hourglass.utils.TimeUtils;
-import net.lavabucket.hourglass.utils.VanillaAccessHelper;
+import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 import net.minecraft.network.protocol.game.ClientboundSetTimePacket;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.DerivedLevelData;
-import net.minecraft.world.level.storage.ServerLevelData;
 
 /**
  * Handles the Hourglass time and sleep functionality for a level.
@@ -51,8 +47,7 @@ public class TimeService {
     // The largest number of lunar cycles that can be stored in an int
     private static final int overflowThreshold = 11184 * TimeUtils.LUNAR_CYCLE_LENGTH;
 
-    public final ServerLevel level;
-    public final ServerLevelData levelData;
+    public final ServerLevelWrapper levelWrapper;
     public final SleepStatus sleepStatus;
 
     private double timeDecimalAccumulator = 0;
@@ -60,25 +55,23 @@ public class TimeService {
     /**
      * Creates a new instance.
      *
-     * @param level  the ServerLevel whose time this object should manage
+     * @param level  the level whose time this object should manage
      */
-    public TimeService(ServerLevel level) {
-        this.level = level;
-        this.levelData = (ServerLevelData) level.getLevelData();
+    public TimeService(ServerLevelWrapper levelWrapper) {
+        this.levelWrapper = levelWrapper;
         this.sleepStatus = new SleepStatus(() -> SERVER_CONFIG.enableSleepFeature.get());
-
-        VanillaAccessHelper.setSleepStatus(level, this.sleepStatus);
+        this.levelWrapper.setSleepStatus(this.sleepStatus);
     }
 
     /**
      * Performs all time, sleep, and weather calculations. Should run once per tick.
      */
     public void tick() {
-        if (level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT) == false) {
+        if (!levelWrapper.daylightRuleEnabled()) {
             return;
         }
 
-        long oldTime = level.getDayTime();
+        long oldTime = levelWrapper.level.getDayTime();
         long time = elapseTime();
         long elapsedTime = time - oldTime;
         preventTimeOverflow();
@@ -89,13 +82,13 @@ public class TimeService {
 
         if (SERVER_CONFIG.enableSleepFeature.get()) {
             if (!sleepStatus.allAwake() && TimeUtils.crossedMorning(oldTime, time)) {
-                LOGGER.debug(HourglassMod.MARKER, "Sleep cycle complete on dimension: {}.", level.dimension().location());
-                net.minecraftforge.event.ForgeEventFactory.onSleepFinished(level, time, time);
-                VanillaAccessHelper.wakeUpAllPlayers(level);
+                LOGGER.debug(HourglassMod.MARKER, "Sleep cycle complete on dimension: {}.", levelWrapper.level.dimension().location());
+                net.minecraftforge.event.ForgeEventFactory.onSleepFinished(levelWrapper.level, time, time);
+                sleepStatus.removeAllSleepers();
+                levelWrapper.wakeUpAllPlayers();
 
-                if (level.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)
-                        && SERVER_CONFIG.clearWeatherOnWake.get()) {
-                    VanillaAccessHelper.stopWeather(level);
+                if (levelWrapper.weatherRuleEnabled() && SERVER_CONFIG.clearWeatherOnWake.get()) {
+                    levelWrapper.stopWeather();
                 }
             }
         }
@@ -112,7 +105,7 @@ public class TimeService {
      * this vanilla progression.
      */
     private void vanillaTimeCompensation() {
-        level.setDayTime(level.getDayTime() - 1);
+        levelWrapper.level.setDayTime(levelWrapper.level.getDayTime() - 1);
     }
 
     /**
@@ -120,9 +113,9 @@ public class TimeService {
      * lunar cycle.
      */
     private void preventTimeOverflow() {
-        long time = level.getDayTime();
+        long time = levelWrapper.level.getDayTime();
         if (time > overflowThreshold) {
-            level.setDayTime(time - overflowThreshold);
+            levelWrapper.level.setDayTime(time - overflowThreshold);
         }
     }
 
@@ -132,7 +125,7 @@ public class TimeService {
      * @return the new day time
      */
     private long elapseTime() {
-        long oldTime = level.getDayTime();
+        long oldTime = levelWrapper.level.getDayTime();
 
         double multiplier = getMultiplier(oldTime);
         long integralMultiplier = (long) multiplier;
@@ -146,7 +139,7 @@ public class TimeService {
         timeToAdd = correctForOvershoot(timeToAdd);
 
         long newTime = oldTime + timeToAdd;
-        level.setDayTime(newTime);
+        levelWrapper.level.setDayTime(newTime);
         return newTime;
     }
 
@@ -162,7 +155,7 @@ public class TimeService {
      * @return the corrected time to elapse
      */
     private long correctForOvershoot(long timeToAdd) {
-        long oldTime = level.getDayTime();
+        long oldTime = levelWrapper.level.getDayTime();
         long currentTimeOfDay = oldTime % TimeUtils.DAY_LENGTH;
         double multiplier = getMultiplier(oldTime);
 
@@ -235,24 +228,24 @@ public class TimeService {
      * Broadcasts the current time to all players in {@link TimeService#level}.
      */
     public void broadcastTime() {
-        long gameTime = level.getGameTime();
-        long dayTime = level.getDayTime();
-        boolean ruleDaylight = level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
+        long gameTime = levelWrapper.level.getGameTime();
+        long dayTime = levelWrapper.level.getDayTime();
+        boolean ruleDaylight = levelWrapper.daylightRuleEnabled();
         ClientboundSetTimePacket timePacket = new ClientboundSetTimePacket(gameTime, dayTime, ruleDaylight);
 
-        if (level.dimension().equals(Level.OVERWORLD)) {
+        if (levelWrapper.level.dimension().equals(Level.OVERWORLD)) {
             // broadcast to overworld and derived worlds
-            List<ServerPlayer> playerList = level.getServer().getPlayerList().getPlayers();
+            List<ServerPlayer> playerList = levelWrapper.level.getServer().getPlayerList().getPlayers();
 
             for(int i = 0; i < playerList.size(); ++i) {
                 ServerPlayer player = playerList.get(i);
-                if (player.level == level || player.level.getLevelData() instanceof DerivedLevelData) {
+                if (player.level == levelWrapper.level || ServerLevelWrapper.isDerived(player.level)) {
                     player.connection.send(timePacket);
                 }
             }
         } else {
             // broadcast to this level
-            level.getServer().getPlayerList().broadcastAll(timePacket, level.dimension());
+            levelWrapper.level.getServer().getPlayerList().broadcastAll(timePacket, levelWrapper.level.dimension());
         }
     }
 
