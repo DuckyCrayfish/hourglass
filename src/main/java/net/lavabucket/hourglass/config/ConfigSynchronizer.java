@@ -72,7 +72,7 @@ public class ConfigSynchronizer {
      * Returns the configuration message class. Removes the need to import the message class where
      * the network channel message is registered.
      *
-     * @return  the configuration message class
+     * @return the configuration message class
      */
     public static Class<S2CConfigData> getMessageClass() {
         return S2CConfigData.class;
@@ -93,7 +93,7 @@ public class ConfigSynchronizer {
      * Attempts to decode an S2CConfigData object from the given PacketBuffer.
      *
      * @param buffer  the buffer to read the object data from
-     * @return  the config data object that was read from the buffer
+     * @return the config data object that was read from the buffer
      */
     public static S2CConfigData decode(FriendlyByteBuf buffer) {
         return S2CConfigData.decode(buffer);

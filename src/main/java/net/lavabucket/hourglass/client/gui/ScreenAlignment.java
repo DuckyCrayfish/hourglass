@@ -39,6 +39,7 @@ public enum ScreenAlignment {
         this.translationKey = translationKey;
     }
 
+    /** {@return the translation key used to display this enum's value} */
     public String getKey() {
         return translationKey;
     }

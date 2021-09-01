@@ -165,7 +165,7 @@ public class TimeInterpolator {
      * fractions of ticks. This method assumes it is being ran at least once per tick.
      *
      * @param partialTickTime  the current partial tick time
-     * @return  the time that has passed since last run.
+     * @return the time that has passed since last run.
      */
     private float getPartialTimeDelta(float partialTickTime) {
         float partialTimeDelta = partialTickTime - lastPartialTickTime;

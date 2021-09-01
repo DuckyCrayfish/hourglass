@@ -45,7 +45,7 @@ public class HourglassCommand {
     /**
      * Register all commands. Called by Forge during a RegisterCommandsEvent.
      *
-     * @param event the RegisterCommandsEvent supplied by the event bus.
+     * @param event  the RegisterCommandsEvent supplied by the event bus.
      */
     @SubscribeEvent
     public static void onRegisterCommandEvent(RegisterCommandsEvent event) {

@@ -49,9 +49,7 @@ public class ConfigCommand {
     protected BiConsumer<CommandContext<CommandSourceStack>, ConfigCommandEntry<?>> modifySuccessHandler;
     protected BiConsumer<CommandContext<CommandSourceStack>, ConfigCommandEntry<?>> modifyFailureHandler;
 
-    /**
-     * Creates a new instance.
-     */
+    /** Creates a new instance. */
     public ConfigCommand() {
         entries = new HashMap<>();
     }
@@ -60,10 +58,10 @@ public class ConfigCommand {
      * Registers a new config value in the command that uses the specified argument type to parse
      * the config value from the command when being used as a setter.
      *
-     * @param <T> the underlying data type of the config value and argument type
-     * @param configValue the ConfigValue to register
-     * @param argumentType the ArgumentType used to parse the config value to be set
-     * @param valueClass the class of the underlying data type of the config value and argument type
+     * @param <T>  the underlying data type of the config value and argument type
+     * @param configValue  the ConfigValue to register
+     * @param argumentType  the ArgumentType used to parse the config value to be set
+     * @param valueClass  the class of the underlying data type of the config value and argument type
      * @return this, for chaining
      */
     public <T> ConfigCommand register(ConfigValue<T> configValue, ArgumentType<T> argumentType, Class<T> valueClass) {
@@ -72,10 +70,10 @@ public class ConfigCommand {
     }
 
     /**
-     * Registers a new ConfigCommandEntry in the command.
+     * Registers a new {@link ConfigCommandEntry} in the command.
      *
-     * @param <T> the data type of the underlying config data
-     * @param entry the entry to register
+     * @param <T>  the data type of the underlying config data
+     * @param entry  the entry to register
      * @return this, for chaining
      */
     public <T> ConfigCommand register(ConfigCommandEntry<T> entry) {
@@ -87,7 +85,7 @@ public class ConfigCommand {
      * Sets the consumer that is called after the query command is successfully called.
      * This consumer should inform the user of the current config value.
      *
-     * @param listener this handler to set
+     * @param listener  this handler to set
      * @return this, for chaining
      */
     public ConfigCommand setQuerySuccessHandler(
@@ -100,7 +98,7 @@ public class ConfigCommand {
      * Sets the consumer that is called after the modify command is successfully called.
      * This consumer should inform the user of the new config value.
      *
-     * @param listener this handler to set
+     * @param listener  this handler to set
      * @return this, for chaining
      */
     public ConfigCommand setModifySuccessHandler(
@@ -113,7 +111,7 @@ public class ConfigCommand {
      * Sets the consumer that is called after the modify command failed.
      * This consumer should inform the user of the failure.
      *
-     * @param listener this handler to set
+     * @param listener  this handler to set
      * @return this, for chaining
      */
     public ConfigCommand setModifyFailureHandler(
@@ -126,7 +124,7 @@ public class ConfigCommand {
      * Builds the Config Command off of the specified parent builder node. Command handlers should
      * be defined before this is called.
      *
-     * @param parent the parent to build config commands off of
+     * @param parent  the parent to build config commands off of
      * @return the parent, for additional chaining
      */
     public ArgumentBuilder<CommandSourceStack, ?> build(ArgumentBuilder<CommandSourceStack, ?> parent) {
@@ -142,12 +140,14 @@ public class ConfigCommand {
     }
 
     /**
-     * 'display config' command execution. Fetches the current value of the ConfigValue stored in
-     * entry and prints it to the chat.
+     * Command handler that is executed during a 'config query' command.
      *
-     * @param <T> the underlying data class of the config and argument
-     * @param context the command context from the executing command
-     * @param entry the ConfigCommandEntry holding the config value to be retrieved
+     * Fetches the current value of the {@link ConfigValue} stored in {@code entry} and prints it to
+     * the chat.
+     *
+     * @param <T>  the underlying data class of the config and argument
+     * @param context  the command context from the executing command
+     * @param entry  the entry holding the config value to be retrieved
      * @return 1 if a success handler was successfully called, 0 otherwise
      */
     protected <T> int queryConfigCommand(CommandContext<CommandSourceStack> context,
@@ -161,13 +161,15 @@ public class ConfigCommand {
     }
 
     /**
-     * 'set config' command execution. Retrieves the new config value as an argument from the
-     * command context, sets the ConfigValue stored in entry, and then sends a config update
-     * message to all connected clients.
+     * Command handler that is executed during a 'config setter' command.
      *
-     * @param <T> the underlying data class of the config and argument
-     * @param context the command context from the executing command
-     * @param entry the ConfigCommandEntry holding the config value to be changed
+     * Retrieves the new config value as an argument from the command context, sets the
+     * {@link ConfigValue} stored in {@code entry}, and then sends a config update message to all connected
+     * clients.
+     *
+     * @param <T>  the underlying data class of the config and argument
+     * @param context  the command context from the executing command
+     * @param entry  the entry holding the config value to be changed
      * @return 1 if successful, 0 otherwise
      */
     protected <T> int modifyConfigCommand(CommandContext<CommandSourceStack> context,

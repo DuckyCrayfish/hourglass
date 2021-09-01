@@ -92,23 +92,17 @@ public class ConfigCommandEntry<T> {
         this.identifier = identifier;
     }
 
-    /**
-     * @return the configValue
-     */
+    /** {@return the configValue} */
     public ConfigValue<T> getConfigValue() {
         return configValue;
     }
 
-    /**
-     * @return the argumentType
-     */
+    /** {@return the argumentType} */
     public ArgumentType<T> getArgumentType() {
         return argumentType;
     }
 
-    /**
-     * @return the valueClass
-     */
+    /** {@return the valueClass} */
     public Class<T> getValueClass() {
         return valueClass;
     }
@@ -124,7 +118,8 @@ public class ConfigCommandEntry<T> {
 
     /**
      * Fetches the argument value from a command execution context.
-     * @param context the command context from a running command
+     *
+     * @param context  the command context from a running command
      * @return the argument value
      */
     public T getArgument(CommandContext<?> context){
@@ -140,10 +135,7 @@ public class ConfigCommandEntry<T> {
         return identifier;
     }
 
-    /**
-     * Create an argument name using the ConfigValue path.
-     * @return
-     */
+    /** {@return the argument name used to store the value} */
     public String getArgumentName() {
         return "value";
     }

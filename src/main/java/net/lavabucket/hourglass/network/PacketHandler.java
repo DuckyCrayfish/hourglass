@@ -52,7 +52,7 @@ public class PacketHandler {
     /**
      * Register all network messages needed for the mod. Called during the mod common setup event.
      *
-     * @param event the mod event from the event bus
+     * @param event  the mod event from the event bus
      */
     @SubscribeEvent
     public static void registerNetworkMessages(final FMLCommonSetupEvent event) {

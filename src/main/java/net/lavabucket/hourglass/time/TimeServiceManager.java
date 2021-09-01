@@ -40,7 +40,7 @@ public class TimeServiceManager {
      * Called from the Forge EventBus during a SleepingTimeCheckEvent, a forge event that is
      * called once per tick for every player who is currently sleeping.
      *
-     * @param event the event provided by forge from the EventBus
+     * @param event  the event provided by forge from the EventBus
      */
     @SubscribeEvent
     public static void onSleepingCheckEvent(SleepingTimeCheckEvent event) {

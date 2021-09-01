@@ -32,10 +32,12 @@ import net.minecraftforge.registries.RegistryBuilder;
  */
 public final class HourglassRegistry {
 
+    /** Registry for time effects. See {@link TimeEffect} for details on time effects. */
     public static IForgeRegistry<TimeEffect> TIME_EFFECT;
 
     public static final ResourceLocation TIME_EFFECT_KEY = new ResourceLocation(HourglassMod.ID, "time_effect");
 
+    /** Creates all new registries in this class. */
     @SubscribeEvent
     public static void newRegistryEvent(RegistryEvent.NewRegistry event) {
         TIME_EFFECT = new RegistryBuilder<TimeEffect>().setName(TIME_EFFECT_KEY).setType(TimeEffect.class).create();

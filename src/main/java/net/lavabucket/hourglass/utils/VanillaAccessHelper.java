@@ -38,6 +38,7 @@ import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
  */
 public final class VanillaAccessHelper {
 
+    /** Private constructor to disallow instantiation. */
     private VanillaAccessHelper() {}
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -68,7 +69,7 @@ public final class VanillaAccessHelper {
     /**
      * Emulate the vanilla functionality for stopping weather.
      *
-     * @param level  the level to stop weather in
+     * @param level  the level in which weather should be stopped
      */
     public static void stopWeather(ServerLevel level) {
         ServerLevelData levelData = (ServerLevelData) level.getLevelData();
@@ -81,7 +82,7 @@ public final class VanillaAccessHelper {
     /**
      * Performs vanilla morning wakeup functionality to wake up all sleeping players.
      *
-     * @param level  the level to wake all sleeping players on
+     * @param level  the level in which all players should be woken up
      */
     public static void wakeUpAllPlayers(ServerLevel level) {
         try {

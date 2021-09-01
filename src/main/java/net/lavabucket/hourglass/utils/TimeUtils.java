@@ -24,6 +24,7 @@ package net.lavabucket.hourglass.utils;
  */
 public final class TimeUtils {
 
+    /** Private constructor to disallow instantiation. */
     private TimeUtils() {}
 
     /** The tick duration of a full Minecraft day. */
@@ -55,6 +56,7 @@ public final class TimeUtils {
 
     /**
      * {@return true if the sun is above the horizon}
+     *
      * The sun is defined as being above the horizon between the times {@link #DAYTIME_START} and
      * {@link #DAYTIME_END}.
      *
@@ -84,7 +86,7 @@ public final class TimeUtils {
     }
 
     /**
-     * {@return  true if a new day has started between oldTime and newTime}
+     * {@return true if a new day has started between oldTime and newTime}
      *
      * @param oldTime  the first reference time
      * @param newTime  the second reference

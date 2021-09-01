@@ -46,6 +46,7 @@ public class TemplateMessage {
     public HashMap<String, String> variables;
     public StrSubstitutor substitutor;
 
+    /** Instantiates a new message builder. */
     public TemplateMessage() {
         variables = new HashMap<>();
         substitutor = new StrSubstitutor();
@@ -60,7 +61,7 @@ public class TemplateMessage {
     }
 
     /**
-     * @param type the ChatType of this message
+     * @param type  the ChatType of this message
      * @return this, for chaining
      */
     public TemplateMessage setType(ChatType type) {
@@ -76,7 +77,7 @@ public class TemplateMessage {
     }
 
     /**
-     * @param template the message template use during bake
+     * @param template  the message template use during bake
      * @return this, for chaining
      */
     public TemplateMessage setTemplate(String template) {
@@ -87,8 +88,8 @@ public class TemplateMessage {
     /**
      * Sets a variable to be substituted in the template message.
      *
-     * @param key the variable name to search for in the template
-     * @param value the value to substitute the variable with
+     * @param key  the variable name to search for in the template
+     * @param value  the value to substitute the variable with
      * @return this, for chaining
      */
     public TemplateMessage setVariable(String key, String value) {
@@ -120,7 +121,7 @@ public class TemplateMessage {
      * Sends the message to the specified targets. This method is only allowed if the target argument
      * is MessageTarget.ALL. Otherwise, use {@link #send(MessageTarget, ServerLevel)}.
      *
-     * @param target the target of the message
+     * @param target  the target of the message
      */
     public void send(MessageTarget target) {
         this.send(target, null);
@@ -130,8 +131,8 @@ public class TemplateMessage {
      * Sends the message to the specified targets. If {@code target} is MessageTarget.ALL,
      * {@code level} may be null.
      *
-     * @param target the target of the message
-     * @param level the level to send targeted message to, if applicable
+     * @param target  the target of the message
+     * @param level  the level to send targeted message to, if applicable
      */
     public void send(MessageTarget target, @Nullable ServerLevel level) {
         if (target != MessageTarget.ALL && level == null) {
@@ -149,15 +150,13 @@ public class TemplateMessage {
         }
     }
 
-    /**
-     * Target destination of a template message.
-     */
+    /** Target destination of a template message. */
     public enum MessageTarget {
-        // Targets all players on the server.
+        /** Targets all players on the server. */
         ALL,
-        // Targets all players in the associated dimension.
+        /** Targets all players in the associated dimension. */
         DIMENSION,
-        // Targets all sleeping players.
+        /** Targets all sleeping players. */
         SLEEPING
     }
 

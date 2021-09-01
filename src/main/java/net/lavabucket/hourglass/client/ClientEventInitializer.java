@@ -26,7 +26,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 
 /**
- * Initializes all clint-only event listeners.
+ * Initializes all client-only event listeners.
  *
  * Performing this in a dedicated class provides sufficient client/server distribution separation.
  */

@@ -129,7 +129,7 @@ public class TimeService {
     /**
      * Elapse time in level based on the current time multiplier. Should be called during every tick.
      *
-     * @return  the new day time
+     * @return the new day time
      */
     private long elapseTime() {
         long oldTime = level.getDayTime();
@@ -159,7 +159,7 @@ public class TimeService {
      * TODO: Make this stateless
      *
      * @param timeToAdd  the proposed time to elapse
-     * @return  the corrected time to elapse
+     * @return the corrected time to elapse
      */
     private long correctForOvershoot(long timeToAdd) {
         long oldTime = level.getDayTime();
@@ -208,7 +208,7 @@ public class TimeService {
      * A return value of 1 is equivalent to vanilla time speed.
      *
      * @param time  the time of day to calculate the time speed for
-     * @return  the time speed multiplier
+     * @return the time speed multiplier
      */
     public double getMultiplier(long time) {
         if (!SERVER_CONFIG.enableSleepFeature.get() || sleepStatus.allAwake()) {

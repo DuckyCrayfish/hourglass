@@ -50,7 +50,7 @@ public class HourglassConfig {
      * Register this class's configs with the mod context provided. Should be called during mod
      * initialization.
      *
-     * @param context the mod loading context to register the configs with.
+     * @param context  the mod loading context to register the configs with.
      */
     public static void register(ModLoadingContext context) {
         context.registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);

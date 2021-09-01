@@ -37,7 +37,7 @@ public interface TimeEffect extends IForgeRegistryEntry<TimeEffect> {
     /**
      * Method that is called by {@link TimeService} every tick after time has been adjusted.
      *
-     * @param context the context of the time adjustment
+     * @param context  the context of the time adjustment
      */
     public void onTimeTick(TimeContext context);
 
