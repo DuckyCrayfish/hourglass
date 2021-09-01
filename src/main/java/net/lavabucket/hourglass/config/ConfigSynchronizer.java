@@ -34,7 +34,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.config.ModConfig.Type;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.minecraftforge.fml.event.config.ModConfigEvent.Reloading;
 import net.minecraftforge.fmllegacy.network.ConfigSync;
 import net.minecraftforge.fmllegacy.network.PacketDistributor;
 import net.minecraftforge.fmllegacy.network.FMLHandshakeMessages.S2CConfigData;
@@ -57,7 +57,7 @@ public class ConfigSynchronizer {
      * @param event  the config reload event, provided by the event bus
      */
     @SubscribeEvent
-    public static void onModConfigEvent(final ModConfigEvent.Reloading event) {
+    public static void onModConfigEvent(final Reloading event) {
         final ModConfig config = event.getConfig();
         final MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if (server != null
