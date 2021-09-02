@@ -23,6 +23,7 @@ import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,7 +36,6 @@ import net.lavabucket.hourglass.utils.TimeUtils;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 import net.minecraft.network.protocol.game.ClientboundSetTimePacket;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.Level;
 
 /**
  * Handles the Hourglass time and sleep functionality for a level.
@@ -225,28 +225,22 @@ public class TimeService {
     }
 
     /**
-     * Broadcasts the current time to all players in {@link TimeService#level}.
+     * Broadcasts the current time to all players who observe it.
      */
     public void broadcastTime() {
         long gameTime = levelWrapper.level.getGameTime();
         long dayTime = levelWrapper.level.getDayTime();
         boolean ruleDaylight = levelWrapper.daylightRuleEnabled();
         ClientboundSetTimePacket timePacket = new ClientboundSetTimePacket(gameTime, dayTime, ruleDaylight);
+        List<ServerPlayer> playerList = levelWrapper.level.getServer().getPlayerList().getPlayers();
+        Predicate<ServerPlayer> playerPredicate = player -> player.level.equals(levelWrapper.level);
 
-        if (levelWrapper.level.dimension().equals(Level.OVERWORLD)) {
-            // broadcast to overworld and derived worlds
-            List<ServerPlayer> playerList = levelWrapper.level.getServer().getPlayerList().getPlayers();
-
-            for(int i = 0; i < playerList.size(); ++i) {
-                ServerPlayer player = playerList.get(i);
-                if (player.level == levelWrapper.level || ServerLevelWrapper.isDerived(player.level)) {
-                    player.connection.send(timePacket);
-                }
-            }
-        } else {
-            // broadcast to this level
-            levelWrapper.level.getServer().getPlayerList().broadcastAll(timePacket, levelWrapper.level.dimension());
+        if (levelWrapper.level.equals(levelWrapper.level.getServer().overworld())) {
+            // If level is overworld, include all derived levels as well.
+            playerPredicate = playerPredicate.and(player -> ServerLevelWrapper.isDerived(player.level));
         }
+
+        playerList.stream().forEach(player -> player.connection.send(timePacket));
     }
 
     private Collection<TimeEffect> getActiveTimeEffects() {
