@@ -20,7 +20,6 @@
 package net.lavabucket.hourglass.time;
 
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -59,7 +58,7 @@ public class TimeServiceManager {
     public static void onWorldLoad(WorldEvent.Load event) {
         if (ServerLevelWrapper.isServerLevel(event.getWorld())) {
             ServerLevelWrapper wrapper = new ServerLevelWrapper(event.getWorld());
-            if (wrapper.level.dimension().equals(Level.OVERWORLD)) {
+            if (wrapper.level.equals(wrapper.level.getServer().overworld())) {
                 service = new TimeService(wrapper);
             }
         }
