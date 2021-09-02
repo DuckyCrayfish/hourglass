@@ -34,7 +34,7 @@ import net.lavabucket.hourglass.time.effects.TimeEffect;
 import net.lavabucket.hourglass.utils.MathUtils;
 import net.lavabucket.hourglass.utils.TimeUtils;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
-import net.minecraft.network.protocol.game.ClientboundSetTimePacket;
+import net.lavabucket.hourglass.wrappers.TimePacket;
 import net.minecraft.server.level.ServerPlayer;
 
 /**
@@ -231,7 +231,7 @@ public class TimeService {
         long gameTime = levelWrapper.level.getGameTime();
         long dayTime = levelWrapper.level.getDayTime();
         boolean ruleDaylight = levelWrapper.daylightRuleEnabled();
-        ClientboundSetTimePacket timePacket = new ClientboundSetTimePacket(gameTime, dayTime, ruleDaylight);
+        TimePacket timePacket = new TimePacket(gameTime, dayTime, ruleDaylight);
         List<ServerPlayer> playerList = levelWrapper.level.getServer().getPlayerList().getPlayers();
         Predicate<ServerPlayer> playerPredicate = player -> player.level.equals(levelWrapper.level);
 
