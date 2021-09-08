@@ -163,17 +163,14 @@ public class HourglassConfig {
                 builder.comment(
                     "This section defines settings for notification messages.",
                     "All messages support Minecraft formatting codes (https://minecraft.fandom.com/wiki/Formatting_codes).",
-                    "All messages support variable substitution in the following format: ${variableName}",
-                    "Supported variables differ for each message.",
-                    "",
-                    "Message 'type' controls where the message appears:",
-                    "SYSTEM: Appears as a message in the chat. (e.g., \"Respawn point set\")",
-                    "GAME_INFO: Game information that appears above the hotbar (e.g., \"You may not rest now, the bed is too far away\").",
-                    "",
-                    "Message 'target' controls to whom the message is sent:",
-                    "ALL: Sends the message to all players on the server.",
-                    "DIMENSION: Sends the message to all players in the current dimension.",
-                    "SLEEPING: Sends the message to all players in the current dimension who are sleeping.")
+                    "All messages have variables that can be inserted using the following format: ${variableName}",
+                    "The type option controls where the message appears:",
+                    "\tSYSTEM: Appears as a message in the chat. (e.g., \"Respawn point set\")",
+                    "\tGAME_INFO: Game information that appears above the hotbar (e.g., \"You may not rest now, the bed is too far away\").",
+                    "The target option controls to whom the message is sent:",
+                    "\tALL: Sends the message to all players on the server.",
+                    "\tDIMENSION: Sends the message to all players in the current dimension.",
+                    "\tSLEEPING: Sends the message to all players in the current dimension who are sleeping.")
                     .push("messages");
 
                     // sleep.messages.morning
