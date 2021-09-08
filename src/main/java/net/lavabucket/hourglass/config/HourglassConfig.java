@@ -74,10 +74,14 @@ public class HourglassConfig {
         public final ConfigValue<String> morningMessage;
         public final EnumValue<ChatType> morningMessageType;
         public final EnumValue<MessageTarget> morningMessageTarget;
-        public final ConfigValue<String> inBedMessage;
-        public final ConfigValue<String> outOfBedMessage;
-        public final EnumValue<ChatType> bedMessageType;
-        public final EnumValue<MessageTarget> bedMessageTarget;
+
+        public final ConfigValue<String> enterBedMessage;
+        public final EnumValue<ChatType> enterBedMessageType;
+        public final EnumValue<MessageTarget> enterBedMessageTarget;
+
+        public final ConfigValue<String> leaveBedMessage;
+        public final EnumValue<ChatType> leaveBedMessageType;
+        public final EnumValue<MessageTarget> leaveBedMessageTarget;
 
         /**
          * Constructs an instance of an Hourglass server config.
@@ -85,8 +89,7 @@ public class HourglassConfig {
          * @param builder  a Forge config builder instance
          */
         public ServerConfig(final ForgeConfigSpec.Builder builder) {
-            // time
-            builder.push("time");
+            builder.push("time"); // time
 
             daySpeed = builder
                     .comment("The speed at which time passes during the day.\n"
@@ -100,8 +103,7 @@ public class HourglassConfig {
                             + "Vanilla speed: 1.0")
                     .defineInRange("nightSpeed", 1D, 0D, (double) TimeUtils.DAY_LENGTH);
 
-            // effects
-            builder.push("effects");
+            builder.push("effects"); // time.effects
 
             accelerateWeather = builder
                     .comment("Accelerate the passage of weather at the same rate as the passage of time, making weather events\n"
@@ -123,16 +125,13 @@ public class HourglassConfig {
                     .comment("The base random tick speed to use when sleep.accelerateRandomTickSpeed config is enabled.")
                     .defineInRange("baseRandomTickSpeed", 3, 0, Integer.MAX_VALUE);
 
-            builder.pop(); // effects
+            builder.pop(); // time.effects
             builder.pop(); // time
-
-            // sleep
-            builder.push("sleep");
+            builder.push("sleep"); // sleep
 
             enableSleepFeature = builder
-                    .comment("Enables or disables the sleep feature of this mod. Enabling this setting will modify the vanilla\n"
-                            + "sleep functionality and may conflict with other sleep mods. If disabled, the settings in the\n"
-                            + "messages section and the remaining settings in this section will not apply.")
+                    .comment("Enables or disables the sleep feature of this mod. Enabling this setting will modify the vanilla sleep functionality\n"
+                            + "and may conflict with other sleep mods. If disabled, all settings in the sleep section will not apply.")
                     .define("enableSleepFeature", true);
 
             sleepSpeedMin = builder
@@ -159,68 +158,75 @@ public class HourglassConfig {
                     .comment("When true, a clock is displayed in the sleep interface.")
                     .define("displayBedClock", true);
 
-            builder.pop(); // sleep
-
-            // messages
+            // sleep.messages
             builder.comment("This section defines settings for notification messages.\n"
-                            + "All messages in this section support Minecraft formatting codes (https://minecraft.fandom.com/wiki/Formatting_codes).\n"
-                            + "All messages in this section support variable substitution in the following format: ${variableName}\n"
-                            + "Supported variables differ per message.")
+                            + "All messages support Minecraft formatting codes (https://minecraft.fandom.com/wiki/Formatting_codes).\n"
+                            + "All messages support variable substitution in the following format: ${variableName}\n"
+                            + "Supported variables differ for each message.\n"
+                            + "\n"
+                            + "Message 'type' controls where the message appears:\n"
+                            + "SYSTEM: Appears as a message in the chat. (e.g., \"Respawn point set\")\n"
+                            + "GAME_INFO: Game information that appears above the hotbar (e.g., \"You may not rest now, the bed is too far away\").\n"
+                            + "\n"
+                            + "Message 'target' controls to whom the message is sent:\n"
+                            + "ALL: Sends the message to all players on the server.\n"
+                            + "DIMENSION: Sends the message to all players in the current dimension.\n"
+                            + "SLEEPING: Sends the message to all players in the current dimension who are sleeping.")
                     .push("messages");
 
+            // sleep.messages.morning
+            builder.comment("This message is sent after a sleep cycle has completed.").push("morning");
             morningMessage = builder
-                    .comment("This message is sent to morningMessageTarget after a sleep cycle has completed in it.\n"
-                            + "Available variables:\n"
+                    .comment("Available variables:\n"
                             + "sleepingPlayers -> the number of players in the current dimension who were sleeping.\n"
                             + "totalPlayers -> the number of players in the current dimension (spectators are not counted).\n"
                             + "sleepingPercentage -> the percentage of players in the current dimension who were sleeping (does not include % symbol).")
-                    .define("morningMessage", "\u00A7e\u00A7oTempus fugit!");
-
+                    .define("message", "\u00A7e\u00A7oTempus fugit!");
             morningMessageType = builder
-                    .comment("Sets the message type for the morning message.\n"
-                            + "SYSTEM: Appears as a message in the chat. (e.g., \"Respawn point set\")\n"
-                            + "GAME_INFO: Game information that appears above the hotbar (e.g., \"You may not rest now, the bed is too far away\").")
-                    .defineEnum("morningMessageType", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
-
+                    .comment("Sets where this message appears.")
+                    .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
             morningMessageTarget = builder
-                    .comment("Sets the target for the morning message.\n"
-                            + "ALL: Send the message to all players on the server.\n"
-                            + "DIMENSION: Send the message to all players in the current dimension.\n"
-                            + "SLEEPING: Only send the message to those who just woke up.")
-                    .defineEnum("morningMessageTarget", MessageTarget.DIMENSION);
+                    .comment("Sets to whom this message is sent. A target of 'SLEEPING' will send the message to all players who just woke up.")
+                    .defineEnum("target", MessageTarget.DIMENSION);
+            builder.pop(); // sleep.messages.morning
 
-            inBedMessage = builder
-                    .comment("This message is sent to bedMessageTarget when a player starts sleeping.\n"
-                            + "Available variables:\n"
+            // sleep.messages.enterBed
+            builder.comment("This message is sent when a player enters their bed.").push("enterBed");
+            enterBedMessage = builder
+                    .comment("Available variables:\n"
                             + "player -> the player who started sleeping.\n"
                             + "sleepingPlayers -> the number of players in the current dimension who are sleeping.\n"
                             + "totalPlayers -> the number of players in the current dimension (spectators are not counted).\n"
                             + "sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).")
-                    .define("inBedMessage", "${player} is now sleeping. [${sleepingPlayers}/${totalPlayers}]");
+                    .define("message", "${player} is now sleeping. [${sleepingPlayers}/${totalPlayers}]");
+            enterBedMessageType = builder
+                    .comment("Sets where this message appears.")
+                    .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
+            enterBedMessageTarget = builder
+                    .comment("Sets to whom this message is sent.")
+                    .defineEnum("target", MessageTarget.DIMENSION);
+            builder.pop(); // sleep.messages.enterBed
 
-            outOfBedMessage = builder
-                    .comment("This message is sent to bedMessageTarget when a player gets out of bed (without being woken up naturally at morning).\n"
-                            + "Available variables:\n"
+            // sleep.messages.leaveBed
+            builder.comment("This message is sent when a player leaves their bed (without being woken up naturally by morning).").push("leaveBed");
+            leaveBedMessage = builder
+                    .comment("Available variables:\n"
                             + "player -> the player who left their bed.\n"
                             + "sleepingPlayers -> the number of players in the current dimension who are sleeping.\n"
                             + "totalPlayers -> the number of players in the current dimension (spectators are not counted).\n"
                             + "sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).")
-                    .define("outOfBedMessage", "${player} has left their bed. [${sleepingPlayers}/${totalPlayers}]");
+                    .define("message", "${player} has left their bed. [${sleepingPlayers}/${totalPlayers}]");
+            leaveBedMessageType = builder
+                    .comment("Sets where this message appears.")
+                    .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
+            leaveBedMessageTarget = builder
+                    .comment("Sets to whom this message is sent.")
+                    .defineEnum("target", MessageTarget.DIMENSION);
+            builder.pop(); // sleep.messages.leaveBed
 
-            bedMessageType = builder
-                    .comment("Sets the message type for inBedMessage and outOfBedMessage.\n"
-                            + "SYSTEM: Appears as a message in the chat (e.g., \"Respawn point set\").\n"
-                            + "GAME_INFO: Game information that appears above the hotbar (e.g., \"You may not rest now, the bed is too far away\").")
-                    .defineEnum("bedMessageType", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
+            builder.pop(); // sleep.messages
+            builder.pop(); // sleep
 
-            bedMessageTarget = builder
-                    .comment("Sets the target for inBedMessage and outOfBedMessage.\n"
-                            + "ALL: Send the message to all players on the server.\n"
-                            + "DIMENSION: Send the message to all players in the current dimension.\n"
-                            + "SLEEPING: Only send the message to players who are currently sleeping.")
-                    .defineEnum("bedMessageTarget", MessageTarget.DIMENSION);
-
-            builder.pop(); // messages
             spec = builder.build();
         }
 

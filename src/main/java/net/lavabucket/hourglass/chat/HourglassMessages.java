@@ -46,7 +46,7 @@ public class HourglassMessages {
         Player player = event.getPlayer();
         if (!player.level.isClientSide() && player.isSleeping() && player.getSleepTimer() == 1
                 && player.level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
-            sendSleepMessage(player);
+            sendEnterBedMessage(player);
         }
     }
 
@@ -60,7 +60,7 @@ public class HourglassMessages {
         Player player = event.getPlayer();
         if (player.level.isClientSide() == false && event.updateWorld() == true
                 && player.level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
-            sendWakeMessage(player);
+            sendLeaveBedMessage(player);
         }
     }
 
@@ -78,16 +78,16 @@ public class HourglassMessages {
     }
 
     /**
-     * Sends a message to all targeted players informing them that a player has started sleeping.
+     * Sends a message to all targeted players informing them that a player has entered their bed.
      *
-     * The message is set by {@link HourglassConfig.ServerConfig#inBedMessage}.
-     * The target is set by {@link HourglassConfig.ServerConfig#bedMessageTarget}.
-     * The message type is set by {@link HourglassConfig.ServerConfig#bedMessageType}.
+     * The message is set by {@link HourglassConfig.ServerConfig#enterBedMessage}.
+     * The target is set by {@link HourglassConfig.ServerConfig#enterBedMessageTarget}.
+     * The message type is set by {@link HourglassConfig.ServerConfig#enterBedMessageType}.
      *
      * @param player  the player who started sleeping
      */
-    public static void sendSleepMessage(Player player) {
-        String templateMessage = SERVER_CONFIG.inBedMessage.get();
+    public static void sendEnterBedMessage(Player player) {
+        String templateMessage = SERVER_CONFIG.enterBedMessage.get();
         TimeService timeService = TimeServiceManager.service;
         if (templateMessage.isEmpty() || timeService == null
                 || !SERVER_CONFIG.enableSleepFeature.get()
@@ -98,25 +98,25 @@ public class HourglassMessages {
         SleepStatus sleepStatus = timeService.sleepStatus;
 
         new TemplateMessage().setTemplate(templateMessage)
-                .setType(SERVER_CONFIG.bedMessageType.get())
+                .setType(SERVER_CONFIG.enterBedMessageType.get())
                 .setVariable("player", player.getGameProfile().getName())
                 .setVariable("totalPlayers", Integer.toString(sleepStatus.amountActive()))
                 .setVariable("sleepingPlayers", Integer.toString(sleepStatus.amountSleeping()))
                 .setVariable("sleepingPercentage", Integer.toString((int) (100D * sleepStatus.getRatio())))
-                .bake().send(SERVER_CONFIG.bedMessageTarget.get(), new ServerLevelWrapper(player.level));
+                .bake().send(SERVER_CONFIG.enterBedMessageTarget.get(), new ServerLevelWrapper(player.level));
     }
 
     /**
      * Sends a message to all targeted players informing them that a player has left their bed.
      *
-     * The message is set by {@link HourglassConfig.ServerConfig#outOfBedMessage}.
-     * The target is set by {@link HourglassConfig.ServerConfig#bedMessageTarget}.
-     * The message type is set by {@link HourglassConfig.ServerConfig#bedMessageType}.
+     * The message is set by {@link HourglassConfig.ServerConfig#leaveBedMessage}.
+     * The target is set by {@link HourglassConfig.ServerConfig#leaveBedMessageTarget}.
+     * The message type is set by {@link HourglassConfig.ServerConfig#leaveBedMessageType}.
      *
      * @param player  the player who left their bed
      */
-    public static void sendWakeMessage(Player player) {
-        String templateMessage = SERVER_CONFIG.outOfBedMessage.get();
+    public static void sendLeaveBedMessage(Player player) {
+        String templateMessage = SERVER_CONFIG.leaveBedMessage.get();
         TimeService timeService = TimeServiceManager.service;
         if (templateMessage.isEmpty() || timeService == null
                 || !SERVER_CONFIG.enableSleepFeature.get()
@@ -127,12 +127,12 @@ public class HourglassMessages {
         SleepStatus sleepStatus = timeService.sleepStatus;
 
         new TemplateMessage().setTemplate(templateMessage)
-                .setType(SERVER_CONFIG.bedMessageType.get())
+                .setType(SERVER_CONFIG.leaveBedMessageType.get())
                 .setVariable("player", player.getGameProfile().getName())
                 .setVariable("totalPlayers", Integer.toString(sleepStatus.amountActive()))
                 .setVariable("sleepingPlayers", Integer.toString(sleepStatus.amountSleeping() - 1))
                 .setVariable("sleepingPercentage", Integer.toString((int) (100D * sleepStatus.getRatio())))
-                .bake().send(SERVER_CONFIG.bedMessageTarget.get(), new ServerLevelWrapper(player.level));
+                .bake().send(SERVER_CONFIG.leaveBedMessageTarget.get(), new ServerLevelWrapper(player.level));
     }
 
     /**
