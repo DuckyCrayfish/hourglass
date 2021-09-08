@@ -59,15 +59,16 @@ public class HourglassConfig {
 
         public final DoubleValue daySpeed;
         public final DoubleValue nightSpeed;
+
         public final BooleanValue accelerateWeather;
+        public final BooleanValue accelerateRandomTickSpeed;
+        public final IntValue baseRandomTickSpeed;
 
         public final BooleanValue enableSleepFeature;
         public final DoubleValue sleepSpeedMin;
         public final DoubleValue sleepSpeedMax;
         public final DoubleValue sleepSpeedAll;
         public final BooleanValue clearWeatherOnWake;
-        public final BooleanValue accelerateRandomTickSpeed;
-        public final IntValue baseRandomTickSpeed;
         public final BooleanValue displayBedClock;
 
         public final ConfigValue<String> morningMessage;
@@ -84,8 +85,8 @@ public class HourglassConfig {
          * @param builder  a Forge config builder instance
          */
         public ServerConfig(final ForgeConfigSpec.Builder builder) {
-            // general
-            builder.push("general");
+            // time
+            builder.push("time");
 
             daySpeed = builder
                     .comment("The speed at which time passes during the day.\n"
@@ -99,13 +100,31 @@ public class HourglassConfig {
                             + "Vanilla speed: 1.0")
                     .defineInRange("nightSpeed", 1D, 0D, (double) TimeUtils.DAY_LENGTH);
 
+            // effects
+            builder.push("effects");
+
             accelerateWeather = builder
                     .comment("Accelerate the passage of weather at the same rate as the passage of time, making weather events\n"
                             + "elapse faster while the passage of time is accelerated. Clear weather is not accelerated.\n"
                             + "Note: This setting is not applicable if game rule doWeatherCycle is false.")
                     .define("accelerateWeather", true);
 
-            builder.pop();
+            accelerateRandomTickSpeed = builder
+                    .comment("When true, accelerates the random tick speed while sleeping. This allows things like crops and\n"
+                            + "grass to grow at the same rate as time is passing overnight. The modified random tick speed is the\n"
+                            + "sleep.baseRandomTickSpeed value times the current time speed. This means that as time moves faster, crops grow faster.\n"
+                            + "More information on the effects of random tick speed can be found here:\n"
+                            + "https://minecraft.fandom.com/wiki/Tick#Random_tick\n"
+                            + "WARNING: This setting manipulates the randomTickSpeed game rule. To modify the base random tick speed,\n"
+                            + "use the sleep.baseRandomTickSpeed config setting instead of changing the game rule directly.")
+                    .define("accelerateRandomTicking", false);
+
+            baseRandomTickSpeed = builder
+                    .comment("The base random tick speed to use when sleep.accelerateRandomTickSpeed config is enabled.")
+                    .defineInRange("baseRandomTickSpeed", 3, 0, Integer.MAX_VALUE);
+
+            builder.pop(); // effects
+            builder.pop(); // time
 
             // sleep
             builder.push("sleep");
@@ -136,25 +155,11 @@ public class HourglassConfig {
                             + "Note: This setting is ignored if game rule doWeatherCycle is false.")
                     .define("clearWeatherOnWake", true);
 
-            accelerateRandomTickSpeed = builder
-                    .comment("When true, accelerates the random tick speed while sleeping. This allows things like crops and\n"
-                            + "grass to grow at the same rate as time is passing overnight. The modified random tick speed is the\n"
-                            + "sleep.baseRandomTickSpeed value times the current time speed. This means that as time moves faster, crops grow faster.\n"
-                            + "More information on the effects of random tick speed can be found here:\n"
-                            + "https://minecraft.fandom.com/wiki/Tick#Random_tick\n"
-                            + "WARNING: This setting manipulates the randomTickSpeed game rule. To modify the base random tick speed,\n"
-                            + "use the sleep.baseRandomTickSpeed config setting instead of changing the game rule directly.")
-                    .define("accelerateRandomTicking", false);
-
-            baseRandomTickSpeed = builder
-                    .comment("The base random tick speed to use when sleep.accelerateRandomTickSpeed config is enabled.")
-                    .defineInRange("baseRandomTickSpeed", 3, 0, Integer.MAX_VALUE);
-
             displayBedClock = builder
                     .comment("When true, a clock is displayed in the sleep interface.")
                     .define("displayBedClock", true);
 
-            builder.pop();
+            builder.pop(); // sleep
 
             // messages
             builder.comment("This section defines settings for notification messages.\n"
@@ -215,7 +220,7 @@ public class HourglassConfig {
                             + "SLEEPING: Only send the message to players who are currently sleeping.")
                     .defineEnum("bedMessageTarget", MessageTarget.DIMENSION);
 
-            builder.pop();
+            builder.pop(); // messages
             spec = builder.build();
         }
 
