@@ -22,6 +22,9 @@ package net.lavabucket.hourglass.wrappers;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ClientboundSetTimePacket;
 
+/**
+ * Time packet wrapper used to hide class-name or package changes from dependent classes.
+ */
 public class TimePacket extends ClientboundSetTimePacket {
 
     public TimePacket(long gameTime, long dayTime, boolean ruleDaylight) {

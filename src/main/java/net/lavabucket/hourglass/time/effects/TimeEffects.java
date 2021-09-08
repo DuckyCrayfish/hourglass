@@ -34,6 +34,10 @@ public class TimeEffects {
     public static RegistryObject<TimeEffect> WEATHER_EFFECT = TIME_EFFECTS.register("weather", () -> new WeatherSleepEffect());
     public static RegistryObject<TimeEffect> RANDOM_TICK_EFFECT = TIME_EFFECTS.register("random_tick", () -> new RandomTickSleepEffect());
 
+    /**
+     * Registers all objects in {@link #TIME_EFFECTS}.
+     * @param bus  the mod event bus
+     */
     public static void registerEffects(IEventBus bus) {
         TIME_EFFECTS.register(bus);
     }

@@ -56,7 +56,7 @@ public class TimeService {
     /**
      * Creates a new instance.
      *
-     * @param level  the level whose time this object should manage
+     * @param levelWrapper  the level whose time this object should manage
      */
     public TimeService(ServerLevelWrapper levelWrapper) {
         this.levelWrapper = levelWrapper;

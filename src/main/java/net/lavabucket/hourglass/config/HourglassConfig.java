@@ -57,6 +57,7 @@ public class HourglassConfig {
         context.registerConfig(ModConfig.Type.CLIENT, CLIENT_SPEC);
     }
 
+    /** Server-specific configuration file. */
     public static class ServerConfig {
 
         public final DoubleValue daySpeed;
@@ -222,6 +223,7 @@ public class HourglassConfig {
 
     }
 
+    /** Client-specific configuration file. */
     public static class ClientConfig {
 
         public final EnumValue<ScreenAlignment> clockAlignment;
