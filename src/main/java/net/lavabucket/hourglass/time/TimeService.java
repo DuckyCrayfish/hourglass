@@ -19,6 +19,7 @@
 
 package net.lavabucket.hourglass.time;
 
+import static net.lavabucket.hourglass.HourglassMod.MARKER;
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
 import java.util.Collection;
@@ -28,7 +29,6 @@ import java.util.function.Predicate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.lavabucket.hourglass.HourglassMod;
 import net.lavabucket.hourglass.registry.HourglassRegistry;
 import net.lavabucket.hourglass.time.effects.TimeEffect;
 import net.lavabucket.hourglass.utils.MathUtils;
@@ -36,6 +36,7 @@ import net.lavabucket.hourglass.utils.TimeUtils;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 import net.lavabucket.hourglass.wrappers.TimePacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.event.ForgeEventFactory;
 
 /**
  * Handles the Hourglass time and sleep functionality for a level.
@@ -74,26 +75,32 @@ public class TimeService {
         long oldTime = levelWrapper.level.getDayTime();
         long time = elapseTime();
         long elapsedTime = time - oldTime;
-        preventTimeOverflow();
-        broadcastTime();
 
         TimeContext context = new TimeContext(this, elapsedTime);
         getActiveTimeEffects().forEach(effect -> effect.onTimeTick(context));
 
-        if (SERVER_CONFIG.enableSleepFeature.get()) {
-            if (!sleepStatus.allAwake() && TimeUtils.crossedMorning(oldTime, time)) {
-                LOGGER.debug(HourglassMod.MARKER, "Sleep cycle complete on dimension: {}.", levelWrapper.level.dimension().location());
-                net.minecraftforge.event.ForgeEventFactory.onSleepFinished(levelWrapper.level, time, time);
-                sleepStatus.removeAllSleepers();
-                levelWrapper.wakeUpAllPlayers();
-
-                if (levelWrapper.weatherRuleEnabled() && SERVER_CONFIG.clearWeatherOnWake.get()) {
-                    levelWrapper.stopWeather();
-                }
-            }
+        boolean overrideSleep = SERVER_CONFIG.enableSleepFeature.get();
+        if (overrideSleep && !sleepStatus.allAwake() && TimeUtils.crossedMorning(oldTime, time)) {
+            handleMorning();
         }
 
+        preventTimeOverflow();
+        broadcastTime();
         vanillaTimeCompensation();
+    }
+
+    private void handleMorning() {
+        long time = levelWrapper.level.getDayTime();
+        ForgeEventFactory.onSleepFinished(levelWrapper.level, time, time);
+        sleepStatus.removeAllSleepers();
+        levelWrapper.wakeUpAllPlayers();
+
+        if (levelWrapper.weatherRuleEnabled() && SERVER_CONFIG.clearWeatherOnWake.get()) {
+            levelWrapper.stopWeather();
+        }
+
+        LOGGER.debug(MARKER, "Sleep cycle complete on dimension: {}.",
+                levelWrapper.level.dimension().location());
     }
 
     /**
@@ -120,7 +127,8 @@ public class TimeService {
     }
 
     /**
-     * Elapse time in level based on the current time multiplier. Should be called during every tick.
+     * Elapse time in this service's {@link #levelWrapper level} based on the current time
+     * multiplier. This method should be called during every tick.
      *
      * @return the new day time
      */
