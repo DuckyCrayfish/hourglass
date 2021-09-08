@@ -132,7 +132,7 @@ public class TemplateMessage {
      * {@code level} may be null.
      *
      * @param target  the target of the message
-     * @param level  the level to send targeted message to, if applicable
+     * @param levelWrapper  the level to send targeted message to, if applicable
      */
     public void send(MessageTarget target, @Nullable ServerLevelWrapper levelWrapper) {
         if (target != MessageTarget.ALL && levelWrapper == null) {

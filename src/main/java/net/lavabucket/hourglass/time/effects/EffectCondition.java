@@ -19,6 +19,11 @@
 
 package net.lavabucket.hourglass.time.effects;
 
+/**
+ * Time effect setting that controls when an effect is applied.
+ *
+ * This enum allows time time effect conditions to be configured by users.
+ */
 public enum EffectCondition {
 
     /** Do not apply the effect. */
