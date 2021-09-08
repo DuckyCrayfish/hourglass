@@ -119,9 +119,8 @@ one morning to the next.
 		baseRandomTickSpeed = 3
 
 [sleep]
-	#Enables or disables the sleep feature of this mod. Enabling this setting will modify the vanilla
-	#sleep functionality and may conflict with other sleep mods. If disabled, the settings in the
-	#messages section and the remaining settings in this section will not apply.
+	#Enables or disables the sleep feature of this mod. Enabling this setting will modify the vanilla sleep functionality
+	#and may conflict with other sleep mods. If disabled, all settings in the sleep section will not apply.
 	enableSleepFeature = true
 
 	#The minimum speed at which time passes when only 1 player is sleeping in a full server.
@@ -146,59 +145,64 @@ one morning to the next.
 	#When true, a clock is displayed in the sleep interface.
 	displayBedClock = true
 
-#This section defines settings for notification messages.
-#All messages in this section support Minecraft formatting codes (https://minecraft.fandom.com/wiki/Formatting_codes).
-#All messages in this section support variable substitution in the following format: ${variableName}
-#Supported variables differ per message.
-[messages]
-	#This message is sent to morningMessageTarget after a sleep cycle has completed in it.
-	#Available variables:
-	#sleepingPlayers -> the number of players in the current dimension who were sleeping.
-	#totalPlayers -> the number of players in the current dimension (spectators are not counted).
-	#sleepingPercentage -> the percentage of players in the current dimension who were sleeping (does not include % symbol).
-	morningMessage = "§e§oTempus fugit!"
-
-	#Sets the message type for the morning message.
+	#This section defines settings for notification messages.
+	#All messages support Minecraft formatting codes (https://minecraft.fandom.com/wiki/Formatting_codes).
+	#All messages support variable substitution in the following format: ${variableName}
+	#Supported variables differ for each message.
+	#
+	#Message 'type' controls where the message appears:
 	#SYSTEM: Appears as a message in the chat. (e.g., "Respawn point set")
 	#GAME_INFO: Game information that appears above the hotbar (e.g., "You may not rest now, the bed is too far away").
-	#Allowed Values: SYSTEM, GAME_INFO
-	morningMessageType = "GAME_INFO"
+	#
+	#Message 'target' controls to whom the message is sent:
+	#ALL: Sends the message to all players on the server.
+	#DIMENSION: Sends the message to all players in the current dimension.
+	#SLEEPING: Sends the message to all players in the current dimension who are sleeping.
+	[sleep.messages]
 
-	#Sets the target for the morning message.
-	#ALL: Send the message to all players on the server.
-	#DIMENSION: Send the message to all players in the current dimension.
-	#SLEEPING: Only send the message to those who just woke up.
-	#Allowed Values: ALL, DIMENSION, SLEEPING
-	morningMessageTarget = "DIMENSION"
+		#This message is sent after a sleep cycle has completed.
+		[sleep.messages.morning]
+			#Available variables:
+			#sleepingPlayers -> the number of players in the current dimension who were sleeping.
+			#totalPlayers -> the number of players in the current dimension (spectators are not counted).
+			#sleepingPercentage -> the percentage of players in the current dimension who were sleeping (does not include % symbol).
+			message = "§e§oTempus fugit!"
+			#Sets where this message appears.
+			#Allowed Values: SYSTEM, GAME_INFO
+			type = "GAME_INFO"
+			#Sets to whom this message is sent. A target of 'SLEEPING' will send the message to all players who just woke up.
+			#Allowed Values: ALL, DIMENSION, SLEEPING
+			target = "DIMENSION"
 
-	#This message is sent to bedMessageTarget when a player starts sleeping.
-	#Available variables:
-	#player -> the player who started sleeping.
-	#sleepingPlayers -> the number of players in the current dimension who are sleeping.
-	#totalPlayers -> the number of players in the current dimension (spectators are not counted).
-	#sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).
-	inBedMessage = "${player} is now sleeping. [${sleepingPlayers}/${totalPlayers}]"
+		#This message is sent when a player enters their bed.
+		[sleep.messages.enterBed]
+			#Available variables:
+			#player -> the player who started sleeping.
+			#sleepingPlayers -> the number of players in the current dimension who are sleeping.
+			#totalPlayers -> the number of players in the current dimension (spectators are not counted).
+			#sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).
+			message = "${player} is now sleeping. [${sleepingPlayers}/${totalPlayers}]"
+			#Sets where this message appears.
+			#Allowed Values: SYSTEM, GAME_INFO
+			type = "GAME_INFO"
+			#Sets to whom this message is sent.
+			#Allowed Values: ALL, DIMENSION, SLEEPING
+			target = "DIMENSION"
 
-	#This message is sent to bedMessageTarget when a player gets out of bed (without being woken up naturally at morning).
-	#Available variables:
-	#player -> the player who left their bed.
-	#sleepingPlayers -> the number of players in the current dimension who are sleeping.
-	#totalPlayers -> the number of players in the current dimension (spectators are not counted).
-	#sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).
-	outOfBedMessage = "${player} has left their bed. [${sleepingPlayers}/${totalPlayers}]"
-
-	#Sets the message type for inBedMessage and outOfBedMessage.
-	#SYSTEM: Appears as a message in the chat (e.g., "Respawn point set").
-	#GAME_INFO: Game information that appears above the hotbar (e.g., "You may not rest now, the bed is too far away").
-	#Allowed Values: SYSTEM, GAME_INFO
-	bedMessageType = "GAME_INFO"
-
-	#Sets the target for inBedMessage and outOfBedMessage.
-	#ALL: Send the message to all players on the server.
-	#DIMENSION: Send the message to all players in the current dimension.
-	#SLEEPING: Only send the message to players who are currently sleeping.
-	#Allowed Values: ALL, DIMENSION, SLEEPING
-	bedMessageTarget = "DIMENSION"
+		#This message is sent when a player leaves their bed (without being woken up naturally by morning).
+		[sleep.messages.leaveBed]
+			#Available variables:
+			#player -> the player who left their bed.
+			#sleepingPlayers -> the number of players in the current dimension who are sleeping.
+			#totalPlayers -> the number of players in the current dimension (spectators are not counted).
+			#sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).
+			message = "${player} has left their bed. [${sleepingPlayers}/${totalPlayers}]"
+			#Sets where this message appears.
+			#Allowed Values: SYSTEM, GAME_INFO
+			type = "GAME_INFO"
+			#Sets to whom this message is sent.
+			#Allowed Values: ALL, DIMENSION, SLEEPING
+			target = "DIMENSION"
 ```
 
 ### Default Client Config
