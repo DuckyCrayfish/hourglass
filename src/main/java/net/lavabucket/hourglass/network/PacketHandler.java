@@ -20,19 +20,14 @@
 package net.lavabucket.hourglass.network;
 
 import java.util.Optional;
-import java.util.function.BiConsumer;
-import java.util.function.Supplier;
 
 import net.lavabucket.hourglass.HourglassMod;
 import net.lavabucket.hourglass.config.ConfigSynchronizer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fmllegacy.network.NetworkDirection;
 import net.minecraftforge.fmllegacy.network.NetworkRegistry;
-import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
 import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 
 /**
@@ -62,21 +57,6 @@ public class PacketHandler {
                 ConfigSynchronizer::decode,
                 ConfigSynchronizer::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-    }
-
-    /**
-     * Packet handler wrapper that ensures the handler is only called on the client distribution.
-     */
-    public static class ClientOnlyMessageHandler<MSG> implements BiConsumer<MSG, Supplier<Context>> {
-        private BiConsumer<MSG, Supplier<Context>> handler;
-        public ClientOnlyMessageHandler(BiConsumer<MSG, Supplier<Context>> handler) {
-            this.handler = handler;
-        }
-        @Override
-        public void accept(MSG msg, Supplier<Context> context) {
-            context.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> handler.accept(msg, context)));
-            context.get().setPacketHandled(true);
-        }
     }
 
 }
