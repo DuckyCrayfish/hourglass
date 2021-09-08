@@ -20,6 +20,8 @@
 package net.lavabucket.hourglass.time.effects;
 
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
+import static net.lavabucket.hourglass.time.effects.EffectCondition.ALWAYS;
+import static net.lavabucket.hourglass.time.effects.EffectCondition.SLEEPING;
 
 import net.lavabucket.hourglass.time.TimeContext;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
@@ -33,13 +35,16 @@ public class WeatherSleepEffect extends AbstractTimeEffect {
     @Override
     public void onTimeTick(TimeContext context) {
         ServerLevelWrapper levelWrapper = context.getTimeService().levelWrapper;
-        if (levelWrapper.weatherCycleEnabled() && effectEnabled()) {
+        EffectCondition condition = SERVER_CONFIG.weatherEffect.get();
+        boolean allAwake = context.getTimeService().sleepStatus.allAwake();
+        if (levelWrapper.weatherCycleEnabled()
+                && (condition == ALWAYS || (condition == SLEEPING && !allAwake))) {
             progressWeather(context);
         }
     }
 
     /**
-     * Accelerate the weather cycle in a level.
+     * Progress the weather cycle in the level of {@code context} by its time delta.
      *
      * @param context  the {@link TimeContext} of the current tick
      */
@@ -60,11 +65,6 @@ public class WeatherSleepEffect extends AbstractTimeEffect {
                 levelWrapper.levelData.setRainTime(Math.max(1, rainTime - weatherSpeed));
             }
         }
-    }
-
-    /** {@return true if this effect is enabled in configs} */
-    private boolean effectEnabled() {
-        return SERVER_CONFIG.accelerateWeather.get() && SERVER_CONFIG.enableSleepFeature.get();
     }
 
 }

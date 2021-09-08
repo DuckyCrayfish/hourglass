@@ -20,7 +20,10 @@
 package net.lavabucket.hourglass.time.effects;
 
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
+import static net.lavabucket.hourglass.time.effects.EffectCondition.ALWAYS;
+import static net.lavabucket.hourglass.time.effects.EffectCondition.SLEEPING;
 
+import net.lavabucket.hourglass.time.SleepStatus;
 import net.lavabucket.hourglass.time.TimeContext;
 
 /**
@@ -31,19 +34,23 @@ public class RandomTickSleepEffect extends AbstractTimeEffect {
 
     @Override
     public void onTimeTick(TimeContext context) {
-        if (SERVER_CONFIG.accelerateRandomTickSpeed.get()) {
-            updateRandomTickSpeed(context);
-        }
+        updateRandomTickSpeed(context);
     }
 
     /**
      * Updates the random tick speed based on configuration values.
-     *
      * @param context  the {@link TimeContext} of the current tick
      */
     private void updateRandomTickSpeed(TimeContext context) {
+        EffectCondition condition = SERVER_CONFIG.randomTickEffect.get();
+
+        if (condition == EffectCondition.NEVER) {
+            return;
+        }
+
         int speed = SERVER_CONFIG.baseRandomTickSpeed.get();
-        if (!context.getTimeService().sleepStatus.allAwake()) {
+        SleepStatus sleepStatus = context.getTimeService().sleepStatus;
+        if (condition == ALWAYS || (condition == SLEEPING && !sleepStatus.allAwake())) {
             speed *= context.getTimeDelta();
         }
 

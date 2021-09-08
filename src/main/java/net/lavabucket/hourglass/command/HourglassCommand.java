@@ -31,11 +31,13 @@ import com.mojang.brigadier.context.CommandContext;
 import net.lavabucket.hourglass.command.config.ConfigCommand;
 import net.lavabucket.hourglass.command.config.ConfigCommandEntry;
 import net.lavabucket.hourglass.config.ConfigSynchronizer;
+import net.lavabucket.hourglass.time.effects.EffectCondition;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.server.command.EnumArgument;
 
 /**
  * This class is used to create and register all commands used in this mod with Forge.
@@ -59,10 +61,10 @@ public class HourglassCommand {
                 .register(SERVER_CONFIG.sleepSpeedMin, DoubleArgumentType.doubleArg(0, 24000), Double.class)
                 .register(SERVER_CONFIG.sleepSpeedMax, DoubleArgumentType.doubleArg(0, 24000), Double.class)
                 .register(SERVER_CONFIG.sleepSpeedAll, DoubleArgumentType.doubleArg(-1, 24000), Double.class)
-                .register(SERVER_CONFIG.accelerateWeather, BoolArgumentType.bool(), Boolean.class)
                 .register(SERVER_CONFIG.clearWeatherOnWake, BoolArgumentType.bool(), Boolean.class)
                 .register(SERVER_CONFIG.displayBedClock, BoolArgumentType.bool(), Boolean.class)
-                .register(SERVER_CONFIG.accelerateRandomTickSpeed, BoolArgumentType.bool(), Boolean.class)
+                .register(SERVER_CONFIG.weatherEffect, EnumArgument.enumArgument(EffectCondition.class), EffectCondition.class)
+                .register(SERVER_CONFIG.randomTickEffect, EnumArgument.enumArgument(EffectCondition.class), EffectCondition.class)
                 .register(SERVER_CONFIG.baseRandomTickSpeed, IntegerArgumentType.integer(0), Integer.class);
 
         event.getDispatcher().register(literal("hourglass")

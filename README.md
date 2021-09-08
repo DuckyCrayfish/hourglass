@@ -100,21 +100,23 @@ one morning to the next.
 	nightSpeed = 1.0
 
 	[time.effects]
-		#Accelerate the passage of weather at the same rate as the passage of time, making weather events
-		#elapse faster while the passage of time is accelerated. Clear weather is not accelerated.
+		#When applied, this effect syncs the passage of weather with the current speed of time.
+		#I.e., as time moves faster, rain stops faster. Clear weather is not affected.
+		#When set to SLEEPING, this effect only applies when at least one player is sleeping in a dimension.
 		#Note: This setting is not applicable if game rule doWeatherCycle is false.
-		accelerateWeather = true
+		#Allowed Values: NEVER, ALWAYS, SLEEPING
+		weatherEffect = "SLEEPING"
 
-		#When true, accelerates the random tick speed while sleeping. This allows things like crops and
-		#grass to grow at the same rate as time is passing overnight. The modified random tick speed is the
-		#sleep.baseRandomTickSpeed value times the current time speed. This means that as time moves faster, crops grow faster.
-		#More information on the effects of random tick speed can be found here:
-		#https://minecraft.fandom.com/wiki/Tick#Random_tick
-		#WARNING: This setting manipulates the randomTickSpeed game rule. To modify the base random tick speed,
-		#use the sleep.baseRandomTickSpeed config setting instead of changing the game rule directly.
-		accelerateRandomTicking = false
+		#When applied, this effect syncs the random tick speed with the current speed of time, forcing
+		#crop, tree, and grass growth to occur at baseRandomTickSpeed multiplied by the current time-speed.
+		#When set to SLEEPING, randomTickSpeed is set to baseRandomTickSpeed unless at least one player is sleeping in a dimension.
+		#More information on the effects of random tick speed can be found here: https://minecraft.fandom.com/wiki/Tick#Random_tick
+		#WARNING: This setting overwrites the randomTickSpeed game rule. To modify the base random tick speed,
+		#use the baseRandomTickSpeed setting instead of changing the game rule directly.
+		#Allowed Values: NEVER, ALWAYS, SLEEPING
+		randomTickEffect = "SLEEPING"
 
-		#The base random tick speed to use when sleep.accelerateRandomTickSpeed config is enabled.
+		#The base random tick speed used by the randomTickEffect time effect.
 		#Range: > 0
 		baseRandomTickSpeed = 3
 
