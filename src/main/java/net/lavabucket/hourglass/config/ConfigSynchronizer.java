@@ -62,7 +62,7 @@ public class ConfigSynchronizer {
         final MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if (server != null
                 && server.isRunning()
-                && config.getSpec() == HourglassConfig.SERVER_SPEC) {
+                && config.getSpec() == HourglassConfig.SERVER_CONFIG.spec) {
 
             syncConfigWithClients();
         }

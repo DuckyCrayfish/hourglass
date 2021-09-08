@@ -38,13 +38,8 @@ import net.minecraftforge.fml.ModLoadingContext;
  */
 public class HourglassConfig {
 
-    public static final Builder SERVER_BUILDER = new Builder();
-    public static final ServerConfig SERVER_CONFIG = new ServerConfig(SERVER_BUILDER);
-    public static final ForgeConfigSpec SERVER_SPEC = SERVER_BUILDER.build();
-
-    public static final Builder CLIENT_BUILDER = new Builder();
-    public static final ClientConfig CLIENT_CONFIG = new ClientConfig(CLIENT_BUILDER);
-    public static final ForgeConfigSpec CLIENT_SPEC = CLIENT_BUILDER.build();
+    public static final ServerConfig SERVER_CONFIG = new ServerConfig(new Builder());
+    public static final ClientConfig CLIENT_CONFIG = new ClientConfig(new Builder());
 
     /**
      * Register this class's configs with the mod context provided. Should be called during mod
@@ -53,12 +48,14 @@ public class HourglassConfig {
      * @param context  the mod loading context to register the configs with.
      */
     public static void register(ModLoadingContext context) {
-        context.registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
-        context.registerConfig(ModConfig.Type.CLIENT, CLIENT_SPEC);
+        context.registerConfig(ModConfig.Type.SERVER, SERVER_CONFIG.spec);
+        context.registerConfig(ModConfig.Type.CLIENT, CLIENT_CONFIG.spec);
     }
 
     /** Server-specific configuration file. */
     public static class ServerConfig {
+
+        public final ForgeConfigSpec spec;
 
         public final DoubleValue daySpeed;
         public final DoubleValue nightSpeed;
@@ -219,12 +216,15 @@ public class HourglassConfig {
                     .defineEnum("bedMessageTarget", MessageTarget.DIMENSION);
 
             builder.pop();
+            spec = builder.build();
         }
 
     }
 
     /** Client-specific configuration file. */
     public static class ClientConfig {
+
+        public final ForgeConfigSpec spec;
 
         public final EnumValue<ScreenAlignment> clockAlignment;
         public final IntValue clockScale;
@@ -260,6 +260,7 @@ public class HourglassConfig {
                     .define("preventClockWobble", true);
 
             builder.pop();
+            spec = builder.build();
         }
 
     }
