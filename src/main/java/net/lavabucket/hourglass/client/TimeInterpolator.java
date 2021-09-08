@@ -35,9 +35,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
  */
 public class TimeInterpolator {
 
-    // Time changes should be interpolated over one tick
-    private static final float interpolationDuration = 1F;
-
     public static TimeInterpolator instance;
 
     public ClientLevel level;
@@ -181,25 +178,26 @@ public class TimeInterpolator {
      * @param timeDelta  the amount of time that has passed since this method was last run. Measured
      * in fractions of ticks.
      */
-    private void interpolateTime(float timeDelta) {
+    private void interpolateTime(final float timeDelta) {
         long time = level.getDayTime();
 
-        float omega = 2F / interpolationDuration;
-        float x = omega * timeDelta;
-        float exp = 1F / (1F + x + 0.48F * x * x + 0.235F * x * x * x);
-        float change = time - targetTime;
+        final float duration = 1f; // Interpolate over 1 tick.
+        final float omega = 2F / duration;
+        final float x = omega * timeDelta;
+        final float exp = 1F / (1F + x + 0.48F * x * x + 0.235F * x * x * x);
+        final float change = time - targetTime;
 
         float temp = (timeVelocity + omega * change) * timeDelta;
+        time = targetTime + (long) ((change + temp) * exp);
         timeVelocity = (timeVelocity - omega * temp) * exp;
-        long newTime = targetTime + (long) ((change + temp) * exp);
 
-        // Disallow overstepping
-        if (change < 0.0F == newTime > targetTime) {
-            newTime = targetTime;
+        // Correct for overshoot.
+        if (change < 0.0F == time > targetTime) {
+            time = targetTime;
             timeVelocity = 0.0F;
         }
 
-        setTime(newTime);
+        setDayTime(time);
     }
 
     /**
@@ -236,7 +234,7 @@ public class TimeInterpolator {
      *
      * @param time  the time of day to set
      */
-    private void setTime(long time) {
+    private void setDayTime(long time) {
         level.setDayTime(time);
         lastTime = time;
     }
