@@ -27,7 +27,7 @@ import java.util.function.Supplier;
 import org.apache.logging.log4j.LogManager;
 
 import net.lavabucket.hourglass.HourglassMod;
-import net.lavabucket.hourglass.network.PacketHandler;
+import net.lavabucket.hourglass.network.NetworkHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -130,7 +130,7 @@ public class ConfigSynchronizer {
                     .get(ModConfig.Type.SERVER);
             byte[] configData = Files.readAllBytes(modConfig.getFullPath());
             S2CConfigData message = new S2CConfigData(modConfig.getFileName(), configData);
-            PacketHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), message);
+            NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), message);
 
         } catch (Exception e) {
             LogManager.getLogger().error("Failed to sync server config with clients.", e);

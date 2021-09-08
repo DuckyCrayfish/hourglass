@@ -33,7 +33,7 @@ import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 /**
  * Network packet registration and management for Hourglass.
  */
-public class PacketHandler {
+public class NetworkHandler {
 
     public static final ResourceLocation CHANNEL_NAME = new ResourceLocation(HourglassMod.ID, "channel");
     public static final String PROTOCOL_VERSION = "1.0";
