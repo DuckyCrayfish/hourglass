@@ -59,7 +59,6 @@ public class HourglassConfig {
 
         public final DoubleValue daySpeed;
         public final DoubleValue nightSpeed;
-        public final BooleanValue displayBedClock;
         public final BooleanValue accelerateWeather;
 
         public final BooleanValue enableSleepFeature;
@@ -69,6 +68,7 @@ public class HourglassConfig {
         public final BooleanValue clearWeatherOnWake;
         public final BooleanValue accelerateRandomTickSpeed;
         public final IntValue baseRandomTickSpeed;
+        public final BooleanValue displayBedClock;
 
         public final ConfigValue<String> morningMessage;
         public final EnumValue<ChatType> morningMessageType;
@@ -98,10 +98,6 @@ public class HourglassConfig {
                             + "Night is defined as any time between 12500 (middle of dusk) and 23500 (middle of dawn).\n"
                             + "Vanilla speed: 1.0")
                     .defineInRange("nightSpeed", 1D, 0D, (double) TimeUtils.DAY_LENGTH);
-
-            displayBedClock = builder
-                    .comment("When true, displays a clock in the sleep interface.")
-                    .define("displayBedClock", true);
 
             accelerateWeather = builder
                     .comment("Accelerate the passage of weather at the same rate as the passage of time, making weather events\n"
@@ -153,6 +149,10 @@ public class HourglassConfig {
             baseRandomTickSpeed = builder
                     .comment("The base random tick speed to use when sleep.accelerateRandomTickSpeed config is enabled.")
                     .defineInRange("baseRandomTickSpeed", 3, 0, Integer.MAX_VALUE);
+
+            displayBedClock = builder
+                    .comment("When true, a clock is displayed in the sleep interface.")
+                    .define("displayBedClock", true);
 
             builder.pop();
 

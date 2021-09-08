@@ -54,8 +54,8 @@ public class SleepGui {
         Minecraft minecraft = Minecraft.getInstance();
 
         if (event.phase == Phase.START
-                && SERVER_CONFIG.displayBedClock.get()
                 && CLIENT_CONFIG.preventClockWobble.get()
+                && clockEnabled()
                 && minecraft.level != null
                 && !minecraft.isPaused()) {
 
@@ -71,7 +71,7 @@ public class SleepGui {
      */
     @SubscribeEvent
     public static void onGuiEvent(DrawScreenEvent.Post event) {
-        if (event.getGui() instanceof InBedChatScreen && SERVER_CONFIG.displayBedClock.get()) {
+        if (event.getGui() instanceof InBedChatScreen && clockEnabled()) {
 
             renderSleepInterface(event.getGui().getMinecraft());
         }
@@ -138,6 +138,10 @@ public class SleepGui {
         posestack.scale(scale, scale, 0);
         itemRenderer.renderAndDecorateItem(clock, 0, 0);
         posestack.popPose();
+    }
+
+    public static boolean clockEnabled() {
+        return SERVER_CONFIG.enableSleepFeature.get() && SERVER_CONFIG.displayBedClock.get();
     }
 
 }

@@ -99,9 +99,6 @@ one morning to the next.
 	#Range: 0.0 ~ 24000.0
 	nightSpeed = 1.0
 
-	#When true, displays a clock in the sleep interface.
-	displayBedClock = true
-
 	#Accelerate the passage of weather at the same rate as the passage of time, making weather events
 	#elapse faster while the passage of time is accelerated. Clear weather is not accelerated.
 	#Note: This setting is not applicable if game rule doWeatherCycle is false.
@@ -144,6 +141,9 @@ one morning to the next.
 	#The base random tick speed to use when sleep.accelerateRandomTickSpeed config is enabled.
 	#Range: > 0
 	baseRandomTickSpeed = 3
+
+	#When true, a clock is displayed in the sleep interface.
+	displayBedClock = true
 
 #This section defines settings for notification messages.
 #All messages in this section support Minecraft formatting codes (https://minecraft.fandom.com/wiki/Formatting_codes).
