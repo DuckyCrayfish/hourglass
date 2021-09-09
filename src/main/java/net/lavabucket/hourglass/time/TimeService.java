@@ -241,15 +241,13 @@ public class TimeService {
                 .getPlayerList().getPlayers().stream()
                 .map(player -> new ServerPlayerWrapper(player));
 
-        Predicate<ServerPlayerWrapper> playerPredicate =
-                player -> player.get().level.equals(level.get());
+        Predicate<ServerPlayerWrapper> predicate = player -> player.get().level.equals(level.get());
         if (level.get().equals(level.get().getServer().overworld())) {
             // If level is overworld, include all derived levels as well.
-            playerPredicate = playerPredicate
-                    .or(player -> ServerLevelWrapper.isDerived(player.get().level));
+            predicate = predicate.or(player -> ServerLevelWrapper.isDerived(player.get().level));
         }
 
-        playerStream.filter(playerPredicate)
+        playerStream.filter(predicate)
                 .forEach(player -> player.get().connection.send(timePacket.get()));
     }
 
