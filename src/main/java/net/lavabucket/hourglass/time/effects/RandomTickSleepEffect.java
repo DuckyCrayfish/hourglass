@@ -54,7 +54,7 @@ public class RandomTickSleepEffect extends AbstractTimeEffect {
             speed *= context.getTimeDelta();
         }
 
-        context.getTimeService().levelWrapper.setRandomTickSpeed(speed);
+        context.getTimeService().level.setRandomTickSpeed(speed);
     }
 
 }

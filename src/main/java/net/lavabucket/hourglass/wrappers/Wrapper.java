@@ -19,26 +19,22 @@
 
 package net.lavabucket.hourglass.wrappers;
 
-import net.minecraft.server.level.ServerPlayer;
+public class Wrapper<T> {
 
-public class ServerPlayerWrapper extends Wrapper<ServerPlayer> {
+    /** The wrapped object. */
+    protected final T wrapped;
 
     /**
-     * Instantiates a new player wrapper.
-     * @param player  the player to wrap
+     * Instantiates a new object wrapper.
+     * @param object  the object to wrap
      */
-    public ServerPlayerWrapper(ServerPlayer player) {
-        super(player);
+    public Wrapper(T object) {
+        this.wrapped = object;
     }
 
-    /**
-     * Wraps the {@link ServerPlayer#isSleeping()} method to allow for predicates that do not depend
-     * on importing the server player class.
-     *
-     * @return the value of {@link ServerPlayer#isSleeping()}
-     */
-    public boolean isSleeping() {
-        return wrapped.isSleeping();
+    /** {@return the wrapped object} */
+    public T get() {
+        return wrapped;
     }
 
 }

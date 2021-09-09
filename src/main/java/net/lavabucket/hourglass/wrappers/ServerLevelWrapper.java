@@ -43,7 +43,7 @@ import net.minecraftforge.fml.util.ObfuscationReflectionHelper.UnableToAccessFie
  * imports or references {@link ServerLevel}. This class consolidates these variations into itself,
  * allowing other classes to depend on it instead.
  */
-public class ServerLevelWrapper {
+public class ServerLevelWrapper extends Wrapper<ServerLevel> {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -51,9 +51,6 @@ public class ServerLevelWrapper {
     private static final Class<ServerLevel> levelClass = ServerLevel.class;
     private static final Class<ServerLevelData> levelDataClass = ServerLevelData.class;
     private static final Class<DerivedLevelData> derivedLevelDataClass = DerivedLevelData.class;
-
-    /** The wrapped level. */
-    public final ServerLevel level;
 
     /** The {@link ServerLevelData} of the wrapped level. */
     public final ServerLevelData levelData;
@@ -63,38 +60,34 @@ public class ServerLevelWrapper {
      * @param level  the server level to wrap
      */
     public ServerLevelWrapper(LevelAccessor level) {
-        if (!isServerLevel(level)) {
-            throw new IllegalArgumentException("level must be an instance of a server level.");
-        }
-
-        this.level = levelClass.cast(level);
-        this.levelData = levelDataClass.cast(this.level.getLevelData());
+        super(levelClass.cast(level));
+        this.levelData = levelDataClass.cast(this.get().getLevelData());
     }
 
-    /** {@return true if the 'daylight cycle' game rule is enabled in {@link #level}} */
+    /** {@return true if the 'daylight cycle' game rule is enabled in {@link #wrapped}} */
     public boolean daylightRuleEnabled() {
-        return level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
+        return wrapped.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
     }
 
-    /** {@return true if the 'weather cycle' game rule is enabled in {@link #level}} */
+    /** {@return true if the 'weather cycle' game rule is enabled in {@link #wrapped}} */
     public boolean weatherRuleEnabled() {
-        return level.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE);
+        return wrapped.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE);
     }
 
     /**
-     * Sets the 'random tick speed' game rule for {@link #level}.
+     * Sets the 'random tick speed' game rule for {@link #wrapped}.
      * @param speed  the new random tick speed
      */
     public void setRandomTickSpeed(int speed) {
-        level.getGameRules().getRule(GameRules.RULE_RANDOMTICKING).set(speed, level.getServer());
+        wrapped.getGameRules().getRule(GameRules.RULE_RANDOMTICKING).set(speed, wrapped.getServer());
     }
 
     /**
-     * Convenience method that returns true if the weather cycle is progressing in {@link #level}.
-     * @return true if the weather cycle is progressing in {@link #level}
+     * Convenience method that returns true if the weather cycle is progressing in {@link #wrapped}.
+     * @return true if the weather cycle is progressing in {@link #wrapped}
      */
     public boolean weatherCycleEnabled() {
-        return weatherRuleEnabled() && level.dimensionType().hasSkyLight();
+        return weatherRuleEnabled() && wrapped.dimensionType().hasSkyLight();
     }
 
     /**
@@ -118,7 +111,7 @@ public class ServerLevelWrapper {
         try {
             Field sleepStatus = ObfuscationReflectionHelper.findField(levelClass, "f_143245_");
             sleepStatus.setAccessible(true);
-            sleepStatus.set(level, newStatus);
+            sleepStatus.set(wrapped, newStatus);
         } catch (IllegalArgumentException | IllegalAccessException | SecurityException | UnableToAccessFieldException e) {
             LOGGER.warn(HourglassMod.MARKER, "Error setting sleep status.", e);
             return;
@@ -129,10 +122,10 @@ public class ServerLevelWrapper {
      * Performs vanilla morning wakeup functionality to wake up all sleeping players.
      */
     public void wakeUpAllPlayers() {
-        level.players().stream()
+        wrapped.players().stream()
                 .map(player -> new ServerPlayerWrapper(player))
                 .filter(ServerPlayerWrapper::isSleeping)
-                .forEach(wrapper -> wrapper.player.stopSleepInBed(false, false));
+                .forEach(player -> player.get().stopSleepInBed(false, false));
     }
 
     /**

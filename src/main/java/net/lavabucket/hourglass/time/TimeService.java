@@ -48,7 +48,7 @@ public class TimeService {
     // The largest number of lunar cycles that can be stored in an int
     private static final int overflowThreshold = 11184 * TimeUtils.LUNAR_CYCLE_LENGTH;
 
-    public final ServerLevelWrapper levelWrapper;
+    public final ServerLevelWrapper level;
     public final SleepStatus sleepStatus;
 
     private double timeDecimalAccumulator = 0;
@@ -56,23 +56,23 @@ public class TimeService {
     /**
      * Creates a new instance.
      *
-     * @param levelWrapper  the level whose time this object should manage
+     * @param level  the wrapped level whose time this object should manage
      */
-    public TimeService(ServerLevelWrapper levelWrapper) {
-        this.levelWrapper = levelWrapper;
+    public TimeService(ServerLevelWrapper level) {
+        this.level = level;
         this.sleepStatus = new SleepStatus(() -> SERVER_CONFIG.enableSleepFeature.get());
-        this.levelWrapper.setSleepStatus(this.sleepStatus);
+        this.level.setSleepStatus(this.sleepStatus);
     }
 
     /**
      * Performs all time, sleep, and weather calculations. Should run once per tick.
      */
     public void tick() {
-        if (!levelWrapper.daylightRuleEnabled()) {
+        if (!level.daylightRuleEnabled()) {
             return;
         }
 
-        long oldTime = levelWrapper.level.getDayTime();
+        long oldTime = level.get().getDayTime();
         long time = elapseTime();
         long elapsedTime = time - oldTime;
 
@@ -90,17 +90,17 @@ public class TimeService {
     }
 
     private void handleMorning() {
-        long time = levelWrapper.level.getDayTime();
-        ForgeEventFactory.onSleepFinished(levelWrapper.level, time, time);
+        long time = level.get().getDayTime();
+        ForgeEventFactory.onSleepFinished(level.get(), time, time);
         sleepStatus.removeAllSleepers();
-        levelWrapper.wakeUpAllPlayers();
+        level.wakeUpAllPlayers();
 
-        if (levelWrapper.weatherRuleEnabled() && SERVER_CONFIG.clearWeatherOnWake.get()) {
-            levelWrapper.stopWeather();
+        if (level.weatherRuleEnabled() && SERVER_CONFIG.clearWeatherOnWake.get()) {
+            level.stopWeather();
         }
 
         LOGGER.debug(MARKER, "Sleep cycle complete on dimension: {}.",
-                levelWrapper.level.dimension().location());
+                level.get().dimension().location());
     }
 
     /**
@@ -112,7 +112,7 @@ public class TimeService {
      * this vanilla progression.
      */
     private void vanillaTimeCompensation() {
-        levelWrapper.level.setDayTime(levelWrapper.level.getDayTime() - 1);
+        level.get().setDayTime(level.get().getDayTime() - 1);
     }
 
     /**
@@ -120,20 +120,20 @@ public class TimeService {
      * lunar cycle.
      */
     private void preventTimeOverflow() {
-        long time = levelWrapper.level.getDayTime();
+        long time = level.get().getDayTime();
         if (time > overflowThreshold) {
-            levelWrapper.level.setDayTime(time - overflowThreshold);
+            level.get().setDayTime(time - overflowThreshold);
         }
     }
 
     /**
-     * Elapse time in this service's {@link #levelWrapper level} based on the current time
+     * Elapse time in this service's {@link #level level} based on the current time
      * multiplier. This method should be called during every tick.
      *
      * @return the new day time
      */
     private long elapseTime() {
-        long oldTime = levelWrapper.level.getDayTime();
+        long oldTime = level.get().getDayTime();
 
         double multiplier = getMultiplier(oldTime);
         long integralMultiplier = (long) multiplier;
@@ -147,7 +147,7 @@ public class TimeService {
         timeToAdd = correctForOvershoot(timeToAdd);
 
         long newTime = oldTime + timeToAdd;
-        levelWrapper.level.setDayTime(newTime);
+        level.get().setDayTime(newTime);
         return newTime;
     }
 
@@ -163,7 +163,7 @@ public class TimeService {
      * @return the corrected time to elapse
      */
     private long correctForOvershoot(long timeToAdd) {
-        long oldTime = levelWrapper.level.getDayTime();
+        long oldTime = level.get().getDayTime();
         long currentTimeOfDay = oldTime % TimeUtils.DAY_LENGTH;
         double multiplier = getMultiplier(oldTime);
 
@@ -236,21 +236,21 @@ public class TimeService {
      * Broadcasts the current time to all players who observe it.
      */
     public void broadcastTime() {
-        TimePacketWrapper timePacketWrapper = TimePacketWrapper.create(levelWrapper);
-        Stream<ServerPlayerWrapper> playerStream = levelWrapper.level.getServer()
+        TimePacketWrapper timePacket = TimePacketWrapper.create(level);
+        Stream<ServerPlayerWrapper> playerStream = level.get().getServer()
                 .getPlayerList().getPlayers().stream()
                 .map(player -> new ServerPlayerWrapper(player));
 
         Predicate<ServerPlayerWrapper> playerPredicate =
-                wrapper -> wrapper.player.level.equals(levelWrapper.level);
-        if (levelWrapper.level.equals(levelWrapper.level.getServer().overworld())) {
+                player -> player.get().level.equals(level.get());
+        if (level.get().equals(level.get().getServer().overworld())) {
             // If level is overworld, include all derived levels as well.
             playerPredicate = playerPredicate
-                    .or(wrapper -> ServerLevelWrapper.isDerived(wrapper.player.level));
+                    .or(player -> ServerLevelWrapper.isDerived(player.get().level));
         }
 
         playerStream.filter(playerPredicate)
-                .forEach(wrapper -> wrapper.player.connection.send(timePacketWrapper.packet));
+                .forEach(player -> player.get().connection.send(timePacket.get()));
     }
 
     private Collection<TimeEffect> getActiveTimeEffects() {

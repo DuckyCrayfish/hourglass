@@ -132,24 +132,24 @@ public class TemplateMessage {
      * {@code level} may be null.
      *
      * @param target  the target of the message
-     * @param levelWrapper  the level to send targeted message to, if applicable
+     * @param level  the level to send targeted message to, if applicable
      */
-    public void send(MessageTarget target, @Nullable ServerLevelWrapper levelWrapper) {
-        if (target != MessageTarget.ALL && levelWrapper == null) {
+    public void send(MessageTarget target, @Nullable ServerLevelWrapper level) {
+        if (target != MessageTarget.ALL && level == null) {
             throw new IllegalArgumentException("Level must be specified unless target is MessageTarget.ALL.");
         }
 
         if (target == MessageTarget.ALL) {
-            levelWrapper.level.getServer().getPlayerList().broadcastMessage(this.message, type, Util.NIL_UUID);
+            level.get().getServer().getPlayerList().broadcastMessage(this.message, type, Util.NIL_UUID);
         } else {
-            Stream<ServerPlayerWrapper> playerStream = levelWrapper.level.players().stream()
+            Stream<ServerPlayerWrapper> playerStream = level.get().players().stream()
                     .map(player -> new ServerPlayerWrapper(player));
 
             if (target == MessageTarget.SLEEPING) {
                 playerStream = playerStream.filter(ServerPlayerWrapper::isSleeping);
             }
 
-            playerStream.forEach(wrapper -> wrapper.player.sendMessage(this.message, type, Util.NIL_UUID));
+            playerStream.forEach(player -> player.get().sendMessage(this.message, type, Util.NIL_UUID));
         }
     }
 

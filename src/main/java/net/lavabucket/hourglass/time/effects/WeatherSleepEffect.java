@@ -34,10 +34,10 @@ public class WeatherSleepEffect extends AbstractTimeEffect {
 
     @Override
     public void onTimeTick(TimeContext context) {
-        ServerLevelWrapper levelWrapper = context.getTimeService().levelWrapper;
+        ServerLevelWrapper level = context.getTimeService().level;
         EffectCondition condition = SERVER_CONFIG.weatherEffect.get();
         boolean allAwake = context.getTimeService().sleepStatus.allAwake();
-        if (levelWrapper.weatherCycleEnabled()
+        if (level.weatherCycleEnabled()
                 && (condition == ALWAYS || (condition == SLEEPING && !allAwake))) {
             progressWeather(context);
         }
@@ -49,20 +49,20 @@ public class WeatherSleepEffect extends AbstractTimeEffect {
      * @param context  the {@link TimeContext} of the current tick
      */
     private void progressWeather(TimeContext context) {
-        ServerLevelWrapper levelWrapper = context.getTimeService().levelWrapper;
-        int clearWeatherTime = levelWrapper.levelData.getClearWeatherTime();
-        int thunderTime = levelWrapper.levelData.getThunderTime();
-        int rainTime = levelWrapper.levelData.getRainTime();
+        ServerLevelWrapper level = context.getTimeService().level;
+        int clearWeatherTime = level.levelData.getClearWeatherTime();
+        int thunderTime = level.levelData.getThunderTime();
+        int rainTime = level.levelData.getRainTime();
 
         // Subtract 1 from weather speed to account for vanilla's weather progression of 1 per tick.
         int weatherSpeed = (int) Math.min(Integer.MAX_VALUE, context.getTimeDelta()) - 1;
 
         if (clearWeatherTime <= 0) {
             if (thunderTime > 0) {
-                levelWrapper.levelData.setThunderTime(Math.max(1, thunderTime - weatherSpeed));
+                level.levelData.setThunderTime(Math.max(1, thunderTime - weatherSpeed));
             }
             if (rainTime > 0) {
-                levelWrapper.levelData.setRainTime(Math.max(1, rainTime - weatherSpeed));
+                level.levelData.setRainTime(Math.max(1, rainTime - weatherSpeed));
             }
         }
     }

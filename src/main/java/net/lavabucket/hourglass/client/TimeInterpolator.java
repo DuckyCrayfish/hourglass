@@ -36,7 +36,7 @@ public class TimeInterpolator {
 
     public static TimeInterpolator instance;
 
-    public final ClientLevelWrapper levelWrapper;
+    public final ClientLevelWrapper level;
     private boolean initialized;
     private long targetTime;
     private float timeVelocity;
@@ -54,8 +54,8 @@ public class TimeInterpolator {
     @SubscribeEvent
     public static void onWorldLoad(WorldEvent.Load event) {
         if (ClientLevelWrapper.isClientLevel(event.getWorld())) {
-            ClientLevelWrapper wrapper = new ClientLevelWrapper(event.getWorld());
-            instance = new TimeInterpolator(wrapper);
+            ClientLevelWrapper level = new ClientLevelWrapper(event.getWorld());
+            instance = new TimeInterpolator(level);
         }
     }
 
@@ -69,7 +69,7 @@ public class TimeInterpolator {
      */
     @SubscribeEvent
     public static void onWorldUnload(WorldEvent.Unload event) {
-        if (instance != null && instance.levelWrapper.level.equals(event.getWorld())) {
+        if (instance != null && instance.level.get().equals(event.getWorld())) {
             instance = null;
         }
     }
@@ -89,7 +89,7 @@ public class TimeInterpolator {
         if (event.phase == Phase.START
                 && !minecraft.isPaused()
                 && instance != null
-                && instance.levelWrapper.level.equals(minecraft.level)) {
+                && instance.level.get().equals(minecraft.level)) {
 
             instance.partialTick(event.renderTickTime);
         }
@@ -108,7 +108,7 @@ public class TimeInterpolator {
         if (event.phase == Phase.END
                 && !minecraft.isPaused()
                 && instance != null
-                && instance.levelWrapper.level.equals(minecraft.level)) {
+                && instance.level.get().equals(minecraft.level)) {
 
             instance.undoVanillaTimeTicks();
         }
@@ -117,10 +117,10 @@ public class TimeInterpolator {
     /**
      * Creates a new instance.
      *
-     * @param levelWrapper  the wrapper of the level whose time this object will manage
+     * @param level  the wrapped level whose time this object will manage
      */
-    public TimeInterpolator(ClientLevelWrapper levelWrapper) {
-        this.levelWrapper = levelWrapper;
+    public TimeInterpolator(ClientLevelWrapper level) {
+        this.level = level;
         this.initialized = false;
     }
 
@@ -128,7 +128,7 @@ public class TimeInterpolator {
      * Initializes variables that need to be set after ticks have started processing.
      */
     private void init() {
-        long time = levelWrapper.level.getDayTime();
+        long time = level.get().getDayTime();
         this.targetTime = time;
         this.lastTime = time;
         this.initialized = true;
@@ -172,7 +172,7 @@ public class TimeInterpolator {
      * in fractions of ticks.
      */
     private void interpolateTime(final float timeDelta) {
-        long time = levelWrapper.level.getDayTime();
+        long time = level.get().getDayTime();
 
         final float duration = 1f; // Interpolate over 1 tick.
         final float omega = 2F / duration;
@@ -203,7 +203,7 @@ public class TimeInterpolator {
      * method jumps to same day as the interpolation target and interpolates from there.
      */
     private void updateTargetTime() {
-        long time = levelWrapper.level.getDayTime();
+        long time = level.get().getDayTime();
 
         // Packet received, update interpolation target and reset current time.
         if (time != lastTime) {
@@ -217,7 +217,7 @@ public class TimeInterpolator {
                 lastTime = time - newTimeOfDay + oldTimeOfDay;
             }
 
-            levelWrapper.level.setDayTime(lastTime);
+            level.get().setDayTime(lastTime);
         }
     }
 
@@ -228,7 +228,7 @@ public class TimeInterpolator {
      * @param time  the time of day to set
      */
     private void setDayTime(long time) {
-        levelWrapper.level.setDayTime(time);
+        level.get().setDayTime(time);
         lastTime = time;
     }
 
@@ -237,8 +237,8 @@ public class TimeInterpolator {
      * this method at the end of every tick to undo this.
      */
     private void undoVanillaTimeTicks() {
-        if (levelWrapper.daylightRuleEnabled()) {
-            levelWrapper.level.setDayTime(levelWrapper.level.getDayTime() - 1);
+        if (level.daylightRuleEnabled()) {
+            level.get().setDayTime(level.get().getDayTime() - 1);
         }
     }
 

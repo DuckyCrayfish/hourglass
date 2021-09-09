@@ -57,9 +57,9 @@ public class TimeServiceManager {
     @SubscribeEvent
     public static void onWorldLoad(WorldEvent.Load event) {
         if (ServerLevelWrapper.isServerLevel(event.getWorld())) {
-            ServerLevelWrapper wrapper = new ServerLevelWrapper(event.getWorld());
-            if (wrapper.level.equals(wrapper.level.getServer().overworld())) {
-                service = new TimeService(wrapper);
+            ServerLevelWrapper level = new ServerLevelWrapper(event.getWorld());
+            if (level.get().equals(level.get().getServer().overworld())) {
+                service = new TimeService(level);
             }
         }
     }
@@ -71,7 +71,7 @@ public class TimeServiceManager {
      */
     @SubscribeEvent
     public static void onWorldUnload(WorldEvent.Unload event) {
-        if (service != null && service.levelWrapper.level == event.getWorld()) {
+        if (service != null && service.level.get() == event.getWorld()) {
             service = null;
         }
     }
@@ -84,7 +84,7 @@ public class TimeServiceManager {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onWorldTick(TickEvent.WorldTickEvent event) {
         if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.START
-                && service != null && service.levelWrapper.level == event.world) {
+                && service != null && service.level.get() == event.world) {
             service.tick();
         }
     }

@@ -32,26 +32,19 @@ import net.minecraft.world.level.LevelAccessor;
  * imports or references {@link ClientLevel}. This class consolidates these variations into itself,
  * allowing other classes to depend on it instead.
  */
-public class ClientLevelWrapper {
-
-    /** The wrapped level. */
-    public final ClientLevel level;
+public class ClientLevelWrapper extends Wrapper<ClientLevel> {
 
     /**
      * Instantiates a new object.
      * @param level  the client level to wrap
      */
     public ClientLevelWrapper(LevelAccessor level) {
-        if (!(level instanceof ClientLevel)) {
-            throw new IllegalArgumentException("level must be a client level instance.");
-        }
-
-        this.level = (ClientLevel) level;
+        super((ClientLevel) level);
     }
 
     /** {@return true if the 'daylight cycle' game rule is enabled in {@link #level}} */
     public boolean daylightRuleEnabled() {
-        return level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
+        return wrapped.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
     }
 
     /** {@return true if {@code levelAccessor} is an instance of {@link ClientLevel}} */

@@ -24,27 +24,24 @@ import net.minecraft.network.protocol.game.ClientboundSetTimePacket;
 /**
  * Time packet wrapper used to hide class or package changes from classes who use time-packets.
  */
-public class TimePacketWrapper {
-
-    /** The wrapped time-packet. */
-    public final ClientboundSetTimePacket packet;
+public class TimePacketWrapper extends Wrapper<ClientboundSetTimePacket> {
 
     /**
      * Creates a new instance.
      * @param packet  the time-packet to wrap
      */
     public TimePacketWrapper(ClientboundSetTimePacket packet) {
-        this.packet = packet;
+        super(packet);
     }
 
     /**
      * Creates a wrapped time-packet for a level.
-     * @param levelWrapper  the wrapped level for which to create a time-packet
+     * @param level  the wrapped level for which to create a time-packet
      */
-    public static TimePacketWrapper create(ServerLevelWrapper levelWrapper) {
-        long gameTime = levelWrapper.level.getGameTime();
-        long dayTime = levelWrapper.level.getDayTime();
-        boolean ruleDaylight = levelWrapper.daylightRuleEnabled();
+    public static TimePacketWrapper create(ServerLevelWrapper level) {
+        long gameTime = level.get().getGameTime();
+        long dayTime = level.get().getDayTime();
+        boolean ruleDaylight = level.daylightRuleEnabled();
         ClientboundSetTimePacket packet = new ClientboundSetTimePacket(gameTime, dayTime, ruleDaylight);
         return new TimePacketWrapper(packet);
     }
