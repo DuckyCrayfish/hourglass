@@ -26,8 +26,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 /**
- * This class mimics a lot of the functionality of {@link net.minecraft.server.players.SleepStatus},
- * but includes the ability to conditionally block vanilla sleep functionality.
+ * This class keeps track of the number of active and sleeping players in a level.
+ *
+ * This class mimics all functionality of Minecraft's SleepStatus class in 1.17+, but includes the
+ * ability to conditionally block vanilla sleep functionality.
  *
  * This class also includes a number of utility methods and getters for use in Hourglass.
  */
@@ -47,61 +49,24 @@ public class SleepStatus extends net.minecraft.server.players.SleepStatus {
     }
 
     /**
-     * Mimics the implementation of {@link SleepStatus#areEnoughSleeping(int)}, except blocks
-     * vanilla sleep functionality by returning false if {@link #preventSleepSupplier} returns true.
+     * Resets the sleeping player count.
+     * Mimics super method in 1.17+.
      */
-    @Override
-    public boolean areEnoughSleeping(int percentageRequired) {
-        if (preventSleepSupplier.get()) {
-            return false;
-        } else {
-            return sleepingPlayerCount >= sleepersNeeded(percentageRequired);
-        }
-    }
-
-    /**
-     * Mimics the implementation of {@link SleepStatus#areEnoughDeepSleeping(int, List)}, except
-     * blocks vanilla sleep functionality by returning false if {@link #preventSleepSupplier}
-     * returns true.
-     */
-    @Override
-    public boolean areEnoughDeepSleeping(int percentageRequired, List<ServerPlayer> playerList) {
-        if (preventSleepSupplier.get()) {
-            return false;
-        } else {
-            long deepSleepers = playerList.stream().filter(Player::isSleepingLongEnough).count();
-            return deepSleepers >= sleepersNeeded(percentageRequired);
-        }
-    }
-
-    /**
-     * Mimics the implementation of {@link SleepStatus#sleepersNeeded(int)}.
-     */
-    @Override
-    public int sleepersNeeded(int percentageRequired) {
-        return Math.max(1, (int) Math.ceil(activePlayerCount * percentageRequired / 100.0D));
-    }
-
-    /**
-     * Mimics the implementation of {@link SleepStatus#removeAllSleepers()}.
-     */
-    @Override
     public void removeAllSleepers() {
         sleepingPlayerCount = 0;
     }
 
     /**
-     * Mimics the implementation of {@link SleepStatus#amountSleeping()}.
+     * {@return the number of sleeping players}
+     * Mimics super method in 1.17+.
      */
-    @Override
     public int amountSleeping() {
         return sleepingPlayerCount;
     }
 
     /**
-     * Get the amount of players currently active (not spectating).
-     *
-     * @return the active player count
+     * {@return the number of players currently active (not spectating)}
+     * Mimics super method in 1.17+.
      */
     public int amountActive() {
         return activePlayerCount;
@@ -129,13 +94,10 @@ public class SleepStatus extends net.minecraft.server.players.SleepStatus {
     }
 
     /**
-     * Mimics the implementation of {@link SleepStatus#update(List)}, except blocks vanilla sleep
-     * messages by returning false if {@link #preventSleepSupplier} returns true.
+     * Updates this object's player counts based on {@code playerList}.
+     * @param playerList  the list of players to count
      */
-    @Override
-    public boolean update(List<ServerPlayer> playerList) {
-        int oldActiveCount = activePlayerCount;
-        int oldSleepingCount = sleepingPlayerCount;
+    public void updatePlayerCounts(List<ServerPlayer> playerList) {
         activePlayerCount = 0;
         sleepingPlayerCount = 0;
 
@@ -147,6 +109,78 @@ public class SleepStatus extends net.minecraft.server.players.SleepStatus {
                 }
             }
         }
+    }
+
+    /**
+     * Returns the number of sleeping players required to meet the {@code percentageRequired} sleep
+     * threshhold based on current active player count.
+     *
+     * This method is only called on 1.17+.
+     * Mimics super method in 1.17+.
+     *
+     * @param percentageRequired  percentage on which to calculate required sleeping player count
+     * @return the number of sleeping players required to meet the sleep threshhold
+     */
+    public int sleepersNeeded(int percentageRequired) {
+        return Math.max(1, (int) Math.ceil(activePlayerCount * percentageRequired / 100.0D));
+    }
+
+    /**
+     * This method should only be called by vanilla code.
+     *
+     * Returns true if enough players are sleeping to pass the night, false otherwise.
+     * This method always returns false if {@link #preventSleepSupplier} returns true.
+     *
+     * This method is only called on 1.17+.
+     * When {@link #preventSleepSupplier} returns false, this method mimics super method in 1.17+.
+     * When {@link #preventSleepSupplier} returns true, this method blocks vanilla sleep in 1.17+.
+     *
+     * @param percentageRequired  percentage on which to calculate required sleeping player count
+     */
+    public boolean areEnoughSleeping(int percentageRequired) {
+        if (preventSleepSupplier.get()) {
+            return false;
+        } else {
+            return sleepingPlayerCount >= sleepersNeeded(percentageRequired);
+        }
+    }
+
+    /**
+     * This method should only be called by vanilla code.
+     *
+     * Returns true if enough players are in a deep sleep to pass the night, false otherwise.
+     * This method always returns false if {@link #preventSleepSupplier} returns true.
+     *
+     * This method is only called on 1.17+.
+     * When {@link #preventSleepSupplier} returns false, this method mimics super method in 1.17+.
+     * When {@link #preventSleepSupplier} returns true, this method blocks vanilla sleep in 1.17+.
+     *
+     * @param percentageRequired  percentage on which to calculate required sleeping player count
+     */
+    public boolean areEnoughDeepSleeping(int percentageRequired, List<ServerPlayer> playerList) {
+        if (preventSleepSupplier.get()) {
+            return false;
+        } else {
+            long deepSleepers = playerList.stream().filter(Player::isSleepingLongEnough).count();
+            return deepSleepers >= sleepersNeeded(percentageRequired);
+        }
+    }
+
+    /**
+     * This method updates this object's player counts and returns true or false if sleeping player
+     * messages should be displayed.
+     *
+     * This method is only called on 1.17+.
+     * When {@link #preventSleepSupplier} returns false, this method mimics super method in 1.17+.
+     * When {@link #preventSleepSupplier} returns true, this method blocks vanilla sleep messages in 1.17+.
+     *
+     * @param playerList  the list of players to count
+     */
+    public boolean update(List<ServerPlayer> playerList) {
+        int oldActiveCount = activePlayerCount;
+        int oldSleepingCount = sleepingPlayerCount;
+
+        updatePlayerCounts(playerList);
 
         if (preventSleepSupplier.get()) {
             return false;
@@ -156,4 +190,5 @@ public class SleepStatus extends net.minecraft.server.players.SleepStatus {
             return !noSleepers && valueChanged;
         }
     }
+
 }
