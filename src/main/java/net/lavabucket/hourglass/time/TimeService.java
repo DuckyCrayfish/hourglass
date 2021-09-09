@@ -23,8 +23,6 @@ import static net.lavabucket.hourglass.HourglassMod.MARKER;
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
 import java.util.Collection;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,7 +32,6 @@ import net.lavabucket.hourglass.time.effects.TimeEffect;
 import net.lavabucket.hourglass.utils.MathUtils;
 import net.lavabucket.hourglass.utils.TimeUtils;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
-import net.lavabucket.hourglass.wrappers.ServerPlayerWrapper;
 import net.lavabucket.hourglass.wrappers.TimePacketWrapper;
 import net.minecraftforge.event.ForgeEventFactory;
 
@@ -237,18 +234,28 @@ public class TimeService {
      */
     public void broadcastTime() {
         TimePacketWrapper timePacket = TimePacketWrapper.create(level);
-        Stream<ServerPlayerWrapper> playerStream = level.get().getServer()
-                .getPlayerList().getPlayers().stream()
-                .map(player -> new ServerPlayerWrapper(player));
+        level.get().getServer().getPlayerList().getPlayers().stream()
+                .filter(player -> managesLevel(new ServerLevelWrapper(player.level)))
+                .forEach(player -> player.connection.send(timePacket.get()));
+    }
 
-        Predicate<ServerPlayerWrapper> predicate = player -> player.get().level.equals(level.get());
-        if (level.get().equals(level.get().getServer().overworld())) {
-            // If level is overworld, include all derived levels as well.
-            predicate = predicate.or(player -> ServerLevelWrapper.isDerived(player.get().level));
+    /**
+     * Returns true if {@code levelToCheck} has its time managed by this object, or false otherwise.
+     * If this object is managing the overworld, this method will return true for all derived
+     * levels.
+     *
+     * @param levelToCheck  the level to check
+     * @return true if {@code levelToCheck} has its time managed by this object, or false otherwise.
+     */
+    public boolean managesLevel(ServerLevelWrapper levelToCheck) {
+        if (level.get().equals(levelToCheck.get())) {
+            return true;
+        } else if (level.get().equals(level.get().getServer().overworld())
+                && ServerLevelWrapper.isDerived(levelToCheck.get())) {
+            return true;
+        } else {
+            return false;
         }
-
-        playerStream.filter(predicate)
-                .forEach(player -> player.get().connection.send(timePacket.get()));
     }
 
     private Collection<TimeEffect> getActiveTimeEffects() {
