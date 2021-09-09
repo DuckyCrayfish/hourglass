@@ -29,11 +29,11 @@ import net.lavabucket.hourglass.time.SleepStatus;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.storage.DerivedLevelData;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper.UnableToAccessFieldException;
 
 /**
  * This class acts as a wrapper for {@link ServerLevel} to increase consistency between Minecraft
@@ -48,8 +48,10 @@ public class ServerLevelWrapper {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Field sleepStatus = ObfuscationReflectionHelper.findField(ServerLevel.class, "f_143245_");
-    static { sleepStatus.setAccessible(true); }
+    // Store classes at the top to minimize file changes between Minecraft versions.
+    private static final Class<ServerLevel> levelClass = ServerLevel.class;
+    private static final Class<ServerLevelData> levelDataClass = ServerLevelData.class;
+    private static final Class<DerivedLevelData> derivedLevelDataClass = DerivedLevelData.class;
 
     /** The wrapped level. */
     public final ServerLevel level;
@@ -62,11 +64,11 @@ public class ServerLevelWrapper {
      * @param level  the level to wrap
      */
     public ServerLevelWrapper(LevelAccessor level) {
-        if (!(level instanceof ServerLevel)) {
-            throw new IllegalArgumentException("level must be an instance of ServerLevel.");
+        if (!isServerLevel(level)) {
+            throw new IllegalArgumentException("level must be an instance of a server level.");
         }
-        this.level = (ServerLevel) level;
-        this.levelData = (ServerLevelData) this.level.getLevelData();
+        this.level = levelClass.cast(level);
+        this.levelData = levelDataClass.cast(this.level.getLevelData());
 
     }
 
@@ -101,7 +103,6 @@ public class ServerLevelWrapper {
      * to the methods that do this in vanilla.
      */
     public void stopWeather() {
-        ServerLevelData levelData = (ServerLevelData) level.getLevelData();
         levelData.setRainTime(0);
         levelData.setRaining(false);
         levelData.setThunderTime(0);
@@ -109,14 +110,18 @@ public class ServerLevelWrapper {
     }
 
     /**
-     * Sets the {@link ServerLevel} sleep status, as access modifiers restrict access to this field.
+     * Sets the {@link ServerLevel} sleep status using reflection, as access modifiers prevent this.
+     * In Minecraft versions lower than 1.17 this method should do nothing.
+     *
      * @param newStatus  the new sleep status
      */
     public void setSleepStatus(SleepStatus newStatus) {
         try {
+            Field sleepStatus = ObfuscationReflectionHelper.findField(levelClass, "f_143245_");
+            sleepStatus.setAccessible(true);
             sleepStatus.set(level, newStatus);
-        } catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
-            LOGGER.error(HourglassMod.MARKER, "Error setting sleep status.", e);
+        } catch (IllegalArgumentException | IllegalAccessException | SecurityException | UnableToAccessFieldException e) {
+            LOGGER.warn(HourglassMod.MARKER, "Error setting sleep status.", e);
             return;
         }
     }
@@ -134,13 +139,13 @@ public class ServerLevelWrapper {
      * {@return true if {@code level} is a derived level}
      * @param level  the level to check
      */
-    public static boolean isDerived(Level level) {
-        return level.getLevelData() instanceof DerivedLevelData;
+    public static boolean isDerived(LevelAccessor level) {
+        return level != null && level.getLevelData().getClass() == derivedLevelDataClass;
     }
 
-    /** {@return true if {@code levelAccessor} is an instance of {@link ServerLevel}} */
-    public static boolean isServerLevel(LevelAccessor levelAccessor) {
-        return levelAccessor instanceof ServerLevel;
+    /** {@return true if {@code level} is an instance of a server level} */
+    public static boolean isServerLevel(LevelAccessor level) {
+        return level != null && level.getClass() == levelClass;
     }
 
 }
