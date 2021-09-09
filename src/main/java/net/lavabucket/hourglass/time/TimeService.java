@@ -23,8 +23,8 @@ import static net.lavabucket.hourglass.HourglassMod.MARKER;
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,8 +34,8 @@ import net.lavabucket.hourglass.time.effects.TimeEffect;
 import net.lavabucket.hourglass.utils.MathUtils;
 import net.lavabucket.hourglass.utils.TimeUtils;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
+import net.lavabucket.hourglass.wrappers.ServerPlayerWrapper;
 import net.lavabucket.hourglass.wrappers.TimePacketWrapper;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.ForgeEventFactory;
 
 /**
@@ -237,15 +237,20 @@ public class TimeService {
      */
     public void broadcastTime() {
         TimePacketWrapper timePacketWrapper = TimePacketWrapper.create(levelWrapper);
-        List<ServerPlayer> playerList = levelWrapper.level.getServer().getPlayerList().getPlayers();
-        Predicate<ServerPlayer> playerPredicate = player -> player.level.equals(levelWrapper.level);
+        Stream<ServerPlayerWrapper> playerStream = levelWrapper.level.getServer()
+                .getPlayerList().getPlayers().stream()
+                .map(player -> new ServerPlayerWrapper(player));
 
+        Predicate<ServerPlayerWrapper> playerPredicate =
+                wrapper -> wrapper.player.level.equals(levelWrapper.level);
         if (levelWrapper.level.equals(levelWrapper.level.getServer().overworld())) {
             // If level is overworld, include all derived levels as well.
-            playerPredicate = playerPredicate.or(player -> ServerLevelWrapper.isDerived(player.level));
+            playerPredicate = playerPredicate
+                    .or(wrapper -> ServerLevelWrapper.isDerived(wrapper.player.level));
         }
 
-        playerList.stream().filter(playerPredicate).forEach(player -> player.connection.send(timePacketWrapper.packet));
+        playerStream.filter(playerPredicate)
+                .forEach(wrapper -> wrapper.player.connection.send(timePacketWrapper.packet));
     }
 
     private Collection<TimeEffect> getActiveTimeEffects() {

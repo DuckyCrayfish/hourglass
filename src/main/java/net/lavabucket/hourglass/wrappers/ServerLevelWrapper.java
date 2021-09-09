@@ -27,7 +27,6 @@ import org.apache.logging.log4j.Logger;
 import net.lavabucket.hourglass.HourglassMod;
 import net.lavabucket.hourglass.time.SleepStatus;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.storage.DerivedLevelData;
@@ -130,9 +129,10 @@ public class ServerLevelWrapper {
      * Performs vanilla morning wakeup functionality to wake up all sleeping players.
      */
     public void wakeUpAllPlayers() {
-        level.players().stream().filter(LivingEntity::isSleeping).forEach(player -> {
-            player.stopSleepInBed(false, false);
-        });
+        level.players().stream()
+                .map(player -> new ServerPlayerWrapper(player))
+                .filter(ServerPlayerWrapper::isSleeping)
+                .forEach(wrapper -> wrapper.player.stopSleepInBed(false, false));
     }
 
     /**

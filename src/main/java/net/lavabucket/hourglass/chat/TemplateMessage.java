@@ -28,11 +28,11 @@ import org.apache.logging.log4j.core.lookup.MapLookup;
 import org.apache.logging.log4j.core.lookup.StrSubstitutor;
 
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
+import net.lavabucket.hourglass.wrappers.ServerPlayerWrapper;
 import net.minecraft.Util;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.server.level.ServerPlayer;
 
 /**
  * Message builder for Hourglass notifications, which allow for customizable targets and variable
@@ -142,11 +142,14 @@ public class TemplateMessage {
         if (target == MessageTarget.ALL) {
             levelWrapper.level.getServer().getPlayerList().broadcastMessage(this.message, type, Util.NIL_UUID);
         } else {
-            Stream<ServerPlayer> players = levelWrapper.level.players().stream();
+            Stream<ServerPlayerWrapper> playerStream = levelWrapper.level.players().stream()
+                    .map(player -> new ServerPlayerWrapper(player));
+
             if (target == MessageTarget.SLEEPING) {
-                players = players.filter(ServerPlayer::isSleeping);
+                playerStream = playerStream.filter(ServerPlayerWrapper::isSleeping);
             }
-            players.forEach(player -> player.sendMessage(this.message, type, Util.NIL_UUID));
+
+            playerStream.forEach(wrapper -> wrapper.player.sendMessage(this.message, type, Util.NIL_UUID));
         }
     }
 
