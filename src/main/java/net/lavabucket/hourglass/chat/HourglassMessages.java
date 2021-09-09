@@ -27,7 +27,6 @@ import net.lavabucket.hourglass.time.TimeService;
 import net.lavabucket.hourglass.time.TimeServiceManager;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.GameRules;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.world.SleepFinishedTimeEvent;
@@ -43,10 +42,16 @@ public class HourglassMessages {
      */
     @SubscribeEvent
     public static void onSleepingCheckEvent(SleepingTimeCheckEvent event) {
-        Player player = event.getPlayer();
-        if (!player.level.isClientSide() && player.isSleeping() && player.getSleepTimer() == 1
-                && player.level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
-            sendEnterBedMessage(player);
+        TimeService service = TimeServiceManager.service;
+
+        if (SERVER_CONFIG.enableSleepFeature.get() == true
+                && event.getPlayer().getSleepTimer() == 1
+                && service != null
+                && service.levelWrapper.level.equals(event.getPlayer().level)
+                && service.levelWrapper.level.players().size() > 1
+                && service.levelWrapper.daylightRuleEnabled()) {
+
+            sendEnterBedMessage(event.getPlayer());
         }
     }
 
@@ -57,10 +62,16 @@ public class HourglassMessages {
      */
     @SubscribeEvent
     public static void onPlayerWakeUpEvent(PlayerWakeUpEvent event) {
-        Player player = event.getPlayer();
-        if (player.level.isClientSide() == false && event.updateWorld() == true
-                && player.level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
-            sendLeaveBedMessage(player);
+        TimeService service = TimeServiceManager.service;
+
+        if (SERVER_CONFIG.enableSleepFeature.get() == true
+                && event.updateWorld() == true
+                && service != null
+                && service.levelWrapper.level.equals(event.getPlayer().level)
+                && service.levelWrapper.level.players().size() > 1
+                && service.levelWrapper.daylightRuleEnabled()) {
+
+            sendLeaveBedMessage(event.getPlayer());
         }
     }
 
@@ -71,7 +82,13 @@ public class HourglassMessages {
      */
     @SubscribeEvent
     public static void onSleepFinishedEvent(SleepFinishedTimeEvent event) {
-        if (ServerLevelWrapper.isServerLevel(event.getWorld())) {
+        TimeService service = TimeServiceManager.service;
+
+        if (SERVER_CONFIG.enableSleepFeature.get() == true
+                && service != null
+                && service.levelWrapper.level.equals(event.getWorld())
+                && service.levelWrapper.daylightRuleEnabled()) {
+
             ServerLevelWrapper levelWrapper = new ServerLevelWrapper(event.getWorld());
             sendMorningMessage(levelWrapper);
         }
@@ -89,9 +106,8 @@ public class HourglassMessages {
     public static void sendEnterBedMessage(Player player) {
         String templateMessage = SERVER_CONFIG.enterBedMessage.get();
         TimeService timeService = TimeServiceManager.service;
-        if (templateMessage.isEmpty() || timeService == null
-                || !SERVER_CONFIG.enableSleepFeature.get()
-                || timeService.levelWrapper.level.players().size() <= 1) {
+
+        if (templateMessage.isEmpty() || timeService == null) {
             return;
         }
 
@@ -118,9 +134,8 @@ public class HourglassMessages {
     public static void sendLeaveBedMessage(Player player) {
         String templateMessage = SERVER_CONFIG.leaveBedMessage.get();
         TimeService timeService = TimeServiceManager.service;
-        if (templateMessage.isEmpty() || timeService == null
-                || !SERVER_CONFIG.enableSleepFeature.get()
-                || timeService.levelWrapper.level.players().size() <= 1) {
+
+        if (templateMessage.isEmpty() || timeService == null) {
             return;
         }
 
@@ -148,8 +163,8 @@ public class HourglassMessages {
     public static void sendMorningMessage(ServerLevelWrapper levelWrapper) {
         String templateMessage = SERVER_CONFIG.morningMessage.get();
         TimeService timeService = TimeServiceManager.service;
-        if (templateMessage.isEmpty() || timeService == null
-                || !SERVER_CONFIG.enableSleepFeature.get()) {
+
+        if (templateMessage.isEmpty() || timeService == null) {
             return;
         }
 
