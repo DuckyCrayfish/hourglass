@@ -117,7 +117,7 @@ public class TimeInterpolator {
     /**
      * Creates a new instance.
      *
-     * @param level  the wrapper of the level whose time this object will manage
+     * @param levelWrapper  the wrapper of the level whose time this object will manage
      */
     public TimeInterpolator(ClientLevelWrapper levelWrapper) {
         this.levelWrapper = levelWrapper;

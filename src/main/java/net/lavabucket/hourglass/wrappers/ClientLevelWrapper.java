@@ -39,12 +39,13 @@ public class ClientLevelWrapper {
 
     /**
      * Instantiates a new object.
-     * @param level  the level to wrap
+     * @param level  the client level to wrap
      */
     public ClientLevelWrapper(LevelAccessor level) {
         if (!(level instanceof ClientLevel)) {
             throw new IllegalArgumentException("level must be a client level instance.");
         }
+
         this.level = (ClientLevel) level;
     }
 

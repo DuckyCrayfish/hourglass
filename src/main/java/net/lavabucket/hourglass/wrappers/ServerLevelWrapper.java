@@ -60,15 +60,15 @@ public class ServerLevelWrapper {
 
     /**
      * Instantiates a new object.
-     * @param level  the level to wrap
+     * @param level  the server level to wrap
      */
     public ServerLevelWrapper(LevelAccessor level) {
         if (!isServerLevel(level)) {
             throw new IllegalArgumentException("level must be an instance of a server level.");
         }
+
         this.level = levelClass.cast(level);
         this.levelData = levelDataClass.cast(this.level.getLevelData());
-
     }
 
     /** {@return true if the 'daylight cycle' game rule is enabled in {@link #level}} */
