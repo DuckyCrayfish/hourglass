@@ -20,9 +20,8 @@
 package net.lavabucket.hourglass.client;
 
 import net.lavabucket.hourglass.utils.TimeUtils;
+import net.lavabucket.hourglass.wrappers.ClientLevelWrapper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.world.level.GameRules;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.RenderTickEvent;
@@ -37,12 +36,12 @@ public class TimeInterpolator {
 
     public static TimeInterpolator instance;
 
-    public ClientLevel level;
+    public final ClientLevelWrapper levelWrapper;
     private boolean initialized;
-    private long lastTime;
     private long targetTime;
-    private float lastPartialTickTime;
     private float timeVelocity;
+    private long lastTime;
+    private float lastPartialTickTime;
 
     /**
      * Event listener that is called when a new level is loaded.
@@ -54,9 +53,9 @@ public class TimeInterpolator {
      */
     @SubscribeEvent
     public static void onWorldLoad(WorldEvent.Load event) {
-        if (event.getWorld() instanceof ClientLevel) {
-            ClientLevel level = (ClientLevel) event.getWorld();
-            instance = new TimeInterpolator(level);
+        if (ClientLevelWrapper.isClientLevel(event.getWorld())) {
+            ClientLevelWrapper wrapper = new ClientLevelWrapper(event.getWorld());
+            instance = new TimeInterpolator(wrapper);
         }
     }
 
@@ -70,11 +69,8 @@ public class TimeInterpolator {
      */
     @SubscribeEvent
     public static void onWorldUnload(WorldEvent.Unload event) {
-        if (event.getWorld() instanceof ClientLevel) {
-            ClientLevel level = (ClientLevel) event.getWorld();
-            if (instance != null && instance.level.equals(level)) {
-                instance = null;
-            }
+        if (instance != null && instance.levelWrapper.level.equals(event.getWorld())) {
+            instance = null;
         }
     }
 
@@ -90,12 +86,10 @@ public class TimeInterpolator {
     @SubscribeEvent
     public static void onRenderTickEvent(RenderTickEvent event) {
         Minecraft minecraft = Minecraft.getInstance();
-        ClientLevel level = minecraft.level;
         if (event.phase == Phase.START
                 && !minecraft.isPaused()
-                && level != null
                 && instance != null
-                && instance.level.equals(level)) {
+                && instance.levelWrapper.level.equals(minecraft.level)) {
 
             instance.partialTick(event.renderTickTime);
         }
@@ -110,12 +104,11 @@ public class TimeInterpolator {
     @SubscribeEvent
     public static void OnClientTickEvent(ClientTickEvent event) {
         Minecraft minecraft = Minecraft.getInstance();
-        ClientLevel level = minecraft.level;
 
         if (event.phase == Phase.END
                 && !minecraft.isPaused()
-                && level != null
-                && instance != null) {
+                && instance != null
+                && instance.levelWrapper.level.equals(minecraft.level)) {
 
             instance.undoVanillaTimeTicks();
         }
@@ -124,10 +117,10 @@ public class TimeInterpolator {
     /**
      * Creates a new instance.
      *
-     * @param level  the level whose time this object should manage
+     * @param level  the wrapper of the level whose time this object will manage
      */
-    public TimeInterpolator(ClientLevel level) {
-        this.level = level;
+    public TimeInterpolator(ClientLevelWrapper levelWrapper) {
+        this.levelWrapper = levelWrapper;
         this.initialized = false;
     }
 
@@ -135,7 +128,7 @@ public class TimeInterpolator {
      * Initializes variables that need to be set after ticks have started processing.
      */
     private void init() {
-        long time = level.getDayTime();
+        long time = levelWrapper.level.getDayTime();
         this.targetTime = time;
         this.lastTime = time;
         this.initialized = true;
@@ -179,7 +172,7 @@ public class TimeInterpolator {
      * in fractions of ticks.
      */
     private void interpolateTime(final float timeDelta) {
-        long time = level.getDayTime();
+        long time = levelWrapper.level.getDayTime();
 
         final float duration = 1f; // Interpolate over 1 tick.
         final float omega = 2F / duration;
@@ -210,7 +203,7 @@ public class TimeInterpolator {
      * method jumps to same day as the interpolation target and interpolates from there.
      */
     private void updateTargetTime() {
-        long time = level.getDayTime();
+        long time = levelWrapper.level.getDayTime();
 
         // Packet received, update interpolation target and reset current time.
         if (time != lastTime) {
@@ -224,7 +217,7 @@ public class TimeInterpolator {
                 lastTime = time - newTimeOfDay + oldTimeOfDay;
             }
 
-            level.setDayTime(lastTime);
+            levelWrapper.level.setDayTime(lastTime);
         }
     }
 
@@ -235,7 +228,7 @@ public class TimeInterpolator {
      * @param time  the time of day to set
      */
     private void setDayTime(long time) {
-        level.setDayTime(time);
+        levelWrapper.level.setDayTime(time);
         lastTime = time;
     }
 
@@ -244,8 +237,8 @@ public class TimeInterpolator {
      * this method at the end of every tick to undo this.
      */
     private void undoVanillaTimeTicks() {
-        if (level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
-            level.setDayTime(level.getDayTime() - 1);
+        if (levelWrapper.daylightRuleEnabled()) {
+            levelWrapper.level.setDayTime(levelWrapper.level.getDayTime() - 1);
         }
     }
 
