@@ -242,10 +242,10 @@ public class TimeService {
 
         if (levelWrapper.level.equals(levelWrapper.level.getServer().overworld())) {
             // If level is overworld, include all derived levels as well.
-            playerPredicate = playerPredicate.and(player -> ServerLevelWrapper.isDerived(player.level));
+            playerPredicate = playerPredicate.or(player -> ServerLevelWrapper.isDerived(player.level));
         }
 
-        playerList.stream().forEach(player -> player.connection.send(timePacketWrapper.packet));
+        playerList.stream().filter(playerPredicate).forEach(player -> player.connection.send(timePacketWrapper.packet));
     }
 
     private Collection<TimeEffect> getActiveTimeEffects() {
