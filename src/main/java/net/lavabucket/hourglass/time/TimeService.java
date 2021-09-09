@@ -34,7 +34,7 @@ import net.lavabucket.hourglass.time.effects.TimeEffect;
 import net.lavabucket.hourglass.utils.MathUtils;
 import net.lavabucket.hourglass.utils.TimeUtils;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
-import net.lavabucket.hourglass.wrappers.TimePacket;
+import net.lavabucket.hourglass.wrappers.TimePacketWrapper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.ForgeEventFactory;
 
@@ -236,10 +236,7 @@ public class TimeService {
      * Broadcasts the current time to all players who observe it.
      */
     public void broadcastTime() {
-        long gameTime = levelWrapper.level.getGameTime();
-        long dayTime = levelWrapper.level.getDayTime();
-        boolean ruleDaylight = levelWrapper.daylightRuleEnabled();
-        TimePacket timePacket = new TimePacket(gameTime, dayTime, ruleDaylight);
+        TimePacketWrapper timePacketWrapper = TimePacketWrapper.create(levelWrapper);
         List<ServerPlayer> playerList = levelWrapper.level.getServer().getPlayerList().getPlayers();
         Predicate<ServerPlayer> playerPredicate = player -> player.level.equals(levelWrapper.level);
 
@@ -248,7 +245,7 @@ public class TimeService {
             playerPredicate = playerPredicate.and(player -> ServerLevelWrapper.isDerived(player.level));
         }
 
-        playerList.stream().forEach(player -> player.connection.send(timePacket));
+        playerList.stream().forEach(player -> player.connection.send(timePacketWrapper.packet));
     }
 
     private Collection<TimeEffect> getActiveTimeEffects() {
