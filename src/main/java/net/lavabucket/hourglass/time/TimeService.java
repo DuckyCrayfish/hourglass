@@ -124,15 +124,15 @@ public class TimeService {
     }
 
     /**
-     * Elapse time in this service's {@link #level level} based on the current time
+     * Elapse time in this service's {@link #level} based on the current time
      * multiplier. This method should be called during every tick.
      *
      * @return the new day time
      */
     private long elapseTime() {
-        long oldTime = level.get().getDayTime();
+        long time = level.get().getDayTime();
 
-        double multiplier = getMultiplier(oldTime);
+        double multiplier = getMultiplier(time);
         long integralMultiplier = (long) multiplier;
         double fractionalMultiplier = multiplier - integralMultiplier;
 
@@ -143,7 +143,7 @@ public class TimeService {
         long timeToAdd = integralMultiplier + overflow;
         timeToAdd = correctForOvershoot(timeToAdd);
 
-        long newTime = oldTime + timeToAdd;
+        long newTime = time + timeToAdd;
         level.get().setDayTime(newTime);
         return newTime;
     }
@@ -160,41 +160,45 @@ public class TimeService {
      * @return the corrected time to elapse
      */
     private long correctForOvershoot(long timeToAdd) {
-        long oldTime = level.get().getDayTime();
-        long currentTimeOfDay = oldTime % TimeUtils.DAY_LENGTH;
-        double multiplier = getMultiplier(oldTime);
+        long time = level.get().getDayTime();
+        long timeOfDay = time % TimeUtils.DAY_LENGTH;
+        double multiplier = getMultiplier(time);
 
         // day to night transition
-        long distanceToDayEnd = TimeUtils.DAYTIME_END - currentTimeOfDay;
-        if (currentTimeOfDay < TimeUtils.DAYTIME_END && timeToAdd > distanceToDayEnd) {
-            double newMultiplier = getMultiplier(oldTime + timeToAdd);
-            double percentagePassedBoundary = (timeToAdd + timeDecimalAccumulator - distanceToDayEnd) / multiplier;
+        long timeUntilDayEnd = TimeUtils.DAYTIME_END - timeOfDay;
+        if (timeOfDay < TimeUtils.DAYTIME_END && timeToAdd > timeUntilDayEnd) {
+            double nextMultiplier = getMultiplier(time + timeToAdd);
+            double percentagePassedBoundary =
+                    (timeToAdd + timeDecimalAccumulator - timeUntilDayEnd) / multiplier;
 
-            double timeToAddAfterBoundary = newMultiplier * percentagePassedBoundary;
+            double timeToAddAfterBoundary = nextMultiplier * percentagePassedBoundary;
             timeDecimalAccumulator = timeToAddAfterBoundary - (int) timeToAddAfterBoundary;
-            return distanceToDayEnd + (int) timeToAddAfterBoundary;
+            return timeUntilDayEnd + (int) timeToAddAfterBoundary;
         }
 
         // day to night transition
-        long distanceToDayStart = TimeUtils.DAYTIME_START - currentTimeOfDay;
-        if (sleepStatus.allAwake() && currentTimeOfDay < TimeUtils.DAYTIME_START && timeToAdd > distanceToDayStart) {
-            double newMultiplier = getMultiplier(oldTime + timeToAdd);
-            double percentagePassedBoundary = (timeToAdd + timeDecimalAccumulator - distanceToDayStart) / multiplier;
+        long timeUntilDayStart = TimeUtils.DAYTIME_START - timeOfDay;
+        if (timeOfDay < TimeUtils.DAYTIME_START && timeToAdd > timeUntilDayStart
+                && sleepStatus.allAwake()) {
+            double nextMultiplier = getMultiplier(time + timeToAdd);
+            double percentagePassedBoundary =
+                    (timeToAdd + timeDecimalAccumulator - timeUntilDayStart) / multiplier;
 
-            double timeToAddAfterBoundary = newMultiplier * percentagePassedBoundary;
+            double timeToAddAfterBoundary = nextMultiplier * percentagePassedBoundary;
             timeDecimalAccumulator = timeToAddAfterBoundary - (int) timeToAddAfterBoundary;
-            return distanceToDayStart + (int) timeToAddAfterBoundary;
+            return timeUntilDayStart + (int) timeToAddAfterBoundary;
         }
 
         // morning transition
-        long distanceToMorning = TimeUtils.DAY_LENGTH - currentTimeOfDay;
-        if (!sleepStatus.allAwake() && timeToAdd > distanceToMorning) {
-            double newMultiplier = SERVER_CONFIG.daySpeed.get();
-            double percentagePassedBoundary = (timeToAdd + timeDecimalAccumulator - distanceToMorning) / multiplier;
+        long timeUntilMorning = TimeUtils.DAY_LENGTH - timeOfDay;
+        if (timeToAdd > timeUntilMorning && !sleepStatus.allAwake()) {
+            double nextMultiplier = SERVER_CONFIG.daySpeed.get();
+            double percentagePassedBoundary =
+                    (timeToAdd + timeDecimalAccumulator - timeUntilMorning) / multiplier;
 
-            double timeToAddAfterBoundary = newMultiplier * percentagePassedBoundary;
+            double timeToAddAfterBoundary = nextMultiplier * percentagePassedBoundary;
             timeDecimalAccumulator = timeToAddAfterBoundary - (int) timeToAddAfterBoundary;
-            return distanceToMorning + (int) timeToAddAfterBoundary;
+            return timeUntilMorning + (int) timeToAddAfterBoundary;
         }
 
         return timeToAdd;
