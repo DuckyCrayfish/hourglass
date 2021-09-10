@@ -113,13 +113,13 @@ public class SleepStatus extends net.minecraft.server.players.SleepStatus {
 
     /**
      * Returns the number of sleeping players required to meet the {@code percentageRequired} sleep
-     * threshhold based on current active player count.
+     * threshold based on current active player count.
      *
      * This method is only called on 1.17+.
      * Mimics super method in 1.17+.
      *
      * @param percentageRequired  percentage on which to calculate required sleeping player count
-     * @return the number of sleeping players required to meet the sleep threshhold
+     * @return the number of sleeping players required to meet the sleep threshold
      */
     public int sleepersNeeded(int percentageRequired) {
         return Math.max(1, (int) Math.ceil(activePlayerCount * percentageRequired / 100.0D));
