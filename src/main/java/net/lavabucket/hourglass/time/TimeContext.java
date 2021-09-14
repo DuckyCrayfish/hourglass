@@ -27,9 +27,9 @@ package net.lavabucket.hourglass.time;
  */
 public class TimeContext {
 
-    protected TimeService timeService;
-    protected long currentTime;
-    protected long timeDelta;
+    protected final TimeService timeService;
+    protected final Time currentTime;
+    protected final Time timeDelta;
 
     /**
      * Creates a new instance.
@@ -37,8 +37,9 @@ public class TimeContext {
      * @param timeService  the time service for this level
      * @param timeDelta  the time that has elapsed during this tick
      */
-    public TimeContext(TimeService timeService, long timeDelta) {
+    public TimeContext(TimeService timeService, Time currentTime, Time timeDelta) {
         this.timeService = timeService;
+        this.currentTime = currentTime;
         this.timeDelta = timeDelta;
     }
 
@@ -48,12 +49,12 @@ public class TimeContext {
     }
 
     /** {@return the new time set during this tick} */
-    public long getCurrentTime() {
+    public Time getCurrentTime() {
         return currentTime;
     }
 
     /** {@return the time that has elapsed during this tick} */
-    public long getTimeDelta() {
+    public Time getTimeDelta() {
         return timeDelta;
     }
 

@@ -21,8 +21,8 @@ package net.lavabucket.hourglass.config;
 
 import net.lavabucket.hourglass.chat.TemplateMessage.MessageTarget;
 import net.lavabucket.hourglass.client.gui.ScreenAlignment;
+import net.lavabucket.hourglass.time.Time;
 import net.lavabucket.hourglass.time.effects.EffectCondition;
-import net.lavabucket.hourglass.utils.TimeUtils;
 import net.minecraft.network.chat.ChatType;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
@@ -96,13 +96,13 @@ public class HourglassConfig {
                     "The speed at which time passes during the day.",
                     "Day is defined as any time between 23500 (middle of dawn) and 12500 (middle of dusk) the next day.",
                     "Vanilla speed: 1.0")
-                    .defineInRange("daySpeed", 1D, 0D, (double) TimeUtils.DAY_LENGTH);
+                    .defineInRange("daySpeed", 1D, 0D, Time.DAY_LENGTH.doubleValue());
 
                 nightSpeed = builder.comment(
                     "The speed at which time passes during the night.",
                     "Night is defined as any time between 12500 (middle of dusk) and 23500 (middle of dawn).",
                     "Vanilla speed: 1.0")
-                    .defineInRange("nightSpeed", 1D, 0D, (double) TimeUtils.DAY_LENGTH);
+                    .defineInRange("nightSpeed", 1D, 0D, Time.DAY_LENGTH.doubleValue());
 
                 builder.push("effects"); // time.effects
 
@@ -138,17 +138,17 @@ public class HourglassConfig {
 
                 sleepSpeedMin = builder
                     .comment("The minimum speed at which time passes when only 1 player is sleeping in a full server.")
-                    .defineInRange("sleepSpeedMin", 1D, 0D, (double) TimeUtils.DAY_LENGTH);
+                    .defineInRange("sleepSpeedMin", 1D, 0D, Time.DAY_LENGTH.doubleValue());
 
                 sleepSpeedMax = builder.comment(
                     "The maximum speed at which time passes when all players are sleeping. A value of 120",
                     "is approximately equal to the time it takes to sleep in vanilla.")
-                    .defineInRange("sleepSpeedMax", 120D, 0D, (double) TimeUtils.DAY_LENGTH);
+                    .defineInRange("sleepSpeedMax", 120D, 0D, Time.DAY_LENGTH.doubleValue());
 
                 sleepSpeedAll = builder.comment(
                     "The speed at which time passes when all players are sleeping.",
                     "Set to -1 to disable this feature (sleepSpeedMax will be used when all players are sleeping).")
-                    .defineInRange("sleepSpeedAll", -1.0D, -1.0D, (double) TimeUtils.DAY_LENGTH);
+                    .defineInRange("sleepSpeedAll", -1.0D, -1.0D, Time.DAY_LENGTH.doubleValue());
 
                 clearWeatherOnWake = builder.comment(
                     "Set to 'true' for the weather to clear when players wake up in the morning as it does in vanilla.",

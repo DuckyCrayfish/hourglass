@@ -19,7 +19,7 @@
 
 package net.lavabucket.hourglass.client;
 
-import net.lavabucket.hourglass.utils.TimeUtils;
+import net.lavabucket.hourglass.time.Time;
 import net.lavabucket.hourglass.wrappers.ClientLevelWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
@@ -145,9 +145,9 @@ public class TimeInterpolator {
             init();
         }
 
-        float timeDelta = getPartialTimeDelta(partialTickTime);
+        float tickTimeDelta = getPartialTimeDelta(partialTickTime);
         updateTargetTime();
-        interpolateTime(timeDelta);
+        interpolateTime(tickTimeDelta);
     }
 
     /**
@@ -168,19 +168,19 @@ public class TimeInterpolator {
      * Interpolate time changes changes on a frame-by-frame basis to smooth out time updates from
      * the server.
      *
-     * @param timeDelta  the amount of time that has passed since this method was last run. Measured
-     * in fractions of ticks.
+     * @param tickTimeDelta  the amount of time that has passed since this method was last run.
+     *                       Measured in fractions of ticks.
      */
-    private void interpolateTime(final float timeDelta) {
+    private void interpolateTime(final float tickTimeDelta) {
         long time = level.get().getDayTime();
 
         final float duration = 1f; // Interpolate over 1 tick.
         final float omega = 2F / duration;
-        final float x = omega * timeDelta;
+        final float x = omega * tickTimeDelta;
         final float exp = 1F / (1F + x + 0.48F * x * x + 0.235F * x * x * x);
         final float change = time - targetTime;
 
-        float temp = (timeVelocity + omega * change) * timeDelta;
+        float temp = (timeVelocity + omega * change) * tickTimeDelta;
         time = targetTime + (long) ((change + temp) * exp);
         timeVelocity = (timeVelocity - omega * temp) * exp;
 
@@ -211,9 +211,9 @@ public class TimeInterpolator {
 
             // Prevent large interpolation distances
             long discrepancy = lastTime - time;
-            if (Math.abs(discrepancy) > TimeUtils.DAY_LENGTH) {
-                long newTimeOfDay = TimeUtils.getTimeOfDay(time);
-                long oldTimeOfDay = TimeUtils.getTimeOfDay(lastTime);
+            if (Math.abs(discrepancy) > Time.DAY_TICKS) {
+                long newTimeOfDay = Time.timeOfDay(time);
+                long oldTimeOfDay = Time.timeOfDay(lastTime);
                 lastTime = time - newTimeOfDay + oldTimeOfDay;
             }
 

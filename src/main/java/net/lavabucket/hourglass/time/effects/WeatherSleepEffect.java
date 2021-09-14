@@ -55,7 +55,7 @@ public class WeatherSleepEffect extends AbstractTimeEffect {
         int rainTime = level.levelData.getRainTime();
 
         // Subtract 1 from weather speed to account for vanilla's weather progression of 1 per tick.
-        int weatherSpeed = (int) Math.min(Integer.MAX_VALUE, context.getTimeDelta()) - 1;
+        int weatherSpeed = (int) Math.min(Integer.MAX_VALUE, context.getTimeDelta().longValue()) - 1;
 
         if (clearWeatherTime <= 0) {
             if (thunderTime > 0) {

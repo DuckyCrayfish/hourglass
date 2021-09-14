@@ -30,7 +30,6 @@ import org.apache.logging.log4j.Logger;
 import net.lavabucket.hourglass.registry.HourglassRegistry;
 import net.lavabucket.hourglass.time.effects.TimeEffect;
 import net.lavabucket.hourglass.utils.MathUtils;
-import net.lavabucket.hourglass.utils.TimeUtils;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 import net.lavabucket.hourglass.wrappers.TimePacketWrapper;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -42,8 +41,14 @@ public class TimeService {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
+    /** Time of day when the sun rises above the horizon. */
+    public static final Time DAY_START = new Time(23500);
+
+    /** Time of day when the sun sets below the horizon. */
+    public static final Time NIGHT_START = new Time(12500);
+
     // The largest number of lunar cycles that can be stored in an int
-    private static final int overflowThreshold = 11184 * TimeUtils.LUNAR_CYCLE_LENGTH;
+    private static final int OVERFLOW_THRESHOLD = 11184 * Time.LUNAR_CYCLE_TICKS;
 
     public final ServerLevelWrapper level;
     public final SleepStatus sleepStatus;
@@ -69,15 +74,15 @@ public class TimeService {
             return;
         }
 
-        long oldTime = level.get().getDayTime();
-        long time = elapseTime();
-        long elapsedTime = time - oldTime;
+        Time oldTime = getDayTime();
+        Time deltaTime = tickTime();
+        Time time = getDayTime();
 
-        TimeContext context = new TimeContext(this, elapsedTime);
+        TimeContext context = new TimeContext(this, time, deltaTime);
         getActiveTimeEffects().forEach(effect -> effect.onTimeTick(context));
 
         boolean overrideSleep = SERVER_CONFIG.enableSleepFeature.get();
-        if (overrideSleep && !sleepStatus.allAwake() && TimeUtils.crossedMorning(oldTime, time)) {
+        if (overrideSleep && !sleepStatus.allAwake() && Time.crossedMorning(oldTime, time)) {
             handleMorning();
         }
 
@@ -118,103 +123,85 @@ public class TimeService {
      */
     private void preventTimeOverflow() {
         long time = level.get().getDayTime();
-        if (time > overflowThreshold) {
-            level.get().setDayTime(time - overflowThreshold);
+        if (time > OVERFLOW_THRESHOLD) {
+            level.get().setDayTime(time - OVERFLOW_THRESHOLD);
         }
     }
 
     /**
-     * Elapse time in this service's {@link #level} based on the current time
-     * multiplier. This method should be called during every tick.
+     * Progresses time in this {@link #level} based on the current time-speed.
+     * This method should be called every tick.
      *
-     * @return the new day time
+     * @return the amount of time that elapsed
      */
-    private long elapseTime() {
-        long time = level.get().getDayTime();
+    private Time tickTime() {
+        Time time = getDayTime();
 
-        double multiplier = getMultiplier(time);
-        long integralMultiplier = (long) multiplier;
-        double fractionalMultiplier = multiplier - integralMultiplier;
+        Time timeDelta = new Time(getTimeSpeed(time));
+        timeDelta = correctForOvershoot(time, timeDelta);
 
-        timeDecimalAccumulator += fractionalMultiplier;
-        int overflow = (int) timeDecimalAccumulator;
-        timeDecimalAccumulator -= overflow;
-
-        long timeToAdd = integralMultiplier + overflow;
-        timeToAdd = correctForOvershoot(timeToAdd);
-
-        long newTime = time + timeToAdd;
-        level.get().setDayTime(newTime);
-        return newTime;
+        setDayTime(time.add(timeDelta));
+        return timeDelta;
     }
 
     /**
-     * Check to see if the time speed multiplier will change after elapsing timeToAdd amount of
-     * time, and correct for any overshooting (or undershooting) based on the new multiplier.
+     * Checks to see if the time-speed will change after elapsing time by {@code timeDelta}, and
+     * correct for any overshooting (or undershooting) based on the new speed.
      *
-     * Stateful, overwrites the current {@link #timeDecimalAccumulator}.
-     *
-     * TODO: Make this stateless
-     *
-     * @param timeToAdd  the proposed time to elapse
-     * @return the corrected time to elapse
+     * @param time  the current time
+     * @param timeDelta  the proposed amount of time to elapse
+     * @return the adjusted amount of time to elapse
      */
-    private long correctForOvershoot(long timeToAdd) {
-        long time = level.get().getDayTime();
-        long timeOfDay = time % TimeUtils.DAY_LENGTH;
-        double multiplier = getMultiplier(time);
+    private Time correctForOvershoot(Time time, Time timeDelta) {
+        Time nextTime = time.add(timeDelta);
+        Time timeOfDay = time.timeOfDay();
+        Time nextTimeOfDay = nextTime.timeOfDay();
 
         // day to night transition
-        long timeUntilDayEnd = TimeUtils.DAYTIME_END - timeOfDay;
-        if (timeOfDay < TimeUtils.DAYTIME_END && timeToAdd > timeUntilDayEnd) {
-            double nextMultiplier = getMultiplier(time + timeToAdd);
-            double percentagePassedBoundary =
-                    (timeToAdd + timeDecimalAccumulator - timeUntilDayEnd) / multiplier;
+        if (NIGHT_START.betweenMod(timeOfDay, nextTimeOfDay)) {
+            double nextTimeSpeed = getTimeSpeed(nextTime);
+            Time timeUntilBreakpoint = NIGHT_START.subtract(timeOfDay);
+            double breakpointRatio = 1 - timeUntilBreakpoint.divide(timeDelta);
 
-            double timeToAddAfterBoundary = nextMultiplier * percentagePassedBoundary;
-            timeDecimalAccumulator = timeToAddAfterBoundary - (int) timeToAddAfterBoundary;
-            return timeUntilDayEnd + (int) timeToAddAfterBoundary;
+            return timeUntilBreakpoint.add(nextTimeSpeed * breakpointRatio);
         }
 
         // day to night transition
-        long timeUntilDayStart = TimeUtils.DAYTIME_START - timeOfDay;
-        if (timeOfDay < TimeUtils.DAYTIME_START && timeToAdd > timeUntilDayStart
-                && sleepStatus.allAwake()) {
-            double nextMultiplier = getMultiplier(time + timeToAdd);
-            double percentagePassedBoundary =
-                    (timeToAdd + timeDecimalAccumulator - timeUntilDayStart) / multiplier;
+        if (DAY_START.betweenMod(timeOfDay, nextTimeOfDay)) {
+            double nextTimeSpeed = getTimeSpeed(nextTime);
+            Time timeUntilBreakpoint = DAY_START.subtract(timeOfDay);
+            double breakpointRatio = 1 - timeUntilBreakpoint.divide(timeDelta);
 
-            double timeToAddAfterBoundary = nextMultiplier * percentagePassedBoundary;
-            timeDecimalAccumulator = timeToAddAfterBoundary - (int) timeToAddAfterBoundary;
-            return timeUntilDayStart + (int) timeToAddAfterBoundary;
+            return timeUntilBreakpoint.add(nextTimeSpeed * breakpointRatio);
         }
 
         // morning transition
-        long timeUntilMorning = TimeUtils.DAY_LENGTH - timeOfDay;
-        if (timeToAdd > timeUntilMorning && !sleepStatus.allAwake()) {
-            double nextMultiplier = SERVER_CONFIG.daySpeed.get();
-            double percentagePassedBoundary =
-                    (timeToAdd + timeDecimalAccumulator - timeUntilMorning) / multiplier;
+        Time timeUntilMorning = Time.DAY_LENGTH.subtract(timeOfDay);
+        if (timeUntilMorning.compareTo(timeDelta) < 0 && !sleepStatus.allAwake()) {
+            double nextTimeSpeed = SERVER_CONFIG.daySpeed.get();
+            double breakpointRatio = 1 - timeUntilMorning.divide(timeDelta);
 
-            double timeToAddAfterBoundary = nextMultiplier * percentagePassedBoundary;
-            timeDecimalAccumulator = timeToAddAfterBoundary - (int) timeToAddAfterBoundary;
-            return timeUntilMorning + (int) timeToAddAfterBoundary;
+            return timeUntilMorning.add(nextTimeSpeed * breakpointRatio);
         }
 
-        return timeToAdd;
+        return timeDelta;
     }
 
     /**
-     * Calculates the current time speed multiplier based on the time-of-day and number of sleeping
-     * players. Allows manual input of time to allow calculation based on times other then current.
+     * Calculates the current time-speed multiplier based on the time-of-day and number of sleeping
+     * players.
+     *
+     * Accepts time as a parameter to allow for prediction of other times. Prediction of times other
+     * than the current time may not be accurate due to sleeping player changes.
+     *
      * A return value of 1 is equivalent to vanilla time speed.
      *
-     * @param time  the time of day to calculate the time speed for
-     * @return the time speed multiplier
+     * @param time  the time at which to calculate the time-speed
+     * @return the time-speed
      */
-    public double getMultiplier(long time) {
+    public double getTimeSpeed(Time time) {
         if (!SERVER_CONFIG.enableSleepFeature.get() || sleepStatus.allAwake()) {
-            if (TimeUtils.isSunUp(time)) {
+            if (time.equals(DAY_START) || time.timeOfDay().betweenMod(DAY_START, NIGHT_START)) {
                 return SERVER_CONFIG.daySpeed.get();
             } else {
                 return SERVER_CONFIG.nightSpeed.get();
@@ -231,6 +218,24 @@ public class TimeService {
         double multiplier = MathUtils.lerp(percentageSleeping, sleepSpeedMin, sleepSpeedMax);
 
         return multiplier;
+    }
+
+    /**
+     * {@return this level's time as an instance of {@link Time}}
+     */
+    public Time getDayTime() {
+        return new Time(level.get().getDayTime(), timeDecimalAccumulator);
+    }
+
+    /**
+     * Sets this level's 'daytime' to the integer component of {@code time}.
+     * @param time  the time to set
+     * @return the new time
+     */
+    public Time setDayTime(Time time) {
+        timeDecimalAccumulator = time.fractionalValue();
+        level.get().setDayTime(time.longValue());
+        return time;
     }
 
     /**
