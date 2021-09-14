@@ -44,4 +44,9 @@ public class ServerPlayerWrapper extends Wrapper<ServerPlayer> {
         return wrapped.isSleeping();
     }
 
+    /** {@return the wrapped level this player is in} */
+    public ServerLevelWrapper getLevel() {
+        return new ServerLevelWrapper(get().level);
+    }
+
 }

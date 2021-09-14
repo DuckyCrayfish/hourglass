@@ -120,8 +120,8 @@ public class HourglassMessages {
                 .setVariable("player", player.get().getGameProfile().getName())
                 .setVariable("totalPlayers", Integer.toString(sleepStatus.amountActive()))
                 .setVariable("sleepingPlayers", Integer.toString(sleepStatus.amountSleeping()))
-                .setVariable("sleepingPercentage", Integer.toString((int) (100D * sleepStatus.getRatio())))
-                .bake().send(SERVER_CONFIG.enterBedMessageTarget.get(), new ServerLevelWrapper(player.get().level));
+                .setVariable("sleepingPercentage", Integer.toString(sleepStatus.percentage()))
+                .bake().send(SERVER_CONFIG.enterBedMessageTarget.get(), player.getLevel());
     }
 
     /**
@@ -148,8 +148,8 @@ public class HourglassMessages {
                 .setVariable("player", player.get().getGameProfile().getName())
                 .setVariable("totalPlayers", Integer.toString(sleepStatus.amountActive()))
                 .setVariable("sleepingPlayers", Integer.toString(sleepStatus.amountSleeping() - 1))
-                .setVariable("sleepingPercentage", Integer.toString((int) (100D * sleepStatus.getRatio())))
-                .bake().send(SERVER_CONFIG.leaveBedMessageTarget.get(), new ServerLevelWrapper(player.get().level));
+                .setVariable("sleepingPercentage", Integer.toString(sleepStatus.percentage()))
+                .bake().send(SERVER_CONFIG.leaveBedMessageTarget.get(), player.getLevel());
     }
 
     /**
@@ -176,11 +176,12 @@ public class HourglassMessages {
                 .setType(SERVER_CONFIG.morningMessageType.get())
                 .setVariable("totalPlayers", Integer.toString(sleepStatus.amountActive()))
                 .setVariable("sleepingPlayers", Integer.toString(sleepStatus.amountSleeping()))
-                .setVariable("sleepingPercentage", Integer.toString((int) (100D * sleepStatus.getRatio())))
+                .setVariable("sleepingPercentage", Integer.toString(sleepStatus.percentage()))
                 .bake().send(SERVER_CONFIG.morningMessageTarget.get(), level);
 
         // JSON version to implement later:
-        // ITextComponent morningMessage = ITextComponent.Serializer.fromJson(HourglassConfig.SERVER.morningMessageJson.get());
+        // ITextComponent morningMessage = ITextComponent.Serializer
+                // .fromJson(HourglassConfig.SERVER.morningMessageJson.get());
     }
 
 }

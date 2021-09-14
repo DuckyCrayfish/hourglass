@@ -212,7 +212,7 @@ public class TimeService {
             return SERVER_CONFIG.sleepSpeedAll.get();
         }
 
-        double percentageSleeping = sleepStatus.getRatio();
+        double percentageSleeping = sleepStatus.ratio();
         double sleepSpeedMin = SERVER_CONFIG.sleepSpeedMin.get();
         double sleepSpeedMax = SERVER_CONFIG.sleepSpeedMax.get();
         double multiplier = MathUtils.lerp(percentageSleeping, sleepSpeedMin, sleepSpeedMax);

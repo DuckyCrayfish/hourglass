@@ -89,8 +89,15 @@ public class SleepStatus extends net.minecraft.server.players.SleepStatus {
     /**
      * {@return the ratio of sleeping players to active players. Value between 0.0 and 1.0}
      */
-    public double getRatio() {
+    public double ratio() {
         return (double) sleepingPlayerCount / (double) activePlayerCount;
+    }
+
+    /**
+     * {@return the percentage of sleeping players to active players as an integer between 0 and 100}
+     */
+    public int percentage() {
+        return (int) (ratio() * 100D);
     }
 
     /**
