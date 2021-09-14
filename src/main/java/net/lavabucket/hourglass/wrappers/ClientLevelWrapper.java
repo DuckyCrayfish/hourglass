@@ -42,7 +42,7 @@ public class ClientLevelWrapper extends Wrapper<ClientLevel> {
         super((ClientLevel) level);
     }
 
-    /** {@return true if the 'daylight cycle' game rule is enabled in {@link #level}} */
+    /** {@return true if the 'daylight cycle' game rule is enabled in this level} */
     public boolean daylightRuleEnabled() {
         return wrapped.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
     }
