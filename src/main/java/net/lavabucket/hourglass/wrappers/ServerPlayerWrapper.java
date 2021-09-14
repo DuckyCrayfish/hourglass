@@ -20,15 +20,18 @@
 package net.lavabucket.hourglass.wrappers;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 
 public class ServerPlayerWrapper extends Wrapper<ServerPlayer> {
+
+    public static Class<ServerPlayer> playerClass = ServerPlayer.class;
 
     /**
      * Instantiates a new player wrapper.
      * @param player  the player to wrap
      */
-    public ServerPlayerWrapper(ServerPlayer player) {
-        super(player);
+    public ServerPlayerWrapper(Player player) {
+        super(playerClass.cast(player));
     }
 
     /**

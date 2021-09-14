@@ -26,7 +26,7 @@ import net.lavabucket.hourglass.time.SleepStatus;
 import net.lavabucket.hourglass.time.TimeService;
 import net.lavabucket.hourglass.time.TimeServiceManager;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
-import net.minecraft.world.entity.player.Player;
+import net.lavabucket.hourglass.wrappers.ServerPlayerWrapper;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.world.SleepFinishedTimeEvent;
@@ -46,12 +46,13 @@ public class HourglassMessages {
 
         if (SERVER_CONFIG.enableSleepFeature.get() == true
                 && event.getPlayer().getSleepTimer() == 1
+                && event.getPlayer().getClass() == ServerPlayerWrapper.playerClass
                 && service != null
                 && service.level.get().equals(event.getPlayer().level)
                 && service.level.get().players().size() > 1
                 && service.level.daylightRuleEnabled()) {
 
-            sendEnterBedMessage(event.getPlayer());
+            sendEnterBedMessage(new ServerPlayerWrapper(event.getPlayer()));
         }
     }
 
@@ -66,12 +67,13 @@ public class HourglassMessages {
 
         if (SERVER_CONFIG.enableSleepFeature.get() == true
                 && event.updateWorld() == true
+                && event.getPlayer().getClass() == ServerPlayerWrapper.playerClass
                 && service != null
                 && service.level.get().equals(event.getPlayer().level)
                 && service.level.get().players().size() > 1
                 && service.level.daylightRuleEnabled()) {
 
-            sendLeaveBedMessage(event.getPlayer());
+            sendLeaveBedMessage(new ServerPlayerWrapper(event.getPlayer()));
         }
     }
 
@@ -103,7 +105,7 @@ public class HourglassMessages {
      *
      * @param player  the player who started sleeping
      */
-    public static void sendEnterBedMessage(Player player) {
+    public static void sendEnterBedMessage(ServerPlayerWrapper player) {
         String templateMessage = SERVER_CONFIG.enterBedMessage.get();
         TimeService timeService = TimeServiceManager.service;
 
@@ -115,11 +117,11 @@ public class HourglassMessages {
 
         new TemplateMessage().setTemplate(templateMessage)
                 .setType(SERVER_CONFIG.enterBedMessageType.get())
-                .setVariable("player", player.getGameProfile().getName())
+                .setVariable("player", player.get().getGameProfile().getName())
                 .setVariable("totalPlayers", Integer.toString(sleepStatus.amountActive()))
                 .setVariable("sleepingPlayers", Integer.toString(sleepStatus.amountSleeping()))
                 .setVariable("sleepingPercentage", Integer.toString((int) (100D * sleepStatus.getRatio())))
-                .bake().send(SERVER_CONFIG.enterBedMessageTarget.get(), new ServerLevelWrapper(player.level));
+                .bake().send(SERVER_CONFIG.enterBedMessageTarget.get(), new ServerLevelWrapper(player.get().level));
     }
 
     /**
@@ -131,7 +133,7 @@ public class HourglassMessages {
      *
      * @param player  the player who left their bed
      */
-    public static void sendLeaveBedMessage(Player player) {
+    public static void sendLeaveBedMessage(ServerPlayerWrapper player) {
         String templateMessage = SERVER_CONFIG.leaveBedMessage.get();
         TimeService timeService = TimeServiceManager.service;
 
@@ -143,11 +145,11 @@ public class HourglassMessages {
 
         new TemplateMessage().setTemplate(templateMessage)
                 .setType(SERVER_CONFIG.leaveBedMessageType.get())
-                .setVariable("player", player.getGameProfile().getName())
+                .setVariable("player", player.get().getGameProfile().getName())
                 .setVariable("totalPlayers", Integer.toString(sleepStatus.amountActive()))
                 .setVariable("sleepingPlayers", Integer.toString(sleepStatus.amountSleeping() - 1))
                 .setVariable("sleepingPercentage", Integer.toString((int) (100D * sleepStatus.getRatio())))
-                .bake().send(SERVER_CONFIG.leaveBedMessageTarget.get(), new ServerLevelWrapper(player.level));
+                .bake().send(SERVER_CONFIG.leaveBedMessageTarget.get(), new ServerLevelWrapper(player.get().level));
     }
 
     /**
