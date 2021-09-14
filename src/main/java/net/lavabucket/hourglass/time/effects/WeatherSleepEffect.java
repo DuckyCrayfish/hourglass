@@ -23,6 +23,8 @@ import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 import static net.lavabucket.hourglass.time.effects.EffectCondition.ALWAYS;
 import static net.lavabucket.hourglass.time.effects.EffectCondition.SLEEPING;
 
+import com.google.common.primitives.Ints;
+
 import net.lavabucket.hourglass.time.TimeContext;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 
@@ -55,14 +57,16 @@ public class WeatherSleepEffect extends AbstractTimeEffect {
         int rainTime = level.levelData.getRainTime();
 
         // Subtract 1 from weather speed to account for vanilla's weather progression of 1 per tick.
-        int weatherSpeed = (int) Math.min(Integer.MAX_VALUE, context.getTimeDelta().longValue()) - 1;
+        int weatherSpeed = Ints.saturatedCast(context.getTimeDelta().longValue() - 1);
 
         if (clearWeatherTime <= 0) {
             if (thunderTime > 0) {
-                level.levelData.setThunderTime(Math.max(1, thunderTime - weatherSpeed));
+                thunderTime = Math.max(1, thunderTime - weatherSpeed);
+                level.levelData.setThunderTime(thunderTime);
             }
             if (rainTime > 0) {
-                level.levelData.setRainTime(Math.max(1, rainTime - weatherSpeed));
+                rainTime = Math.max(1, rainTime - weatherSpeed);
+                level.levelData.setRainTime(rainTime);
             }
         }
     }
