@@ -29,10 +29,9 @@ import org.apache.logging.log4j.core.lookup.StrSubstitutor;
 
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 import net.lavabucket.hourglass.wrappers.ServerPlayerWrapper;
+import net.lavabucket.hourglass.wrappers.TextWrapper;
 import net.minecraft.Util;
 import net.minecraft.network.chat.ChatType;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 
 /**
  * Message builder for Hourglass notifications, which allow for customizable targets and variable
@@ -41,7 +40,7 @@ import net.minecraft.network.chat.TextComponent;
 public class TemplateMessage {
 
     private ChatType type = ChatType.SYSTEM;
-    private Component message;
+    private TextWrapper message;
     private String template;
     public HashMap<String, String> variables;
     public StrSubstitutor substitutor;
@@ -98,22 +97,22 @@ public class TemplateMessage {
     }
 
     /**
-     * Gets the ITextComponent to be used as the message body.
+     * Gets the text component to be used as the message body.
      *
      * @return the message
      */
-    public Component getMessage() {
+    public TextWrapper getMessage() {
         return this.message;
     }
 
     /**
-     * Bake the variables into the message template to create an ITextComponent message.
+     * Bake the variables a new message.
      *
      * @return this, for chaining
      */
     public TemplateMessage bake() {
         this.substitutor.setVariableResolver(new MapLookup(this.variables));
-        this.message = new TextComponent(this.substitutor.replace(this.template));
+        this.message = TextWrapper.literal(this.substitutor.replace(this.template));
         return this;
     }
 
@@ -140,7 +139,7 @@ public class TemplateMessage {
         }
 
         if (target == MessageTarget.ALL) {
-            level.get().getServer().getPlayerList().broadcastMessage(this.message, type, Util.NIL_UUID);
+            level.get().getServer().getPlayerList().broadcastMessage(this.message.get(), type, Util.NIL_UUID);
         } else {
             Stream<ServerPlayerWrapper> playerStream = level.get().players().stream()
                     .map(player -> new ServerPlayerWrapper(player));
@@ -149,7 +148,7 @@ public class TemplateMessage {
                 playerStream = playerStream.filter(ServerPlayerWrapper::isSleeping);
             }
 
-            playerStream.forEach(player -> player.get().sendMessage(this.message, type, Util.NIL_UUID));
+            playerStream.forEach(player -> player.get().sendMessage(this.message.get(), type, Util.NIL_UUID));
         }
     }
 

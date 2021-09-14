@@ -32,9 +32,8 @@ import net.lavabucket.hourglass.command.config.ConfigCommand;
 import net.lavabucket.hourglass.command.config.ConfigCommandEntry;
 import net.lavabucket.hourglass.config.ConfigSynchronizer;
 import net.lavabucket.hourglass.time.effects.EffectCondition;
+import net.lavabucket.hourglass.wrappers.TextWrapper;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.server.command.EnumArgument;
@@ -81,11 +80,11 @@ public class HourglassCommand {
      */
     public static <T> void onQuerySuccess(CommandContext<CommandSourceStack> context, ConfigCommandEntry<T> entry) {
 
-        Component response = new TranslatableComponent("commands.hourglass.config.query",
+        TextWrapper response = TextWrapper.translation("commands.hourglass.config.query",
                 entry.getIdentifier(),
                 entry.getConfigValue().get().toString());
 
-        context.getSource().sendSuccess(response, false);
+        context.getSource().sendSuccess(response.get(), false);
     }
 
     /**
@@ -100,11 +99,11 @@ public class HourglassCommand {
         // cause the config update to send twice.
         ConfigSynchronizer.syncConfigWithClients();
 
-        Component response = new TranslatableComponent("commands.hourglass.config.set",
+        TextWrapper response = TextWrapper.translation("commands.hourglass.config.set",
                 entry.getIdentifier(),
                 entry.getConfigValue().get());
 
-        context.getSource().sendSuccess(response, true);
+        context.getSource().sendSuccess(response.get(), true);
     }
 
     /**
@@ -115,11 +114,11 @@ public class HourglassCommand {
      * @param entry  the entry that the user tried to modify
      */
     public static <T> void onModifyFailure(CommandContext<CommandSourceStack> context, ConfigCommandEntry<T> entry) {
-        Component response = new TranslatableComponent("commands.hourglass.config.failure",
+        TextWrapper response = TextWrapper.translation("commands.hourglass.config.failure",
                 entry.getIdentifier(),
                 entry.getConfigValue().get());
 
-        context.getSource().sendFailure(response);
+        context.getSource().sendFailure(response.get());
     }
 
 }
