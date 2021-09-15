@@ -2,6 +2,8 @@
   "commands.hourglass.config.query": "Config %s is currently set to: %s",
   "commands.hourglass.config.set": "Config %s is now set to: %s",
   "commands.hourglass.config.failure": "Failed to set config: %s",
+  "commands.hourglass.query.timeSpeed.success": "The time speed is %s",
+  "commands.hourglass.query.timeSpeed.failure": "Hourglass does not control this dimension.",
   "hourglass.configgui.title": "Hourglass Config",
   "hourglass.configgui.preventClockWobble": "Prevent Clock Wobble",
   "hourglass.configgui.clockAlignment": "Clock Alignment",

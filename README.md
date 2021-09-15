@@ -71,6 +71,10 @@ Many config options can be changed in-game via this command.
 
 If the `<value>` argument is omitted, this command will display the config option's current value.
 
+#### `/hourglass query timeSpeed`
+
+Displays the current speed at which time is elapsing.
+
 ## Configuration
 
 All configuration values can be changed at runtime without reloading the game.
