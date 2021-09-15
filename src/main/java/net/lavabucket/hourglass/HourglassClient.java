@@ -36,7 +36,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 public class HourglassClient {
 
     /** Client-specific entry point. */
-    public static void init() {
+    public HourglassClient() {
         final ModLoadingContext modLoadingContext = ModLoadingContext.get();
         final IEventBus forgeEventBus = MinecraftForge.EVENT_BUS;
 

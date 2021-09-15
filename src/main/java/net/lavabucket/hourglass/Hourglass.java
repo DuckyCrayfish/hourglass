@@ -44,7 +44,6 @@ public class Hourglass {
 
     /** Mod identifier. The value here should match an entry in the META-INF/mods.toml file. */
     public static final String MOD_ID = "hourglass";
-
     /** Log4j marker for Hourglass logs. */
     public static final Marker MARKER = MarkerManager.getMarker(MOD_ID);
 
@@ -64,9 +63,9 @@ public class Hourglass {
         forgeEventBus.register(HourglassMessages.class);
         forgeEventBus.register(HourglassCommand.class);
 
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> HourglassClient::init);
-
         TimeEffects.registerEffects(modEventBus);
+
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> HourglassClient::new);
     }
 
 }
