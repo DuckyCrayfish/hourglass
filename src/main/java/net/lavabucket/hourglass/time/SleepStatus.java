@@ -72,23 +72,17 @@ public class SleepStatus extends net.minecraft.server.players.SleepStatus {
         return activePlayerCount;
     }
 
-    /**
-     * {@return true when all players are awake, false otherwise}
-     */
+    /** {@return true when all players are awake, false otherwise} */
     public boolean allAwake() {
         return sleepingPlayerCount == 0;
     }
 
-    /**
-     * {@return true when all players are sleeping, false otherwise}
-     */
+    /** {@return true when all players are sleeping, false otherwise} */
     public boolean allAsleep() {
         return sleepingPlayerCount == activePlayerCount;
     }
 
-    /**
-     * {@return the ratio of sleeping players to active players. Value between 0.0 and 1.0}
-     */
+    /** {@return the ratio of sleeping players to active players. Value between 0.0 and 1.0} */
     public double ratio() {
         return (double) sleepingPlayerCount / (double) activePlayerCount;
     }

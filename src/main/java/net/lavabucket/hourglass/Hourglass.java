@@ -42,8 +42,10 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @Mod(Hourglass.MOD_ID)
 public class Hourglass {
 
-    // The value here should match an entry in the META-INF/mods.toml file
+    /** Mod identifier. The value here should match an entry in the META-INF/mods.toml file. */
     public static final String MOD_ID = "hourglass";
+
+    /** Log4j marker for Hourglass logs. */
     public static final Marker MARKER = MarkerManager.getMarker(MOD_ID);
 
     /** Mod entry point. */

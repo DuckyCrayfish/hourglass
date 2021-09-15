@@ -28,8 +28,13 @@ package net.lavabucket.hourglass.utils;
 public class MathUtils {
 
     /**
-     * Returns a value {@code percent} from the linear interpolation between {@code d0} and
-     * {@code d1}.
+     * Returns a value from the range of numbers between {@code d0} and {@code d1}. The value's
+     * position in this range is proportional to the argument {@code percent} as a fraction.
+     *
+     * @param percent  the fraction of the distance between {@code d0} and {@code d1} to sample
+     * @param d0  the first edge of the range
+     * @param d1  the second edge of the range
+     * @return a value from the range of numbers between {@code d0} and {@code d1}
      */
    public static double lerp(double percent, double d0, double d1) {
       return d0 + percent * (d1 - d0);

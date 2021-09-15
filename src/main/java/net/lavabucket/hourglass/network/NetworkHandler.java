@@ -46,7 +46,6 @@ public class NetworkHandler {
 
     /**
      * Register all network messages needed for the mod. Called during the mod common setup event.
-     *
      * @param event  the mod event from the event bus
      */
     @SubscribeEvent

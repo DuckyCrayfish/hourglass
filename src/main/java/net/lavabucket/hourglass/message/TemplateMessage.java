@@ -52,15 +52,15 @@ public class TemplateMessage {
         template = "";
     }
 
-    /**
-     * @return the ChatType of this message
-     */
+    /** {@return the {@code ChatType} of this message} */
     public ChatType getType() {
         return type;
     }
 
     /**
-     * @param type  the ChatType of this message
+     * Sets the {@code ChatType} of this message
+     *
+     * @param type  this message type
      * @return this, for chaining
      */
     public TemplateMessage setType(ChatType type) {
@@ -68,15 +68,15 @@ public class TemplateMessage {
         return this;
     }
 
-    /**
-     * @return the message template
-     */
+    /** {@return the message template} */
     public String getTemplate() {
         return template;
     }
 
     /**
-     * @param template  the message template use during bake
+     * Sets the template of this message to use when baking the message.
+     *
+     * @param template  the message template
      * @return this, for chaining
      */
     public TemplateMessage setTemplate(String template) {
@@ -96,18 +96,13 @@ public class TemplateMessage {
         return this;
     }
 
-    /**
-     * Gets the text component to be used as the message body.
-     *
-     * @return the message
-     */
+    /** {@return the text component to be used as the message body} */
     public TextWrapper getMessage() {
         return this.message;
     }
 
     /**
      * Bake the variables a new message.
-     *
      * @return this, for chaining
      */
     public TemplateMessage bake() {

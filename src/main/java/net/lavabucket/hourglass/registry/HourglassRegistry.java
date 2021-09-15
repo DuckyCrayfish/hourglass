@@ -35,9 +35,13 @@ public final class HourglassRegistry {
     /** Registry for time effects. See {@link TimeEffect} for details on time effects. */
     public static IForgeRegistry<TimeEffect> TIME_EFFECT;
 
+    /** The resource key for the {@link #TIME_EFFECT} registry. */
     public static final ResourceLocation TIME_EFFECT_KEY = new ResourceLocation(Hourglass.MOD_ID, "time_effect");
 
-    /** Creates all new registries in this class. */
+    /**
+     * Creates all new registries in this class.
+     * @param event  the event provided by the Forge event bus
+     */
     @SubscribeEvent
     public static void newRegistryEvent(RegistryEvent.NewRegistry event) {
         TIME_EFFECT = new RegistryBuilder<TimeEffect>().setName(TIME_EFFECT_KEY).setType(TimeEffect.class).create();

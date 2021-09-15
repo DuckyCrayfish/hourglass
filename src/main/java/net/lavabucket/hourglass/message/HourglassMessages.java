@@ -37,7 +37,6 @@ public class HourglassMessages {
 
     /**
      * Event listener that is called every tick for every player who is sleeping.
-     *
      * @param event  the event provided by the Forge event bus
      */
     @SubscribeEvent
@@ -58,7 +57,6 @@ public class HourglassMessages {
 
     /**
      * Event listener that is called when a player gets out of bed.
-     *
      * @param event  the event provided by the Forge event bus
      */
     @SubscribeEvent
@@ -79,7 +77,6 @@ public class HourglassMessages {
 
     /**
      * Event listener that is called at morning when sleep has completed in a dimension.
-     *
      * @param event  the event provided by the Forge event bus
      */
     @SubscribeEvent
