@@ -22,11 +22,11 @@ package net.lavabucket.hourglass;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import net.lavabucket.hourglass.chat.HourglassMessages;
 import net.lavabucket.hourglass.client.ClientEventInitializer;
 import net.lavabucket.hourglass.command.HourglassCommand;
 import net.lavabucket.hourglass.config.ConfigSynchronizer;
 import net.lavabucket.hourglass.config.HourglassConfig;
+import net.lavabucket.hourglass.message.HourglassMessages;
 import net.lavabucket.hourglass.network.NetworkHandler;
 import net.lavabucket.hourglass.registry.HourglassRegistry;
 import net.lavabucket.hourglass.time.TimeServiceManager;

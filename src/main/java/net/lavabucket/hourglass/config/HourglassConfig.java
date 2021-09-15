@@ -19,8 +19,8 @@
 
 package net.lavabucket.hourglass.config;
 
-import net.lavabucket.hourglass.chat.TemplateMessage.MessageTarget;
 import net.lavabucket.hourglass.client.gui.ScreenAlignment;
+import net.lavabucket.hourglass.message.TemplateMessage.MessageTarget;
 import net.lavabucket.hourglass.time.Time;
 import net.lavabucket.hourglass.time.effects.EffectCondition;
 import net.minecraft.network.chat.ChatType;

@@ -17,7 +17,7 @@
  * along with Hourglass.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.lavabucket.hourglass.chat;
+package net.lavabucket.hourglass.message;
 
 import java.util.HashMap;
 import java.util.stream.Stream;

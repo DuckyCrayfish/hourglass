@@ -17,7 +17,7 @@
  * along with Hourglass.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.lavabucket.hourglass.chat;
+package net.lavabucket.hourglass.message;
 
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
