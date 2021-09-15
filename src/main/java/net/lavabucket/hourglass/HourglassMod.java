@@ -22,7 +22,6 @@ package net.lavabucket.hourglass;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import net.lavabucket.hourglass.client.ClientEventInitializer;
 import net.lavabucket.hourglass.command.HourglassCommand;
 import net.lavabucket.hourglass.config.ConfigSynchronizer;
 import net.lavabucket.hourglass.config.HourglassConfig;
@@ -47,9 +46,7 @@ public class HourglassMod {
     public static final String ID = "hourglass";
     public static final Marker MARKER = MarkerManager.getMarker(ID);
 
-    /**
-     * Mod entry point.
-     */
+    /** Mod entry point. */
     public HourglassMod() {
         final ModLoadingContext modLoadingContext = ModLoadingContext.get();
         final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -65,7 +62,7 @@ public class HourglassMod {
         forgeEventBus.register(HourglassMessages.class);
         forgeEventBus.register(HourglassCommand.class);
 
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientEventInitializer::register);
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> HourglassClient::init);
 
         TimeEffects.registerEffects(modEventBus);
     }

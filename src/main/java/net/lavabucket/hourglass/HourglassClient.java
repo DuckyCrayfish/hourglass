@@ -17,8 +17,9 @@
  * along with Hourglass.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.lavabucket.hourglass.client;
+package net.lavabucket.hourglass;
 
+import net.lavabucket.hourglass.client.TimeInterpolator;
 import net.lavabucket.hourglass.client.gui.ConfigScreen;
 import net.lavabucket.hourglass.client.gui.SleepGui;
 import net.minecraftforge.common.MinecraftForge;
@@ -26,13 +27,16 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 
 /**
- * Initializes all client-only event listeners.
+ * Entry point for client-specific features.
  *
- * Performing this in a dedicated class provides sufficient client/server distribution separation.
+ * <p>Placing client-specific initialization in a dedicated class is necessary to provide sufficient
+ * client/server distribution separation. Failure to do this could crash a Minecraft server
+ * distribution on startup as Java tries to load classes that do not exist.
  */
-public class ClientEventInitializer {
+public class HourglassClient {
 
-    public static void register() {
+    /** Client-specific entry point. */
+    public static void init() {
         final ModLoadingContext modLoadingContext = ModLoadingContext.get();
         final IEventBus forgeEventBus = MinecraftForge.EVENT_BUS;
 
