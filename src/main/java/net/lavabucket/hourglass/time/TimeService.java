@@ -19,7 +19,7 @@
 
 package net.lavabucket.hourglass.time;
 
-import static net.lavabucket.hourglass.HourglassMod.MARKER;
+import static net.lavabucket.hourglass.Hourglass.MARKER;
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
 import java.util.Collection;

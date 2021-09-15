@@ -24,7 +24,7 @@ import java.lang.reflect.Field;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.lavabucket.hourglass.HourglassMod;
+import net.lavabucket.hourglass.Hourglass;
 import net.lavabucket.hourglass.time.SleepStatus;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.GameRules;
@@ -113,7 +113,7 @@ public class ServerLevelWrapper extends Wrapper<ServerLevel> {
             sleepStatus.setAccessible(true);
             sleepStatus.set(wrapped, newStatus);
         } catch (IllegalArgumentException | IllegalAccessException | SecurityException | UnableToAccessFieldException e) {
-            LOGGER.warn(HourglassMod.MARKER, "Error setting sleep status.", e);
+            LOGGER.warn(Hourglass.MARKER, "Error setting sleep status.", e);
             return;
         }
     }

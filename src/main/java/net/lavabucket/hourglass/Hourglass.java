@@ -39,15 +39,15 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 /** This class contains the mod entry point, as well as some constants related to the mod itself. */
-@Mod(HourglassMod.ID)
-public class HourglassMod {
+@Mod(Hourglass.MOD_ID)
+public class Hourglass {
 
     // The value here should match an entry in the META-INF/mods.toml file
-    public static final String ID = "hourglass";
-    public static final Marker MARKER = MarkerManager.getMarker(ID);
+    public static final String MOD_ID = "hourglass";
+    public static final Marker MARKER = MarkerManager.getMarker(MOD_ID);
 
     /** Mod entry point. */
-    public HourglassMod() {
+    public Hourglass() {
         final ModLoadingContext modLoadingContext = ModLoadingContext.get();
         final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         final IEventBus forgeEventBus = MinecraftForge.EVENT_BUS;

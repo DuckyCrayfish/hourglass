@@ -21,7 +21,7 @@ package net.lavabucket.hourglass.network;
 
 import java.util.Optional;
 
-import net.lavabucket.hourglass.HourglassMod;
+import net.lavabucket.hourglass.Hourglass;
 import net.lavabucket.hourglass.config.ConfigSynchronizer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -35,7 +35,7 @@ import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
  */
 public class NetworkHandler {
 
-    public static final ResourceLocation CHANNEL_NAME = new ResourceLocation(HourglassMod.ID, "channel");
+    public static final ResourceLocation CHANNEL_NAME = new ResourceLocation(Hourglass.MOD_ID, "channel");
     public static final String PROTOCOL_VERSION = "1.0";
     public static final byte CONFIG_MESSAGE_ID = 1;
 

@@ -19,7 +19,7 @@
 
 package net.lavabucket.hourglass.time.effects;
 
-import net.lavabucket.hourglass.HourglassMod;
+import net.lavabucket.hourglass.Hourglass;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
@@ -29,7 +29,7 @@ import net.minecraftforge.registries.DeferredRegister;
  */
 public class TimeEffects {
 
-    private static DeferredRegister<TimeEffect> TIME_EFFECTS = DeferredRegister.create(TimeEffect.class, HourglassMod.ID);
+    private static DeferredRegister<TimeEffect> TIME_EFFECTS = DeferredRegister.create(TimeEffect.class, Hourglass.MOD_ID);
 
     public static RegistryObject<TimeEffect> WEATHER_EFFECT = TIME_EFFECTS.register("weather", () -> new WeatherSleepEffect());
     public static RegistryObject<TimeEffect> RANDOM_TICK_EFFECT = TIME_EFFECTS.register("random_tick", () -> new RandomTickSleepEffect());

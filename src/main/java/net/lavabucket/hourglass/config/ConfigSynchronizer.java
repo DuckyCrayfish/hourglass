@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 
 import org.apache.logging.log4j.LogManager;
 
-import net.lavabucket.hourglass.HourglassMod;
+import net.lavabucket.hourglass.Hourglass;
 import net.lavabucket.hourglass.network.NetworkHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
@@ -126,7 +126,7 @@ public class ConfigSynchronizer {
             ConfigTracker configTracker = ConfigTracker.INSTANCE;
             ModConfig modConfig =
                     ((Map<String, Map<Type, ModConfig>>) configsByModField.get(configTracker))
-                    .get(HourglassMod.ID)
+                    .get(Hourglass.MOD_ID)
                     .get(ModConfig.Type.SERVER);
             byte[] configData = Files.readAllBytes(modConfig.getFullPath());
             S2CConfigData message = new S2CConfigData(modConfig.getFileName(), configData);

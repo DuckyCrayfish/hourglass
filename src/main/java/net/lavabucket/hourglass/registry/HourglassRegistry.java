@@ -19,7 +19,7 @@
 
 package net.lavabucket.hourglass.registry;
 
-import net.lavabucket.hourglass.HourglassMod;
+import net.lavabucket.hourglass.Hourglass;
 import net.lavabucket.hourglass.time.effects.TimeEffect;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
@@ -35,7 +35,7 @@ public final class HourglassRegistry {
     /** Registry for time effects. See {@link TimeEffect} for details on time effects. */
     public static IForgeRegistry<TimeEffect> TIME_EFFECT;
 
-    public static final ResourceLocation TIME_EFFECT_KEY = new ResourceLocation(HourglassMod.ID, "time_effect");
+    public static final ResourceLocation TIME_EFFECT_KEY = new ResourceLocation(Hourglass.MOD_ID, "time_effect");
 
     /** Creates all new registries in this class. */
     @SubscribeEvent
