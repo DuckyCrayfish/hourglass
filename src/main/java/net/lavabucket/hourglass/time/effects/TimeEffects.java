@@ -21,6 +21,9 @@ package net.lavabucket.hourglass.time.effects;
 
 import net.lavabucket.hourglass.Hourglass;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 
@@ -35,11 +38,13 @@ public class TimeEffects {
     public static RegistryObject<TimeEffect> RANDOM_TICK_EFFECT = TIME_EFFECTS.register("random_tick", () -> new RandomTickSleepEffect());
 
     /**
-     * Registers all objects in {@link #TIME_EFFECTS}.
-     * @param bus  the mod event bus
+     * Registers {@link #TIME_EFFECTS}.
+     * @param event  the event, provided by the mod event bus
      */
-    public static void registerEffects(IEventBus bus) {
-        TIME_EFFECTS.register(bus);
+    @SubscribeEvent
+    public static void onConstructModEvent(FMLConstructModEvent event) {
+        final IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        TIME_EFFECTS.register(modBus);
     }
 
 }

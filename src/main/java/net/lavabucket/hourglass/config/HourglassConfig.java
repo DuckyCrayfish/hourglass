@@ -31,7 +31,9 @@ import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 
 /**
@@ -43,12 +45,12 @@ public class HourglassConfig {
     public static final ClientConfig CLIENT_CONFIG = new ClientConfig(new Builder());
 
     /**
-     * Register this class's configs with the mod context provided. Should be called during mod
-     * initialization.
-     *
-     * @param context  the mod loading context to register the configs with.
+     * Register this class's configs with the mod loading context.
+     * @param event  the event, provided by the mod event bus
      */
-    public static void register(ModLoadingContext context) {
+    @SubscribeEvent
+    public static void onConstructModEvent(FMLConstructModEvent event) {
+        final ModLoadingContext context = ModLoadingContext.get();
         context.registerConfig(ModConfig.Type.SERVER, SERVER_CONFIG.spec);
         context.registerConfig(ModConfig.Type.CLIENT, CLIENT_CONFIG.spec);
     }

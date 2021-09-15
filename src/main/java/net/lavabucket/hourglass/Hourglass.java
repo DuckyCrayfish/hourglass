@@ -34,7 +34,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -49,21 +48,18 @@ public class Hourglass {
 
     /** Mod entry point. */
     public Hourglass() {
-        final ModLoadingContext context = ModLoadingContext.get();
         final IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         final IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 
-        HourglassConfig.register(context);
-
         modBus.register(HourglassRegistry.class);
         modBus.register(NetworkHandler.class);
+        modBus.register(HourglassConfig.class);
         modBus.register(ConfigSynchronizer.class);
+        modBus.register(TimeEffects.class);
 
         forgeBus.register(TimeServiceManager.class);
         forgeBus.register(HourglassMessages.class);
         forgeBus.register(HourglassCommand.class);
-
-        TimeEffects.registerEffects(modBus);
 
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> HourglassClient::new);
     }

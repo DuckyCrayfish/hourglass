@@ -32,7 +32,9 @@ import net.minecraft.client.ProgressOption;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fmlclient.ConfigGuiHandler;
 import net.minecraftforge.fmlclient.ConfigGuiHandler.ConfigGuiFactory;
 
@@ -67,7 +69,13 @@ public final class ConfigScreen extends Screen {
     private int clockMargin;
     private boolean preventClockWobble;
 
-    public static void register(ModLoadingContext context) {
+    /**
+     * Registers this screen as the mod's config screen.
+     * @param event  the event, provided by the mod event bus
+     */
+    @SubscribeEvent
+    public static void onConstructModEvent(FMLConstructModEvent event) {
+        final ModLoadingContext context = ModLoadingContext.get();
         context.registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class,
                 () -> new ConfigGuiFactory((mc, screen) -> new ConfigScreen(screen)));
     }

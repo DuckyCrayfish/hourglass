@@ -24,7 +24,7 @@ import net.lavabucket.hourglass.client.gui.ConfigScreen;
 import net.lavabucket.hourglass.client.gui.SleepGui;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 /**
  * Entry point for client-specific features.
@@ -37,10 +37,10 @@ public class HourglassClient {
 
     /** Client-specific entry point. */
     public HourglassClient() {
-        final ModLoadingContext context = ModLoadingContext.get();
+        final IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         final IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 
-        ConfigScreen.register(context);
+        modBus.register(ConfigScreen.class);
 
         forgeBus.register(SleepGui.class);
         forgeBus.register(TimeInterpolator.class);
