@@ -57,16 +57,15 @@ Hourglass has been tested to be compatible with the following mods:
 * [Enhanced Celestials](https://www.curseforge.com/minecraft/mc-mods/enhanced-celestials)
 * [Quark](https://www.curseforge.com/minecraft/mc-mods/quark)
 
-  > The Improved Sleeping module of Quark interferes with the sleep feature of Hourglass. See the
-    notes below for more info.
+  > The Improved Sleeping module of Quark interferes with the sleep feature of Hourglass. See 
+    notes below.
 
   > The "Nerf Clock" Quark option breaks the bed clock in Hourglass. This option should either be
   	disabled or the Hourglass bed clock should be disabled via the `displayBedClock` config.
 
 * [Morpheus](https://www.curseforge.com/minecraft/mc-mods/morpheus)
 
-  > The sleep feature of Hourglass will need to be disabled to use it alongside Morpheus. See notes
-    below for more info.
+  > The sleep feature of Hourglass will need to be disabled to use it alongside Morpheus. See notes below.
 
 Hourglass is compatible with mods that enable sleep voting or have sleep percentage systems like
 **quark** and **morpheus**, but conflict with the sleep feature of this mod. These features should
