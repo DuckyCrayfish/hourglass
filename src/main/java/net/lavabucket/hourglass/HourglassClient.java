@@ -37,13 +37,13 @@ public class HourglassClient {
 
     /** Client-specific entry point. */
     public HourglassClient() {
-        final ModLoadingContext modLoadingContext = ModLoadingContext.get();
-        final IEventBus forgeEventBus = MinecraftForge.EVENT_BUS;
+        final ModLoadingContext context = ModLoadingContext.get();
+        final IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 
-        ConfigScreen.register(modLoadingContext);
+        ConfigScreen.register(context);
 
-        forgeEventBus.register(SleepGui.class);
-        forgeEventBus.register(TimeInterpolator.class);
+        forgeBus.register(SleepGui.class);
+        forgeBus.register(TimeInterpolator.class);
     }
 
 }
