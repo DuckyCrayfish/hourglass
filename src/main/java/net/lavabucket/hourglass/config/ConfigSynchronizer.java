@@ -26,13 +26,14 @@ import java.util.function.Supplier;
 
 import org.apache.logging.log4j.LogManager;
 
-import net.lavabucket.hourglass.HourglassMod;
-import net.lavabucket.hourglass.network.PacketHandler;
+import net.lavabucket.hourglass.Hourglass;
+import net.lavabucket.hourglass.network.NetworkHandler;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.config.ModConfig.Reloading;
 import net.minecraftforge.fml.config.ModConfig.Type;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.FMLHandshakeMessages.S2CConfigData;
@@ -55,22 +56,22 @@ public class ConfigSynchronizer {
      * @param event  the config reload event, provided by the event bus
      */
     @SubscribeEvent
-	public static void onModConfigEvent(final ModConfig.Reloading event) {
-		final ModConfig config = event.getConfig();
+    public static void onModConfigEvent(final Reloading event) {
+        final ModConfig config = event.getConfig();
         final MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-		if (server != null
+        if (server != null
                 && server.isRunning()
-                && config.getSpec() == HourglassConfig.SERVER_SPEC) {
+                && config.getSpec() == HourglassConfig.SERVER_CONFIG.spec) {
 
             syncConfigWithClients();
-		}
-	}
+        }
+    }
 
     /**
      * Returns the configuration message class. Removes the need to import the message class where
      * the network channel message is registered.
      *
-     * @return  the configuration message class
+     * @return the configuration message class
      */
     public static Class<S2CConfigData> getMessageClass() {
         return S2CConfigData.class;
@@ -91,7 +92,7 @@ public class ConfigSynchronizer {
      * Attempts to decode an S2CConfigData object from the given PacketBuffer.
      *
      * @param buffer  the buffer to read the object data from
-     * @return  the config data object that was read from the buffer
+     * @return the config data object that was read from the buffer
      */
     public static S2CConfigData decode(PacketBuffer buffer) {
         return S2CConfigData.decode(buffer);
@@ -124,11 +125,11 @@ public class ConfigSynchronizer {
             ConfigTracker configTracker = ConfigTracker.INSTANCE;
             ModConfig modConfig =
                     ((Map<String, Map<Type, ModConfig>>) configsByModField.get(configTracker))
-                    .get(HourglassMod.ID)
+                    .get(Hourglass.MOD_ID)
                     .get(ModConfig.Type.SERVER);
             byte[] configData = Files.readAllBytes(modConfig.getFullPath());
             S2CConfigData message = new S2CConfigData(modConfig.getFileName(), configData);
-            PacketHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), message);
+            NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), message);
 
         } catch (Exception e) {
             LogManager.getLogger().error("Failed to sync server config with clients.", e);

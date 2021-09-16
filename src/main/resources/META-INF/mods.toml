@@ -36,7 +36,7 @@ displayURL="https://github.com/DuckyCrayfish/hourglass" #optional
 logoFile="logo-800x400.png" #optional
 
 # A text field displayed in the mod UI
-#credits="Thanks for this example mod goes to Java" #optional
+# credits="Thanks for this example mod goes to Java" #optional
 
 # A text field displayed in the mod UI
 authors="DuckyCrayfish" #optional

@@ -19,9 +19,10 @@
 
 package net.lavabucket.hourglass.config;
 
-import net.lavabucket.hourglass.chat.TemplateMessage.MessageTarget;
 import net.lavabucket.hourglass.client.gui.ScreenAlignment;
-import net.lavabucket.hourglass.time.TimeUtils;
+import net.lavabucket.hourglass.message.TemplateMessage.MessageTarget;
+import net.lavabucket.hourglass.time.Time;
+import net.lavabucket.hourglass.time.effects.EffectCondition;
 import net.minecraft.util.text.ChatType;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
@@ -30,196 +31,207 @@ import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 
+/**
+ * Configuration class for Hourglass.
+ */
 public class HourglassConfig {
 
-    public static final Builder SERVER_BUILDER = new Builder();
-    public static final ServerConfig SERVER_CONFIG = new ServerConfig(SERVER_BUILDER);
-    public static final ForgeConfigSpec SERVER_SPEC = SERVER_BUILDER.build();
+    public static final ServerConfig SERVER_CONFIG = new ServerConfig(new Builder());
+    public static final ClientConfig CLIENT_CONFIG = new ClientConfig(new Builder());
 
-    public static final Builder CLIENT_BUILDER = new Builder();
-    public static final ClientConfig CLIENT_CONFIG = new ClientConfig(CLIENT_BUILDER);
-    public static final ForgeConfigSpec CLIENT_SPEC = CLIENT_BUILDER.build();
+    /**
+     * Register this class's configs with the mod loading context.
+     * @param event  the event, provided by the mod event bus
+     */
+    @SubscribeEvent
+    public static void onConstructModEvent(FMLConstructModEvent event) {
+        final ModLoadingContext context = ModLoadingContext.get();
+        context.registerConfig(ModConfig.Type.SERVER, SERVER_CONFIG.spec);
+        context.registerConfig(ModConfig.Type.CLIENT, CLIENT_CONFIG.spec);
+    }
 
-	/**
-	 * Register this class's configs with the mod context provided. Should be called during mod
-	 * initialization.
-	 *
-	 * @param context the mod loading context to register the configs with.
-	 */
-	public static void register(ModLoadingContext context) {
-		context.registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
-		context.registerConfig(ModConfig.Type.CLIENT, CLIENT_SPEC);
-	}
-
+    /** Server-specific configuration file. */
     public static class ServerConfig {
+
+        public final ForgeConfigSpec spec;
 
         public final DoubleValue daySpeed;
         public final DoubleValue nightSpeed;
-        public final BooleanValue displayBedClock;
-        public final BooleanValue accelerateWeather;
+
+        public final EnumValue<EffectCondition> weatherEffect;
+        public final EnumValue<EffectCondition> randomTickEffect;
+        public final IntValue baseRandomTickSpeed;
 
         public final BooleanValue enableSleepFeature;
         public final DoubleValue sleepSpeedMin;
         public final DoubleValue sleepSpeedMax;
         public final DoubleValue sleepSpeedAll;
         public final BooleanValue clearWeatherOnWake;
-        public final BooleanValue accelerateRandomTickSpeed;
-        public final IntValue baseRandomTickSpeed;
+        public final BooleanValue displayBedClock;
 
         public final ConfigValue<String> morningMessage;
         public final EnumValue<ChatType> morningMessageType;
         public final EnumValue<MessageTarget> morningMessageTarget;
-        public final ConfigValue<String> inBedMessage;
-        public final ConfigValue<String> outOfBedMessage;
-        public final EnumValue<ChatType> bedMessageType;
-        public final EnumValue<MessageTarget> bedMessageTarget;
+
+        public final ConfigValue<String> enterBedMessage;
+        public final EnumValue<ChatType> enterBedMessageType;
+        public final EnumValue<MessageTarget> enterBedMessageTarget;
+
+        public final ConfigValue<String> leaveBedMessage;
+        public final EnumValue<ChatType> leaveBedMessageType;
+        public final EnumValue<MessageTarget> leaveBedMessageTarget;
 
         /**
          * Constructs an instance of an Hourglass server config.
-         *
          * @param builder  a Forge config builder instance
          */
         public ServerConfig(final ForgeConfigSpec.Builder builder) {
-            // general
-            builder.push("general");
 
-            daySpeed = builder
-                    .comment("The speed at which time passes during the day.\n"
-                            + "Day is defined as any time between 23500 (middle of dawn) and 12500 (middle of dusk) the next day.\n"
-                            + "Vanilla speed: 1.0")
-                    .defineInRange("daySpeed", 1D, 0D, (double) TimeUtils.DAY_LENGTH);
+            builder.push("time"); // time
 
-            nightSpeed = builder
-                    .comment("The speed at which time passes during the night.\n"
-                            + "Night is defined as any time between 12500 (middle of dusk) and 23500 (middle of dawn).\n"
-                            + "Vanilla speed: 1.0")
-                    .defineInRange("nightSpeed", 1D, 0D, (double) TimeUtils.DAY_LENGTH);
+                daySpeed = builder.comment(
+                    "The speed at which time passes during the day.",
+                    "Day is defined as any time between 23500 (middle of dawn) and 12500 (middle of dusk) the next day.",
+                    "Vanilla speed: 1.0")
+                    .defineInRange("daySpeed", 1D, 0D, Time.DAY_LENGTH.doubleValue());
 
-            displayBedClock = builder
-                    .comment("When true, displays a clock in the sleep interface.")
-                    .define("displayBedClock", true);
+                nightSpeed = builder.comment(
+                    "The speed at which time passes during the night.",
+                    "Night is defined as any time between 12500 (middle of dusk) and 23500 (middle of dawn).",
+                    "Vanilla speed: 1.0")
+                    .defineInRange("nightSpeed", 1D, 0D, Time.DAY_LENGTH.doubleValue());
 
-            accelerateWeather = builder
-                    .comment("Accelerate the passage of weather at the same rate as the passage of time, making weather events\n"
-                            + "elapse faster while the passage of time is accelerated. Clear weather is not accelerated.\n"
-                            + "Note: This setting is not applicable if game rule doWeatherCycle is false.")
-                    .define("accelerateWeather", true);
+                builder.push("effects"); // time.effects
 
-            builder.pop();
+                    weatherEffect = builder.comment(
+                        "When applied, this effect syncs the passage of weather with the current speed of time.",
+                        "I.e., as time moves faster, rain stops faster. Clear weather is not affected.",
+                        "When set to SLEEPING, this effect only applies when at least one player is sleeping in a dimension.",
+                        "Note: This setting is not applicable if game rule doWeatherCycle is false.")
+                        .defineEnum("weatherEffect", EffectCondition.SLEEPING);
 
-            // sleep
-            builder.push("sleep");
+                    randomTickEffect = builder.comment(
+                        "When applied, this effect syncs the random tick speed with the current speed of time, forcing",
+                        "crop, tree, and grass growth to occur at baseRandomTickSpeed multiplied by the current time-speed.",
+                        "When set to SLEEPING, randomTickSpeed is set to baseRandomTickSpeed unless at least one player is sleeping in a dimension.",
+                        "More information on the effects of random tick speed can be found here: https://minecraft.fandom.com/wiki/Tick#Random_tick",
+                        "WARNING: This setting overwrites the randomTickSpeed game rule. To modify the base random tick speed,",
+                        "use the baseRandomTickSpeed setting instead of changing the game rule directly.")
+                        .defineEnum("randomTickEffect", EffectCondition.NEVER);
 
-            enableSleepFeature = builder
-                    .comment("Enables or disables the sleep feature of this mod. Enabling this setting will modify the vanilla\n"
-                            + "sleep functionality and may conflict with other sleep mods. If disabled, the settings in the\n"
-                            + "messages section and the remaining settings in this section will not apply.")
+                    baseRandomTickSpeed = builder
+                        .comment("The base random tick speed used by the randomTickEffect time effect.")
+                        .defineInRange("baseRandomTickSpeed", 3, 0, Integer.MAX_VALUE);
+
+                builder.pop(); // time.effects
+            builder.pop(); // time
+
+            builder.push("sleep"); // sleep
+
+                enableSleepFeature = builder.comment(
+                    "Enables or disables the sleep feature of this mod. Enabling this setting will modify the vanilla sleep functionality",
+                    "and may conflict with other sleep mods. If disabled, all settings in the sleep section will not apply.")
                     .define("enableSleepFeature", true);
 
-            sleepSpeedMin = builder
+                sleepSpeedMin = builder
                     .comment("The minimum speed at which time passes when only 1 player is sleeping in a full server.")
-                    .defineInRange("sleepSpeedMin", 1D, 0D, (double) TimeUtils.DAY_LENGTH);
+                    .defineInRange("sleepSpeedMin", 1D, 0D, Time.DAY_LENGTH.doubleValue());
 
-            sleepSpeedMax = builder
-                    .comment("The maximum speed at which time passes when all players are sleeping. A value of 120\n"
-                            + "is approximately equal to the time it takes to sleep in vanilla.")
-                    .defineInRange("sleepSpeedMax", 120D, 0D, (double) TimeUtils.DAY_LENGTH);
+                sleepSpeedMax = builder.comment(
+                    "The maximum speed at which time passes when all players are sleeping. A value of 120",
+                    "is approximately equal to the time it takes to sleep in vanilla.")
+                    .defineInRange("sleepSpeedMax", 120D, 0D, Time.DAY_LENGTH.doubleValue());
 
-            sleepSpeedAll = builder
-                    .comment("The speed at which time passes when all players are sleeping.\n"
-                            + "Set to -1 to disable this feature (sleepSpeedMax will be used when all players are sleeping).")
-                    .defineInRange("sleepSpeedAll", -1.0D, -1.0D, (double) TimeUtils.DAY_LENGTH);
+                sleepSpeedAll = builder.comment(
+                    "The speed at which time passes when all players are sleeping.",
+                    "Set to -1 to disable this feature (sleepSpeedMax will be used when all players are sleeping).")
+                    .defineInRange("sleepSpeedAll", -1.0D, -1.0D, Time.DAY_LENGTH.doubleValue());
 
-            clearWeatherOnWake = builder
-                    .comment("Set to 'true' for the weather to clear when players wake up in the morning as it does in vanilla.\n"
-                            + "Set to 'false' to allow weather to pass realistically overnight if accelerateWeather is enabled.\n"
-                            + "Note: This setting is ignored if game rule doWeatherCycle is false.")
+                clearWeatherOnWake = builder.comment(
+                    "Set to 'true' for the weather to clear when players wake up in the morning as it does in vanilla.",
+                    "Set to 'false' to force weather to pass naturally. Adds realism when accelerateWeather is enabled.",
+                    "Note: This setting is ignored if game rule doWeatherCycle is false.")
                     .define("clearWeatherOnWake", true);
 
-            accelerateRandomTickSpeed = builder
-                    .comment("When true, accelerates the random tick speed while sleeping. This allows things like crops and\n"
-                            + "grass to grow at the same rate as time is passing overnight. The modified random tick speed is the\n"
-                            + "sleep.baseRandomTickSpeed value times the current time speed. This means that as time moves faster, crops grow faster.\n"
-                            + "More information on the effects of random tick speed can be found here:\n"
-                            + "https://minecraft.fandom.com/wiki/Tick#Random_tick\n"
-                            + "WARNING: This setting manipulates the randomTickSpeed game rule. To modify the base random tick speed,\n"
-                            + "use the sleep.baseRandomTickSpeed config setting instead of changing the game rule directly.")
-                    .define("accelerateRandomTicking", false);
+                displayBedClock = builder
+                    .comment("When true, a clock is displayed in the sleep interface.")
+                    .define("displayBedClock", true);
 
-            baseRandomTickSpeed = builder
-                    .comment("The base random tick speed to use when sleep.accelerateRandomTickSpeed config is enabled.")
-                    .defineInRange("baseRandomTickSpeed", 3, 0, Integer.MAX_VALUE);
-
-            builder.pop();
-
-            // messages
-            builder.comment("This section defines settings for notification messages.\n"
-                            + "All messages in this section support Minecraft formatting codes (https://minecraft.fandom.com/wiki/Formatting_codes).\n"
-                            + "All messages in this section support variable substitution in the following format: ${variableName}\n"
-                            + "Supported variables differ per message.")
+                // sleep.messages
+                builder.comment(
+                    "This section defines settings for notification messages.",
+                    "All messages support Minecraft formatting codes (https://minecraft.fandom.com/wiki/Formatting_codes).",
+                    "All messages have variables that can be inserted using the following format: ${variableName}",
+                    "The type option controls where the message appears:",
+                    "\tSYSTEM: Appears as a message in the chat. (e.g., \"Respawn point set\")",
+                    "\tGAME_INFO: Game information that appears above the hotbar (e.g., \"You may not rest now, the bed is too far away\").",
+                    "The target option controls to whom the message is sent:",
+                    "\tALL: Sends the message to all players on the server.",
+                    "\tDIMENSION: Sends the message to all players in the current dimension.",
+                    "\tSLEEPING: Sends the message to all players in the current dimension who are sleeping.")
                     .push("messages");
 
-            morningMessage = builder
-                    .comment("This message is sent to morningMessageTarget after a sleep cycle has completed in it.\n"
-                            + "Available variables:\n"
-                            + "sleepingPlayers -> the number of players in the current dimension who were sleeping.\n"
-                            + "totalPlayers -> the number of players in the current dimension (spectators are not counted).\n"
-                            + "sleepingPercentage -> the percentage of players in the current dimension who were sleeping (does not include % symbol).")
-                    .define("morningMessage", "\u00A7e\u00A7oTempus fugit!");
+                    // sleep.messages.morning
+                    builder.comment("This message is sent after a sleep cycle has completed.").push("morning");
+                        morningMessage = builder.comment(
+                            "Available variables:",
+                            "sleepingPlayers -> the number of players in the current dimension who were sleeping.",
+                            "totalPlayers -> the number of players in the current dimension (spectators are not counted).",
+                            "sleepingPercentage -> the percentage of players in the current dimension who were sleeping (does not include % symbol).")
+                            .define("message", "\u00A7e\u00A7oTempus fugit!");
+                        morningMessageType = builder.comment("Sets where this message appears.")
+                            .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
+                        morningMessageTarget = builder.comment("Sets to whom this message is sent. A target of 'SLEEPING' will send the message to all players who just woke up.")
+                            .defineEnum("target", MessageTarget.DIMENSION);
+                    builder.pop(); // sleep.messages.morning
 
-            morningMessageType = builder
-                    .comment("Sets the message type for the morning message.\n"
-                            + "SYSTEM: Appears as a message in the chat. (e.g., \"Respawn point set\")\n"
-                            + "GAME_INFO: Game information that appears above the hotbar (e.g., \"You may not rest now, the bed is too far away\").")
-                    .defineEnum("morningMessageType", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
+                    // sleep.messages.enterBed
+                    builder.comment("This message is sent when a player enters their bed.").push("enterBed");
+                        enterBedMessage = builder.comment(
+                            "Available variables:",
+                            "player -> the player who started sleeping.",
+                            "sleepingPlayers -> the number of players in the current dimension who are sleeping.",
+                            "totalPlayers -> the number of players in the current dimension (spectators are not counted).",
+                            "sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).")
+                            .define("message", "${player} is now sleeping. [${sleepingPlayers}/${totalPlayers}]");
+                        enterBedMessageType = builder.comment("Sets where this message appears.")
+                            .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
+                        enterBedMessageTarget = builder.comment("Sets to whom this message is sent.")
+                            .defineEnum("target", MessageTarget.DIMENSION);
+                    builder.pop(); // sleep.messages.enterBed
 
-            morningMessageTarget = builder
-                    .comment("Sets the target for the morning message.\n"
-                            + "ALL: Send the message to all players on the server.\n"
-                            + "DIMENSION: Send the message to all players in the current dimension.\n"
-                            + "SLEEPING: Only send the message to those who just woke up.")
-                    .defineEnum("morningMessageTarget", MessageTarget.DIMENSION);
+                    // sleep.messages.leaveBed
+                    builder.comment("This message is sent when a player leaves their bed (without being woken up naturally by morning).").push("leaveBed");
+                        leaveBedMessage = builder.comment(
+                            "Available variables:",
+                            "player -> the player who left their bed.",
+                            "sleepingPlayers -> the number of players in the current dimension who are sleeping.",
+                            "totalPlayers -> the number of players in the current dimension (spectators are not counted).",
+                            "sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).")
+                            .define("message", "${player} has left their bed. [${sleepingPlayers}/${totalPlayers}]");
+                        leaveBedMessageType = builder.comment("Sets where this message appears.")
+                            .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
+                        leaveBedMessageTarget = builder.comment("Sets to whom this message is sent.")
+                            .defineEnum("target", MessageTarget.DIMENSION);
+                    builder.pop(); // sleep.messages.leaveBed
 
-            inBedMessage = builder
-                    .comment("This message is sent to bedMessageTarget when a player starts sleeping.\n"
-                            + "Available variables:\n"
-                            + "player -> the player who started sleeping.\n"
-                            + "sleepingPlayers -> the number of players in the current dimension who are sleeping.\n"
-                            + "totalPlayers -> the number of players in the current dimension (spectators are not counted).\n"
-                            + "sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).")
-                    .define("inBedMessage", "${player} is now sleeping. [${sleepingPlayers}/${totalPlayers}]");
+                builder.pop(); // sleep.messages
+            builder.pop(); // sleep
 
-            outOfBedMessage = builder
-                    .comment("This message is sent to bedMessageTarget when a player gets out of bed (without being woken up naturally at morning).\n"
-                            + "Available variables:\n"
-                            + "player -> the player who left their bed.\n"
-                            + "sleepingPlayers -> the number of players in the current dimension who are sleeping.\n"
-                            + "totalPlayers -> the number of players in the current dimension (spectators are not counted).\n"
-                            + "sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).")
-                    .define("outOfBedMessage", "${player} has left their bed. [${sleepingPlayers}/${totalPlayers}]");
-
-            bedMessageType = builder
-                    .comment("Sets the message type for inBedMessage and outOfBedMessage.\n"
-                            + "SYSTEM: Appears as a message in the chat (e.g., \"Respawn point set\").\n"
-                            + "GAME_INFO: Game information that appears above the hotbar (e.g., \"You may not rest now, the bed is too far away\").")
-                    .defineEnum("bedMessageType", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
-
-            bedMessageTarget = builder
-                    .comment("Sets the target for inBedMessage and outOfBedMessage.\n"
-                            + "ALL: Send the message to all players on the server.\n"
-                            + "DIMENSION: Send the message to all players in the current dimension.\n"
-                            + "SLEEPING: Only send the message to players who are currently sleeping.")
-                    .defineEnum("bedMessageTarget", MessageTarget.DIMENSION);
-
-            builder.pop();
+            spec = builder.build();
         }
 
     }
 
+    /** Client-specific configuration file. */
     public static class ClientConfig {
+
+        public final ForgeConfigSpec spec;
 
         public final EnumValue<ScreenAlignment> clockAlignment;
         public final IntValue clockScale;
@@ -228,33 +240,32 @@ public class HourglassConfig {
 
         /**
          * Constructs an instance of an Hourglass client config.
-         *
          * @param builder  a Forge config builder instance
          */
         public ClientConfig(final ForgeConfigSpec.Builder builder) {
-            // gui
-            builder.push("gui");
 
-            clockAlignment = builder
-                    .comment("Sets the screen alignment of the bed clock.")
+            builder.push("gui"); // gui
+
+                clockAlignment = builder.comment("Sets the screen alignment of the bed clock.")
                     .defineEnum("clockAlignment", ScreenAlignment.TOP_RIGHT);
 
-            clockScale = builder
-                    .comment("Sets the scale of the bed clock.")
+                clockScale = builder.comment("Sets the scale of the bed clock.")
                     .defineInRange("clockScale", 64, 1, Integer.MAX_VALUE);
 
-            clockMargin = builder
-                    .comment("Sets the distance between the clock and the edge of the screen.\n"
-                            + "Unused if clockAlignment is CENTER_CENTER.")
+                clockMargin = builder.comment(
+                    "Sets the distance between the clock and the edge of the screen.",
+                    "Unused if clockAlignment is CENTER_CENTER.")
                     .defineInRange("clockMargin", 16, 0, Integer.MAX_VALUE);
 
-            preventClockWobble = builder
-                    .comment("This setting prevents clock wobble when getting in bed by updating the clock's position every tick.\n"
-                            + "As a side-effect, the clock won't wobble when first viewed as it does in vanilla. This setting is\n"
-                            + "unused if displayBedClock is false.")
+                preventClockWobble = builder.comment(
+                    "This setting prevents clock wobble when getting in bed by updating the clock's position every tick.",
+                    "As a side-effect, the clock won't wobble when first viewed as it does in vanilla. This setting is",
+                    "unused if displayBedClock is false.")
                     .define("preventClockWobble", true);
 
-            builder.pop();
+            builder.pop(); // gui
+
+            spec = builder.build();
         }
 
     }

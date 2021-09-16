@@ -25,6 +25,9 @@ import java.util.function.BiConsumer;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 
@@ -33,12 +36,18 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
+import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
+import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
+import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
+import net.minecraftforge.common.ForgeConfigSpec.IntValue;
+import net.minecraftforge.server.command.EnumArgument;
 
 /**
- * This class is used to create a command tree for modifying forge configuration values. It was
- * written intentionally vague with the hope of eventually making it more extensible and turning
- * it into a library.
+ * This class is used to create command trees for accessing and modifying Forge configuration values
+ * in game.
+ *
+ * <p>This package may eventually be released as a standalone library.
  */
 public class ConfigCommand {
 
@@ -49,33 +58,119 @@ public class ConfigCommand {
     protected BiConsumer<CommandContext<CommandSource>, ConfigCommandEntry<?>> modifySuccessHandler;
     protected BiConsumer<CommandContext<CommandSource>, ConfigCommandEntry<?>> modifyFailureHandler;
 
-    /**
-     * Creates a new instance.
-     */
+    /** Creates a new instance. */
     public ConfigCommand() {
         entries = new HashMap<>();
     }
 
     /**
-     * Registers a new config value in the command that uses the specified argument type to parse
-     * the config value from the command when being used as a setter.
+     * Registers a new {@code ConfigCommandEntry} for {@code configValue} to this command using a
+     * default {@link IntegerArgumentType} as the value parser and {@code Integer} as the underlying
+     * data type.
      *
-     * @param <T> the underlying data type of the config value and argument type
-     * @param configValue the ConfigValue to register
-     * @param argumentType the ArgumentType used to parse the config value to be set
-     * @param valueClass the class of the underlying data type of the config value and argument type
+     * <p>This is a convenience method for {@link #register(ConfigCommandEntry)}.
+     *
+     * @param configValue the {@code IntValue} to register
      * @return this, for chaining
      */
-    public <T> ConfigCommand register(ConfigValue<T> configValue, ArgumentType<T> argumentType, Class<T> valueClass) {
-        ConfigCommandEntry<T> entry = new ConfigCommandEntry<>(configValue, argumentType, valueClass);
-        return register(entry);
+    public ConfigCommand register(IntValue configValue) {
+        return register(configValue, IntegerArgumentType.integer(), Integer.class);
     }
 
     /**
-     * Registers a new ConfigCommandEntry in the command.
+     * Registers a new {@code ConfigCommandEntry} for {@code configValue} to this command
+     * using {@code argumentType} as the value parser and {@code Integer} as the underlying data
+     * type.
      *
-     * @param <T> the data type of the underlying config data
-     * @param entry the entry to register
+     * <p>This is a convenience method for {@link #register(ConfigCommandEntry)}.
+     *
+     * @param configValue the {@code IntValue} to register
+     * @param argumentType  the {@code ArgumentType} used to parse the value in the 'modify' command
+     * @return this, for chaining
+     */
+    public ConfigCommand register(IntValue configValue, ArgumentType<Integer> argumentType) {
+        return register(configValue, argumentType, Integer.class);
+    }
+
+    /**
+     * Registers a new {@code ConfigCommandEntry} for {@code configValue} to this command
+     * using a default {@link DoubleArgumentType} as the value parser and {@code Double} as the
+     * underlying data type.
+     *
+     * <p>This is a convenience method for {@link #register(ConfigCommandEntry)}.
+     *
+     * @param configValue the {@code DoubleValue} to register
+     * @return this, for chaining
+     */
+    public ConfigCommand register(DoubleValue configValue) {
+        return register(configValue, DoubleArgumentType.doubleArg(), Double.class);
+    }
+
+    /**
+     * Registers a new {@code ConfigCommandEntry} for {@code configValue} to this command
+     * using {@code argumentType} as the value parser and {@code Double} as the underlying data
+     * type.
+     *
+     * <p>This is a convenience method for {@link #register(ConfigCommandEntry)}.
+     *
+     * @param configValue the {@code DoubleValue} to register
+     * @param argumentType  the {@code ArgumentType} used to parse the value in the 'modify' command
+     * @return this, for chaining
+     */
+    public ConfigCommand register(DoubleValue configValue, ArgumentType<Double> argumentType) {
+        return register(configValue, argumentType, Double.class);
+    }
+
+    /**
+     * Registers a new {@code ConfigCommandEntry} for {@code configValue} to this command
+     * using a default {@link BoolArgumentType} as the value parser and {@code Boolean} as the
+     * underlying data type.
+     *
+     * <p>This is a convenience method for {@link #register(ConfigCommandEntry)}.
+     *
+     * @param configValue  the {@code BooleanValue} to register
+     * @return this, for chaining
+     */
+    public ConfigCommand register(BooleanValue configValue) {
+        return register(configValue, BoolArgumentType.bool(), Boolean.class);
+    }
+
+    /**
+     * Registers a new {@code ConfigCommandEntry} for {@code configValue} to this command using
+     * a default {@link EnumArgument} as the value parser and {@code valueClass} as the underlying
+     * data type.
+     *
+     * <p>This is a convenience method for {@link #register(ConfigCommandEntry)}.
+     *
+     * @param configValue  the {@code EnumValue} to register
+     * @param valueClass  the underlying enum class of the config value
+     * @return this, for chaining
+     */
+    public <T extends Enum<T>> ConfigCommand register(EnumValue<T> configValue, Class<T> valueClass) {
+        return register(configValue, EnumArgument.enumArgument(valueClass), valueClass);
+    }
+
+    /**
+     * Registers a new {@code ConfigCommandEntry} for {@code configValue} to this command using
+     * {@code argumentType} as the value parser and {@code valueClass} as the underlying data type.
+     *
+     * <p>This is a convenience method for {@link #register(ConfigCommandEntry)}.
+     *
+     * @param <T>  the underlying data type of the config value and argument type
+     * @param configValue  the {@code ConfigValue} to register
+     * @param argumentType  the {@code ArgumentType} used to parse the value in the 'modify' command
+     * @param valueClass  the underlying data class of the config value and argument type
+     * @return this, for chaining
+     */
+    public <T> ConfigCommand register(ConfigValue<T> configValue, ArgumentType<T> argumentType, Class<T> valueClass) {
+        return register(new ConfigCommandEntry<>(configValue, argumentType, valueClass));
+    }
+
+    /**
+     * Registers a new {@link ConfigCommandEntry} to the command.
+     *
+     * @param <T>  the underlying data class of the command entry
+     * @param entry  the command entry to register
      * @return this, for chaining
      */
     public <T> ConfigCommand register(ConfigCommandEntry<T> entry) {
@@ -87,7 +182,7 @@ public class ConfigCommand {
      * Sets the consumer that is called after the query command is successfully called.
      * This consumer should inform the user of the current config value.
      *
-     * @param listener this handler to set
+     * @param listener  this handler to set
      * @return this, for chaining
      */
     public ConfigCommand setQuerySuccessHandler(
@@ -100,7 +195,7 @@ public class ConfigCommand {
      * Sets the consumer that is called after the modify command is successfully called.
      * This consumer should inform the user of the new config value.
      *
-     * @param listener this handler to set
+     * @param listener  this handler to set
      * @return this, for chaining
      */
     public ConfigCommand setModifySuccessHandler(
@@ -113,7 +208,7 @@ public class ConfigCommand {
      * Sets the consumer that is called after the modify command failed.
      * This consumer should inform the user of the failure.
      *
-     * @param listener this handler to set
+     * @param listener  this handler to set
      * @return this, for chaining
      */
     public ConfigCommand setModifyFailureHandler(
@@ -126,7 +221,7 @@ public class ConfigCommand {
      * Builds the Config Command off of the specified parent builder node. Command handlers should
      * be defined before this is called.
      *
-     * @param parent the parent to build config commands off of
+     * @param parent  the parent to build config commands off of
      * @return the parent, for additional chaining
      */
     public ArgumentBuilder<CommandSource, ?> build(ArgumentBuilder<CommandSource, ?> parent) {
@@ -142,12 +237,13 @@ public class ConfigCommand {
     }
 
     /**
-     * 'display config' command execution. Fetches the current value of the ConfigValue stored in
-     * entry and prints it to the chat.
+     * Command handler that is executed during a config 'query' command.
      *
-     * @param <T> the underlying data class of the config and argument
-     * @param context the command context from the executing command
-     * @param entry the ConfigCommandEntry holding the config value to be retrieved
+     * Calls the current handler in {@link #querySuccessHandler}.
+     *
+     * @param <T>  the underlying data class of the command entry
+     * @param context  the command context from the executing command
+     * @param entry  the entry holding the config value to be retrieved
      * @return 1 if a success handler was successfully called, 0 otherwise
      */
     protected <T> int queryConfigCommand(CommandContext<CommandSource> context,
@@ -161,13 +257,15 @@ public class ConfigCommand {
     }
 
     /**
-     * 'set config' command execution. Retrieves the new config value as an argument from the
-     * command context, sets the ConfigValue stored in entry, and then sends a config update
-     * message to all connected clients.
+     * Command handler that is executed during a config 'modify' command.
      *
-     * @param <T> the underlying data class of the config and argument
-     * @param context the command context from the executing command
-     * @param entry the ConfigCommandEntry holding the config value to be changed
+     * Retrieves the new config value as an argument from the command context, sets the
+     * {@link ConfigValue} stored in {@code entry}, and finally calls {@link #modifySuccessHandler}
+     * or {@link #modifyFailureHandler}.
+     *
+     * @param <T>  the underlying data class of the command entry
+     * @param context  the command context from the executing command
+     * @param entry  the entry to be modified
      * @return 1 if successful, 0 otherwise
      */
     protected <T> int modifyConfigCommand(CommandContext<CommandSource> context,
