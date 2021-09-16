@@ -17,29 +17,33 @@
  * along with Hourglass.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.lavabucket.hourglass.client;
+package net.lavabucket.hourglass;
 
+import net.lavabucket.hourglass.client.TimeInterpolator;
 import net.lavabucket.hourglass.client.gui.ConfigScreen;
 import net.lavabucket.hourglass.client.gui.SleepGui;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 /**
- * Initializes all clint-only event listeners.
+ * Entry point for client-specific features.
  *
- * Performing this in a dedicated class provides sufficient client/server distribution separation.
+ * <p>Placing client-specific initialization in a dedicated class is necessary to provide sufficient
+ * client/server distribution separation. Failure to do this could crash a Minecraft server
+ * distribution on startup as Java tries to load classes that do not exist.
  */
-public class ClientEventInitializer {
+public class HourglassClient {
 
-    public static void register() {
-		final ModLoadingContext modLoadingContext = ModLoadingContext.get();
-		final IEventBus forgeEventBus = MinecraftForge.EVENT_BUS;
+    /** Client-specific entry point. */
+    public HourglassClient() {
+        final IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        final IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 
-        ConfigScreen.register(modLoadingContext);
+        modBus.register(ConfigScreen.class);
 
-        forgeEventBus.register(SleepGui.class);
-        forgeEventBus.register(TimeInterpolator.class);
+        forgeBus.register(SleepGui.class);
+        forgeBus.register(TimeInterpolator.class);
     }
 
 }

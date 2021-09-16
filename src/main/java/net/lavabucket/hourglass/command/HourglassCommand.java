@@ -19,11 +19,9 @@
 
 package net.lavabucket.hourglass.command;
 
-import static net.minecraft.commands.Commands.literal;
-
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
-import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -31,9 +29,13 @@ import com.mojang.brigadier.context.CommandContext;
 import net.lavabucket.hourglass.command.config.ConfigCommand;
 import net.lavabucket.hourglass.command.config.ConfigCommandEntry;
 import net.lavabucket.hourglass.config.ConfigSynchronizer;
+import net.lavabucket.hourglass.time.TimeService;
+import net.lavabucket.hourglass.time.TimeServiceManager;
+import net.lavabucket.hourglass.time.effects.EffectCondition;
+import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
+import net.lavabucket.hourglass.wrappers.TextWrapper;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.commands.Commands;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -42,10 +44,14 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
  */
 public class HourglassCommand {
 
+    // A default ArgumentType used for time speed arguments.
+    private static final DoubleArgumentType TIME_SPEED_ARGUMENT =
+            DoubleArgumentType.doubleArg(0, 24000);
+
     /**
      * Register all commands. Called by Forge during a RegisterCommandsEvent.
      *
-     * @param event the RegisterCommandsEvent supplied by the event bus.
+     * @param event  the RegisterCommandsEvent supplied by the event bus.
      */
     @SubscribeEvent
     public static void onRegisterCommandEvent(RegisterCommandsEvent event) {
@@ -53,21 +59,30 @@ public class HourglassCommand {
                 .setQuerySuccessHandler(HourglassCommand::onQuerySuccess)
                 .setModifySuccessHandler(HourglassCommand::onModifySuccess)
                 .setModifyFailureHandler(HourglassCommand::onModifyFailure)
-                .register(SERVER_CONFIG.daySpeed, DoubleArgumentType.doubleArg(0, 24000), Double.class)
-                .register(SERVER_CONFIG.nightSpeed, DoubleArgumentType.doubleArg(0, 24000), Double.class)
-                .register(SERVER_CONFIG.enableSleepFeature, BoolArgumentType.bool(), Boolean.class)
-                .register(SERVER_CONFIG.sleepSpeedMin, DoubleArgumentType.doubleArg(0, 24000), Double.class)
-                .register(SERVER_CONFIG.sleepSpeedMax, DoubleArgumentType.doubleArg(0, 24000), Double.class)
-                .register(SERVER_CONFIG.sleepSpeedAll, DoubleArgumentType.doubleArg(-1, 24000), Double.class)
-                .register(SERVER_CONFIG.accelerateWeather, BoolArgumentType.bool(), Boolean.class)
-                .register(SERVER_CONFIG.clearWeatherOnWake, BoolArgumentType.bool(), Boolean.class)
-                .register(SERVER_CONFIG.displayBedClock, BoolArgumentType.bool(), Boolean.class)
-                .register(SERVER_CONFIG.accelerateRandomTickSpeed, BoolArgumentType.bool(), Boolean.class)
-                .register(SERVER_CONFIG.baseRandomTickSpeed, IntegerArgumentType.integer(0), Integer.class);
+                .register(SERVER_CONFIG.daySpeed, TIME_SPEED_ARGUMENT)
+                .register(SERVER_CONFIG.nightSpeed, TIME_SPEED_ARGUMENT)
+                .register(SERVER_CONFIG.enableSleepFeature)
+                .register(SERVER_CONFIG.sleepSpeedMin, TIME_SPEED_ARGUMENT)
+                .register(SERVER_CONFIG.sleepSpeedMax, TIME_SPEED_ARGUMENT)
+                .register(SERVER_CONFIG.sleepSpeedAll, DoubleArgumentType.doubleArg(-1, 24000))
+                .register(SERVER_CONFIG.clearWeatherOnWake)
+                .register(SERVER_CONFIG.displayBedClock)
+                .register(SERVER_CONFIG.weatherEffect, EffectCondition.class)
+                .register(SERVER_CONFIG.randomTickEffect, EffectCondition.class)
+                .register(SERVER_CONFIG.baseRandomTickSpeed, IntegerArgumentType.integer(0));
 
-        event.getDispatcher().register(literal("hourglass")
-                .requires(source -> source.hasPermission(2))
-                .then(configCommand.build(literal("config"))));
+        event.getDispatcher().register(
+                Commands.literal("hourglass").requires(source -> source.hasPermission(2))
+
+                    .then(configCommand.build(Commands.literal("config")))
+
+                    .then(Commands.literal("query")
+                        .then(Commands.literal("timeSpeed")
+                            .executes(HourglassCommand::onTimeSpeedQuery))
+                        .then(Commands.literal("sleeperCount")
+                            .executes(HourglassCommand::onSleeperCountQuery))
+                    )
+                );
     }
 
     /**
@@ -79,11 +94,11 @@ public class HourglassCommand {
      */
     public static <T> void onQuerySuccess(CommandContext<CommandSourceStack> context, ConfigCommandEntry<T> entry) {
 
-        Component response = new TranslatableComponent("commands.hourglass.config.query",
+        TextWrapper response = TextWrapper.translation("commands.hourglass.config.query",
                 entry.getIdentifier(),
                 entry.getConfigValue().get().toString());
 
-        context.getSource().sendSuccess(response, false);
+        context.getSource().sendSuccess(response.get(), false);
     }
 
     /**
@@ -98,11 +113,11 @@ public class HourglassCommand {
         // cause the config update to send twice.
         ConfigSynchronizer.syncConfigWithClients();
 
-        Component response = new TranslatableComponent("commands.hourglass.config.set",
+        TextWrapper response = TextWrapper.translation("commands.hourglass.config.set",
                 entry.getIdentifier(),
                 entry.getConfigValue().get());
 
-        context.getSource().sendSuccess(response, true);
+        context.getSource().sendSuccess(response.get(), true);
     }
 
     /**
@@ -113,11 +128,57 @@ public class HourglassCommand {
      * @param entry  the entry that the user tried to modify
      */
     public static <T> void onModifyFailure(CommandContext<CommandSourceStack> context, ConfigCommandEntry<T> entry) {
-        Component response = new TranslatableComponent("commands.hourglass.config.failure",
+        TextWrapper response = TextWrapper.translation("commands.hourglass.config.failure",
                 entry.getIdentifier(),
                 entry.getConfigValue().get());
 
-        context.getSource().sendFailure(response);
+        context.getSource().sendFailure(response.get());
+    }
+
+    /**
+     * Handles a time speed query command.
+     * @param context  the command context
+     */
+    public static int onTimeSpeedQuery(CommandContext<CommandSourceStack> context) {
+        ServerLevelWrapper wrapper = new ServerLevelWrapper(context.getSource().getLevel());
+        TimeService service = TimeServiceManager.service;
+
+        if (service == null || !service.managesLevel(wrapper)) {
+            TextWrapper response = TextWrapper.translation(
+                    "commands.hourglass.query.levelNotApplicable");
+            context.getSource().sendFailure(response.get());
+            return 0;
+        }
+
+        TextWrapper response = TextWrapper.translation(
+                "commands.hourglass.query.timeSpeed.success",
+                service.getTimeSpeed(service.getDayTime()));
+        context.getSource().sendSuccess(response.get(), false);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    /**
+     * Handles a sleeper count query command.
+     * @param context  the command context
+     */
+    public static int onSleeperCountQuery(CommandContext<CommandSourceStack> context) {
+        ServerLevelWrapper wrapper = new ServerLevelWrapper(context.getSource().getLevel());
+        TimeService service = TimeServiceManager.service;
+
+        if (service == null || !service.managesLevel(wrapper)) {
+            TextWrapper response = TextWrapper.translation(
+                    "commands.hourglass.query.levelNotApplicable");
+            context.getSource().sendFailure(response.get());
+            return 0;
+        }
+
+        TextWrapper response = TextWrapper.translation(
+                "commands.hourglass.query.sleeperCount.success",
+                service.sleepStatus.percentage(),
+                service.sleepStatus.amountSleeping(),
+                service.sleepStatus.amountActive());
+        context.getSource().sendSuccess(response.get(), false);
+        return Command.SINGLE_SUCCESS;
     }
 
 }

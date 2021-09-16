@@ -19,24 +19,16 @@
 
 package net.lavabucket.hourglass.client.gui;
 
-import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
-import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
+import static net.lavabucket.hourglass.config.HourglassConfig.CLIENT_CONFIG;
+import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import org.apache.commons.lang3.BooleanUtils;
-
-import net.lavabucket.hourglass.config.HourglassConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.InBedChatScreen;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.client.event.GuiScreenEvent.DrawScreenEvent;
@@ -62,8 +54,8 @@ public class SleepGui {
         Minecraft minecraft = Minecraft.getInstance();
 
         if (event.phase == Phase.START
-                && BooleanUtils.isTrue(HourglassConfig.SERVER_CONFIG.displayBedClock.get())
-                && BooleanUtils.isTrue(HourglassConfig.CLIENT_CONFIG.preventClockWobble.get())
+                && CLIENT_CONFIG.preventClockWobble.get()
+                && clockEnabled()
                 && minecraft.level != null
                 && !minecraft.isPaused()) {
 
@@ -79,8 +71,7 @@ public class SleepGui {
      */
     @SubscribeEvent
     public static void onGuiEvent(DrawScreenEvent.Post event) {
-        if (event.getGui() instanceof InBedChatScreen
-                && BooleanUtils.isTrue(HourglassConfig.SERVER_CONFIG.displayBedClock.get())) {
+        if (event.getGui() instanceof InBedChatScreen && clockEnabled()) {
 
             renderSleepInterface(event.getGui().getMinecraft());
         }
@@ -98,32 +89,32 @@ public class SleepGui {
         }
 
         float x, y;
-        int scale = HourglassConfig.CLIENT_CONFIG.clockScale.get();
-        int margin = HourglassConfig.CLIENT_CONFIG.clockMargin.get();
-        ScreenAlignment alignment = HourglassConfig.CLIENT_CONFIG.clockAlignment.get();
+        int scale = CLIENT_CONFIG.clockScale.get();
+        int margin = CLIENT_CONFIG.clockMargin.get();
+        ScreenAlignment alignment = CLIENT_CONFIG.clockAlignment.get();
 
         if (alignment == ScreenAlignment.TOP_LEFT
                 || alignment == ScreenAlignment.CENTER_LEFT
                 || alignment == ScreenAlignment.BOTTOM_LEFT) {
-            x = scale / 2 + margin;
+            x = margin;
         } else if (alignment == ScreenAlignment.TOP_CENTER
                 || alignment == ScreenAlignment.CENTER_CENTER
                 || alignment == ScreenAlignment.BOTTOM_CENTER) {
-            x = screen.width / 2;
+            x = screen.width / 2 - scale / 2;
         } else {
-            x = screen.width - scale / 2 - margin;
+            x = screen.width - scale - margin;
         }
 
         if (alignment == ScreenAlignment.TOP_LEFT
                 || alignment == ScreenAlignment.TOP_CENTER
                 || alignment == ScreenAlignment.TOP_RIGHT) {
-            y = scale / 2 + margin;
+            y = margin;
         } else if (alignment == ScreenAlignment.CENTER_LEFT
                 || alignment == ScreenAlignment.CENTER_CENTER
                 || alignment == ScreenAlignment.CENTER_RIGHT) {
-            y = screen.height / 2;
+            y = screen.height / 2 - scale / 2;
         } else {
-            y = screen.height - scale / 2 - margin;
+            y = screen.height - scale - margin;
         }
 
         renderClock(minecraft, x, y, scale);
@@ -137,34 +128,20 @@ public class SleepGui {
      * @param y  the y coordinate of the center of the clock
      * @param scale  the size of the clock
      */
-    @SuppressWarnings("deprecation")
     public static void renderClock(Minecraft minecraft, float x, float y, float scale) {
         ItemRenderer itemRenderer = minecraft.getItemRenderer();
-        BakedModel model = itemRenderer.getItemModelShaper().getItemModel(Items.CLOCK);
-        model = model.getOverrides().resolve(model, clock, minecraft.level, minecraft.player, 0);
+        scale /= 16F;
 
-        // ItemRenderer#renderAndDecorateItem(ItemStack, int, int)
-        RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
-        RenderSystem.enableBlend();
-        RenderSystem.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         PoseStack posestack = RenderSystem.getModelViewStack();
         posestack.pushPose();
         posestack.translate(x, y, 0);
-        posestack.scale(scale, -scale, scale);
-        RenderSystem.applyModelViewMatrix();
-        PoseStack posestack1 = new PoseStack();
-        BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        Lighting.setupForFlatItems();
-
-        itemRenderer.render(clock, TransformType.GUI, false, posestack1, bufferSource, 15728880,
-                OverlayTexture.NO_OVERLAY, model);
-
-        bufferSource.endBatch();
-        RenderSystem.enableDepthTest();
-        Lighting.setupFor3DItems();
+        posestack.scale(scale, scale, 0);
+        itemRenderer.renderAndDecorateItem(clock, 0, 0);
         posestack.popPose();
-        RenderSystem.applyModelViewMatrix();
+    }
+
+    public static boolean clockEnabled() {
+        return SERVER_CONFIG.enableSleepFeature.get() && SERVER_CONFIG.displayBedClock.get();
     }
 
 }

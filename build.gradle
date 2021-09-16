@@ -1,3 +1,11 @@
+// Project details
+def modId = 'hourglass'
+def vendor = 'lavabucket.net'
+def groupId = 'net.lavabucket.forge.hourglass'
+def modVersion = '1.2.0.0'
+def minecraftVersion = '1.17.1'
+def forgeVersion = '37.0.61'
+
 buildscript {
     repositories {
         // These repositories are only for Gradle plugins, put any other repositories in the repository block further below
@@ -13,12 +21,29 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.17.1-1.1.1.0'
-group = 'net.lavabucket.forge.hourglass' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'hourglass'
+version = "${minecraftVersion}-${modVersion}"
+archivesBaseName = modId
+group = groupId // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 
-// Mojang ships Java 16 to end users in 1.17+ instead of Java 8 in 1.16 or lower, so your mod should target Java 16.
-java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+class Version {
+    public final int major, minor, patch
+    Version(String version) {
+        def parts = version.tokenize('.')
+        this.major = parts[0].toInteger()
+        this.minor = parts[1].toInteger()
+        this.patch = parts[2].toInteger()
+    }
+    boolean greaterThan(Version other) {
+        if (this.major != other.major) return this.major > other.major
+        if (this.minor != other.minor) return this.minor > other.minor
+        if (this.patch != other.patch) return this.patch > other.patch
+        return false
+    }
+}
+
+// Mojang ships Java 16 to end users in 1.17+ and Java 8 in 1.16 or lower.
+def javaVersion = new Version(minecraftVersion).greaterThan(new Version('1.17.0')) ? 16 : 8;
+java.toolchain.languageVersion = JavaLanguageVersion.of(javaVersion)
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
@@ -33,7 +58,7 @@ minecraft {
     //
     // Use non-default mappings at your own risk. They may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'official', version: '1.17.1'
+    mappings channel: 'official', version: minecraftVersion
 
     // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg') // Currently, this location cannot be changed from the default.
 
@@ -128,7 +153,7 @@ dependencies {
     // Specify the version of Minecraft to use. If this is any group other than 'net.minecraft', it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency, and its patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft 'net.minecraftforge:forge:1.17.1-37.0.34'
+    minecraft "net.minecraftforge:forge:${minecraftVersion}-${forgeVersion}"
 
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
@@ -147,13 +172,13 @@ dependencies {
 jar {
     manifest {
         attributes([
-            "Specification-Title"     : "hourglass",
-            "Specification-Vendor"    : "lavabucket.net",
-            "Specification-Version"   : "1.1.1.0",
+            "Specification-Title"     : modId,
+            "Specification-Vendor"    : vendor,
+            "Specification-Version"   : modVersion,
             "Implementation-Title"    : project.name,
             "Implementation-Version"  : project.jar.archiveVersion,
-            "Implementation-Vendor"   : "lavabucket.net",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+            "Implementation-Vendor"   : vendor,
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
     from('/') {
