@@ -50,11 +50,28 @@ forgiving experience.
 
 ## Compatibility
 
-Hourglass has been tested to be compatible with the following mods:
+Hourglass is compatible with the following mods:
 
 * [Comforts](https://www.curseforge.com/minecraft/mc-mods/comforts)
 * [Serene Seasons](https://www.curseforge.com/minecraft/mc-mods/serene-seasons)
 * [Enhanced Celestials](https://www.curseforge.com/minecraft/mc-mods/enhanced-celestials)
+* [Quark](https://www.curseforge.com/minecraft/mc-mods/quark)  
+  * The Improved Sleeping module of Quark interferes with the sleep feature of Hourglass.
+    [See note below.](#sleep-vote-mods)  
+  * The "Nerf Clock" Quark option breaks the bed clock in Hourglass. Either the Quark tweak should
+    be disabled or the Hourglass Bed Clock should be disabled via the `displayBedClock` config.
+* [Morpheus](https://www.curseforge.com/minecraft/mc-mods/morpheus)  
+  * The sleep feature of Hourglass will need to be disabled to use it alongside Morpheus.
+    [See note below.](#sleep-vote-mods)
+
+#### Sleep Vote Mods
+
+Hourglass is compatible with mods that enable sleep voting or have sleep percentage systems like
+**Quark** and **Morpheus**, but they conflict with the sleep feature of this mod. These features should
+either be disabled in their corresponding mods, or the sleep feature in Hourglass should be disabled.
+The sleep feature can be disabled via command or file by modifying the `enableSleepFeature` option.
+
+#### Other Compatibility Notes
 
 The Overworld is currently the only dimension supported. However, most dimensions in Minecraft
 (including custom dimensions) derive their time information from the Overworld and will therefore
