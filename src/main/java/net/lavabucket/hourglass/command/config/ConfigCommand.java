@@ -44,9 +44,10 @@ import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.server.command.EnumArgument;
 
 /**
- * This class is used to create a command tree for modifying forge configuration values. It was
- * written intentionally vague with the hope of eventually making it more extensible and turning
- * it into a library.
+ * This class is used to create command trees for accessing and modifying Forge configuration values
+ * in game.
+ *
+ * <p>This package may eventually be released as a standalone library.
  */
 public class ConfigCommand {
 
@@ -63,77 +64,97 @@ public class ConfigCommand {
     }
 
     /**
-     * Registers an {@code IntValue} to the command using a default {@link IntegerArgumentType} as
-     * the value parser and {@code Integer} as the underlying data type.
+     * Registers a new {@code ConfigCommandEntry} for {@code configValue} to this command using a
+     * default {@link IntegerArgumentType} as the value parser and {@code Integer} as the underlying
+     * data type.
      *
-     * @param intConfigValue the {@code IntValue} config value to register
+     * <p>This is a convenience method for {@link #register(ConfigCommandEntry)}.
+     *
+     * @param configValue the {@code IntValue} to register
      * @return this, for chaining
      */
-    public ConfigCommand register(IntValue intConfigValue) {
-        return register(intConfigValue, IntegerArgumentType.integer(), Integer.class);
+    public ConfigCommand register(IntValue configValue) {
+        return register(configValue, IntegerArgumentType.integer(), Integer.class);
     }
 
     /**
-     * Registers an {@code IntValue} to the command using {@code argumentType} as the value parser
-     * and {@code Integer} as the underlying data type.
+     * Registers a new {@code ConfigCommandEntry} for {@code configValue} to this command
+     * using {@code argumentType} as the value parser and {@code Integer} as the underlying data
+     * type.
      *
-     * @param intConfigValue the {@code IntValue} config value to register
+     * <p>This is a convenience method for {@link #register(ConfigCommandEntry)}.
+     *
+     * @param configValue the {@code IntValue} to register
      * @param argumentType  the {@code ArgumentType} used to parse the value in the 'modify' command
      * @return this, for chaining
      */
-    public ConfigCommand register(IntValue intConfigValue, ArgumentType<Integer> argumentType) {
-        return register(intConfigValue, argumentType, Integer.class);
+    public ConfigCommand register(IntValue configValue, ArgumentType<Integer> argumentType) {
+        return register(configValue, argumentType, Integer.class);
     }
 
     /**
-     * Registers a {@code DoubleValue} to the command using a default {@link DoubleArgumentType} as
-     * the value parser and {@code Double} as the underlying data type.
+     * Registers a new {@code ConfigCommandEntry} for {@code configValue} to this command
+     * using a default {@link DoubleArgumentType} as the value parser and {@code Double} as the
+     * underlying data type.
      *
-     * @param doubleConfigValue the {@code DoubleValue} config value to register
+     * <p>This is a convenience method for {@link #register(ConfigCommandEntry)}.
+     *
+     * @param configValue the {@code DoubleValue} to register
      * @return this, for chaining
      */
-    public ConfigCommand register(DoubleValue doubleConfigValue) {
-        return register(doubleConfigValue, DoubleArgumentType.doubleArg(), Double.class);
+    public ConfigCommand register(DoubleValue configValue) {
+        return register(configValue, DoubleArgumentType.doubleArg(), Double.class);
     }
 
     /**
-     * Registers a {@code DoubleValue} to the command using {@code argumentType} as the value parser
-     * and {@code Double} as the underlying data type.
+     * Registers a new {@code ConfigCommandEntry} for {@code configValue} to this command
+     * using {@code argumentType} as the value parser and {@code Double} as the underlying data
+     * type.
      *
-     * @param doubleConfigValue the {@code DoubleValue} config value to register
+     * <p>This is a convenience method for {@link #register(ConfigCommandEntry)}.
+     *
+     * @param configValue the {@code DoubleValue} to register
      * @param argumentType  the {@code ArgumentType} used to parse the value in the 'modify' command
      * @return this, for chaining
      */
-    public ConfigCommand register(DoubleValue doubleConfigValue, ArgumentType<Double> argumentType) {
-        return register(doubleConfigValue, argumentType, Double.class);
+    public ConfigCommand register(DoubleValue configValue, ArgumentType<Double> argumentType) {
+        return register(configValue, argumentType, Double.class);
     }
 
     /**
-     * Registers a {@code BooleanValue} to the command using a default {@link BoolArgumentType} as
-     * the value parser and {@code Boolean} as the underlying data type.
+     * Registers a new {@code ConfigCommandEntry} for {@code configValue} to this command
+     * using a default {@link BoolArgumentType} as the value parser and {@code Boolean} as the
+     * underlying data type.
      *
-     * @param booleanConfigValue  the {@code BooleanValue} config value to register
+     * <p>This is a convenience method for {@link #register(ConfigCommandEntry)}.
+     *
+     * @param configValue  the {@code BooleanValue} to register
      * @return this, for chaining
      */
-    public ConfigCommand register(BooleanValue booleanConfigValue) {
-        return register(booleanConfigValue, BoolArgumentType.bool(), Boolean.class);
+    public ConfigCommand register(BooleanValue configValue) {
+        return register(configValue, BoolArgumentType.bool(), Boolean.class);
     }
 
     /**
-     * Registers an {@code EnumValue} to the command using a default {@link EnumArgument} as the
-     * value parser and {@code valueClass} as the underlying data type.
+     * Registers a new {@code ConfigCommandEntry} for {@code configValue} to this command using
+     * a default {@link EnumArgument} as the value parser and {@code valueClass} as the underlying
+     * data type.
      *
-     * @param enumConfigValue  the {@code EnumValue} config value to register
+     * <p>This is a convenience method for {@link #register(ConfigCommandEntry)}.
+     *
+     * @param configValue  the {@code EnumValue} to register
      * @param valueClass  the underlying enum class of the config value
      * @return this, for chaining
      */
-    public <T extends Enum<T>> ConfigCommand register(EnumValue<T> enumConfigValue, Class<T> valueClass) {
-        return register(enumConfigValue, EnumArgument.enumArgument(valueClass), valueClass);
+    public <T extends Enum<T>> ConfigCommand register(EnumValue<T> configValue, Class<T> valueClass) {
+        return register(configValue, EnumArgument.enumArgument(valueClass), valueClass);
     }
 
     /**
-     * Registers a new {@code ConfigValue} to the command whose value is parsed by
-     * {@code argumentType}.
+     * Registers a new {@code ConfigCommandEntry} for {@code configValue} to this command using
+     * {@code argumentType} as the value parser and {@code valueClass} as the underlying data type.
+     *
+     * <p>This is a convenience method for {@link #register(ConfigCommandEntry)}.
      *
      * @param <T>  the underlying data type of the config value and argument type
      * @param configValue  the {@code ConfigValue} to register
@@ -142,15 +163,14 @@ public class ConfigCommand {
      * @return this, for chaining
      */
     public <T> ConfigCommand register(ConfigValue<T> configValue, ArgumentType<T> argumentType, Class<T> valueClass) {
-        ConfigCommandEntry<T> entry = new ConfigCommandEntry<>(configValue, argumentType, valueClass);
-        return register(entry);
+        return register(new ConfigCommandEntry<>(configValue, argumentType, valueClass));
     }
 
     /**
-     * Registers a new {@link ConfigCommandEntry} in the command.
+     * Registers a new {@link ConfigCommandEntry} to the command.
      *
-     * @param <T>  the data type of the underlying config data
-     * @param entry  the entry to register
+     * @param <T>  the underlying data class of the command entry
+     * @param entry  the command entry to register
      * @return this, for chaining
      */
     public <T> ConfigCommand register(ConfigCommandEntry<T> entry) {
@@ -217,12 +237,11 @@ public class ConfigCommand {
     }
 
     /**
-     * Command handler that is executed during a 'config query' command.
+     * Command handler that is executed during a config 'query' command.
      *
-     * Fetches the current value of the {@link ConfigValue} stored in {@code entry} and prints it to
-     * the chat.
+     * Calls the current handler in {@link #querySuccessHandler}.
      *
-     * @param <T>  the underlying data class of the config and argument
+     * @param <T>  the underlying data class of the command entry
      * @param context  the command context from the executing command
      * @param entry  the entry holding the config value to be retrieved
      * @return 1 if a success handler was successfully called, 0 otherwise
@@ -238,15 +257,15 @@ public class ConfigCommand {
     }
 
     /**
-     * Command handler that is executed during a 'config setter' command.
+     * Command handler that is executed during a config 'modify' command.
      *
      * Retrieves the new config value as an argument from the command context, sets the
-     * {@link ConfigValue} stored in {@code entry}, and then sends a config update message to all connected
-     * clients.
+     * {@link ConfigValue} stored in {@code entry}, and finally calls {@link #modifySuccessHandler}
+     * or {@link #modifyFailureHandler}.
      *
-     * @param <T>  the underlying data class of the config and argument
+     * @param <T>  the underlying data class of the command entry
      * @param context  the command context from the executing command
-     * @param entry  the entry holding the config value to be changed
+     * @param entry  the entry to be modified
      * @return 1 if successful, 0 otherwise
      */
     protected <T> int modifyConfigCommand(CommandContext<CommandSourceStack> context,

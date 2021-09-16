@@ -43,26 +43,26 @@ public class ConfigCommandEntry<T> {
     private String identifier;
 
     /**
-     * Creates a new instance that will use the last node of the config path as an identifier.
+     * Creates a new command entry that will use the last node of the config path as an identifier.
      *
-     * @param configValue  the ConfigValue that this command entry is based on
-     * @param argumentType  the ArgumentType used to parse entered data for config modification
-     * @param valueClass  the underlying data class for both configValue and argumentType
+     * @param configValue  the {@code ConfigValue} that this command entry is based on
+     * @param argumentType  the {@code ArgumentType} used to parse the value in the 'modify' command
+     * @param valueClass  the underlying data class for the {@code ConfigValue} and {@code ArgumentType}
      */
     public ConfigCommandEntry(ConfigValue<T> configValue, ArgumentType<T> argumentType, Class<T> valueClass) {
         this(configValue, argumentType, valueClass, false);
     }
 
     /**
-     * Creates a new instance that will use full paths delimited by '.' as an identifier if
+     * Creates a new command entry that will use full paths delimited by '.' as an identifier if
      * useFullPath is true, or uses the last node of config paths if false.
      *
-     * @param configValue  the ConfigValue that this command entry is based on
-     * @param argumentType  the ArgumentType used to parse entered data for config modification
-     * @param valueClass  the underlying data class for both configValue and argumentType
+     * @param configValue  the {@code ConfigValue} that this command entry is based on
+     * @param argumentType  the {@code ArgumentType} used to parse the value in the 'modify' command
+     * @param valueClass  the underlying data class for the {@code ConfigValue} and {@code ArgumentType}
      * @param useFullPath  If true, this object's identifier will be set to the full path of
-     * configValue, joined by a period. If false, this object's identifier will be set to the
-     * last node of the path of configValue.
+     * {@code configValue}, joined by a period. If false, this object's identifier will be set to
+     * the last node of the path of {@code configValue}.
      */
     public ConfigCommandEntry(ConfigValue<T> configValue, ArgumentType<T> argumentType, Class<T> valueClass, boolean useFullPath) {
         this.configValue = configValue;
@@ -76,11 +76,11 @@ public class ConfigCommandEntry<T> {
     }
 
     /**
-     * Creates a new instance.
+     * Creates a new command entry.
      *
-     * @param configValue  the ConfigValue that this command entry is based on
-     * @param argumentType  the ArgumentType used to parse entered data for config modification
-     * @param valueClass  the underlying data class for both configValue and argumentType
+     * @param configValue  the {@code ConfigValue} that this command entry is based on
+     * @param argumentType  the {@code ArgumentType} used to parse the value in the 'modify' command
+     * @param valueClass  the underlying data class for the {@code ConfigValue} and {@code ArgumentType}
      * @param identifier  the string used to identify and refer to this entry in the config
      * command. The value used here will be the value that users will type to set or query this
      * config.
@@ -92,25 +92,25 @@ public class ConfigCommandEntry<T> {
         this.identifier = identifier;
     }
 
-    /** {@return the configValue} */
+    /** {@return the {@code ConfigValue} for this command entry} */
     public ConfigValue<T> getConfigValue() {
         return configValue;
     }
 
-    /** {@return the argumentType} */
+    /** {@return the {@code ArgumentType} used to parse the value of this command entry} */
     public ArgumentType<T> getArgumentType() {
         return argumentType;
     }
 
-    /** {@return the valueClass} */
+    /** {@return the underlying data class of this command entry} */
     public Class<T> getValueClass() {
         return valueClass;
     }
 
     /**
-     * Creates an argument to be appended to an ArgumentBuilder.
+     * Creates an {@code ArgumentBuilder} to append this entry to a command chain.
      *
-     * @return an ArgumentBuilder, for chaining
+     * @return the {@code ArgumentBuilder}, for chaining
      */
     public RequiredArgumentBuilder<CommandSourceStack, T> createArgument() {
         return Commands.argument(this.getArgumentName(), this.getArgumentType());
@@ -127,7 +127,7 @@ public class ConfigCommandEntry<T> {
     }
 
     /**
-     * Returns this entry's identifier used to refer to this config value in commands.
+     * Returns this entry's identifier used to refer to this entry in commands.
      *
      * @return this entry's identifier
      */
@@ -135,7 +135,7 @@ public class ConfigCommandEntry<T> {
         return identifier;
     }
 
-    /** {@return the argument name used to store the value} */
+    /** {@return the argument name used to store the config value in the command} */
     public String getArgumentName() {
         return "value";
     }
