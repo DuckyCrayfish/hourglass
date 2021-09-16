@@ -47,9 +47,9 @@ public class ClientLevelWrapper extends Wrapper<ClientLevel> {
         return wrapped.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
     }
 
-    /** {@return true if {@code levelAccessor} is an instance of {@link ClientLevel}} */
-    public static boolean isClientLevel(LevelAccessor levelAccessor) {
-        return levelAccessor instanceof ClientLevel;
+    /** {@return true if {@code level} is an instance of {@link ClientLevel}} */
+    public static boolean isClientLevel(LevelAccessor level) {
+        return level instanceof ClientLevel;
     }
 
 }
