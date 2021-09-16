@@ -127,6 +127,7 @@ public class SleepGui {
      * @param y  the y coordinate of the center of the clock
      * @param scale  the size of the clock
      */
+    @SuppressWarnings("deprecation")
     public static void renderClock(Minecraft minecraft, float x, float y, float scale) {
         ItemRenderer itemRenderer = minecraft.getItemRenderer();
         scale /= 16F;
