@@ -3,8 +3,8 @@ def modId = 'hourglass'
 def vendor = 'lavabucket.net'
 def groupId = 'net.lavabucket.forge.hourglass'
 def modVersion = '1.2.0.0'
-def minecraftVersion = '1.16.5'
-def forgeVersion = '36.2.0'
+def minecraftVersion = '1.16.4'
+def forgeVersion = '35.1.4'
 
 buildscript {
     repositories {
