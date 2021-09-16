@@ -125,11 +125,11 @@ public final class ConfigScreen extends Screen {
     }
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(matrixStack);
-        optionsList.render(matrixStack, mouseX, mouseY, partialTicks);
-        drawCenteredString(matrixStack, font, title.getString(), width / 2, TITLE_MARGIN, 0xFFFFFF);
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
+    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
+        renderBackground(stack);
+        optionsList.render(stack, mouseX, mouseY, partialTicks);
+        drawCenteredString(stack, font, title.getString(), width / 2, TITLE_MARGIN, 0xFFFFFF);
+        super.render(stack, mouseX, mouseY, partialTicks);
     }
 
     @Override
