@@ -159,4 +159,3 @@ public final class ConfigScreen extends Screen {
     }
 
 }
-
