@@ -34,6 +34,7 @@ import net.minecraftforge.fml.LogicalSide;
 public class TimeServiceManager {
 
     public static TimeService service;
+    public static final Time VANILLA_SLEEP_END = new Time(23460);
 
     /**
      * Called from the Forge EventBus during a SleepingTimeCheckEvent, a forge event that is
@@ -43,9 +44,11 @@ public class TimeServiceManager {
      */
     @SubscribeEvent
     public static void onSleepingCheckEvent(SleepingTimeCheckEvent event) {
-        long time = event.getPlayer().level.getDayTime() % 24000;
-        if (time >= 23460 || time == 0) {
-            event.setResult(Result.ALLOW);
+        if (service != null && service.level.get().equals(event.getPlayer().level)) {
+            Time time = service.getDayTime().timeOfDay();
+            if (time.compareTo(VANILLA_SLEEP_END) >= 0) {
+                event.setResult(Result.ALLOW);
+            }
         }
     }
 
