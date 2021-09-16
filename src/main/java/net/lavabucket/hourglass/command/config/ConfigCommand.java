@@ -25,6 +25,9 @@ import java.util.function.BiConsumer;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 
@@ -33,7 +36,12 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
+import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
+import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
+import net.minecraftforge.common.ForgeConfigSpec.IntValue;
+import net.minecraftforge.server.command.EnumArgument;
 
 /**
  * This class is used to create a command tree for modifying forge configuration values. It was
@@ -55,13 +63,82 @@ public class ConfigCommand {
     }
 
     /**
-     * Registers a new config value in the command that uses the specified argument type to parse
-     * the config value from the command when being used as a setter.
+     * Registers an {@code IntValue} to the command using a default {@link IntegerArgumentType} as
+     * the value parser and {@code Integer} as the underlying data type.
+     *
+     * @param intConfigValue the {@code IntValue} config value to register
+     * @return this, for chaining
+     */
+    public ConfigCommand register(IntValue intConfigValue) {
+        return register(intConfigValue, IntegerArgumentType.integer(), Integer.class);
+    }
+
+    /**
+     * Registers an {@code IntValue} to the command using {@code argumentType} as the value parser
+     * and {@code Integer} as the underlying data type.
+     *
+     * @param intConfigValue the {@code IntValue} config value to register
+     * @param argumentType  the {@code ArgumentType} used to parse the value in the 'modify' command
+     * @return this, for chaining
+     */
+    public ConfigCommand register(IntValue intConfigValue, ArgumentType<Integer> argumentType) {
+        return register(intConfigValue, argumentType, Integer.class);
+    }
+
+    /**
+     * Registers a {@code DoubleValue} to the command using a default {@link DoubleArgumentType} as
+     * the value parser and {@code Double} as the underlying data type.
+     *
+     * @param doubleConfigValue the {@code DoubleValue} config value to register
+     * @return this, for chaining
+     */
+    public ConfigCommand register(DoubleValue doubleConfigValue) {
+        return register(doubleConfigValue, DoubleArgumentType.doubleArg(), Double.class);
+    }
+
+    /**
+     * Registers a {@code DoubleValue} to the command using {@code argumentType} as the value parser
+     * and {@code Double} as the underlying data type.
+     *
+     * @param doubleConfigValue the {@code DoubleValue} config value to register
+     * @param argumentType  the {@code ArgumentType} used to parse the value in the 'modify' command
+     * @return this, for chaining
+     */
+    public ConfigCommand register(DoubleValue doubleConfigValue, ArgumentType<Double> argumentType) {
+        return register(doubleConfigValue, argumentType, Double.class);
+    }
+
+    /**
+     * Registers a {@code BooleanValue} to the command using a default {@link BoolArgumentType} as
+     * the value parser and {@code Boolean} as the underlying data type.
+     *
+     * @param booleanConfigValue  the {@code BooleanValue} config value to register
+     * @return this, for chaining
+     */
+    public ConfigCommand register(BooleanValue booleanConfigValue) {
+        return register(booleanConfigValue, BoolArgumentType.bool(), Boolean.class);
+    }
+
+    /**
+     * Registers an {@code EnumValue} to the command using a default {@link EnumArgument} as the
+     * value parser and {@code valueClass} as the underlying data type.
+     *
+     * @param enumConfigValue  the {@code EnumValue} config value to register
+     * @param valueClass  the underlying enum class of the config value
+     * @return this, for chaining
+     */
+    public <T extends Enum<T>> ConfigCommand register(EnumValue<T> enumConfigValue, Class<T> valueClass) {
+        return register(enumConfigValue, EnumArgument.enumArgument(valueClass), valueClass);
+    }
+
+    /**
+     * Registers a new {@code ConfigValue} to the command whose value is parsed by
+     * {@code argumentType}.
      *
      * @param <T>  the underlying data type of the config value and argument type
-     * @param configValue  the ConfigValue to register
-     * @param argumentType  the ArgumentType used to parse the config value to be set
-     * @param valueClass  the class of the underlying data type of the config value and argument type
+     * @param configValue  the {@code ConfigValue} to register
+     * @param argumentType  the {@code ArgumentType} used to parse the value in the 'modify' command
+     * @param valueClass  the underlying data class of the config value and argument type
      * @return this, for chaining
      */
     public <T> ConfigCommand register(ConfigValue<T> configValue, ArgumentType<T> argumentType, Class<T> valueClass) {

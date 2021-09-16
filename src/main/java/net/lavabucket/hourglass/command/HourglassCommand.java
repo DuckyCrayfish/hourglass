@@ -22,7 +22,6 @@ package net.lavabucket.hourglass.command;
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
 import com.mojang.brigadier.Command;
-import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -39,12 +38,15 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.server.command.EnumArgument;
 
 /**
  * This class is used to create and register all commands used in this mod with Forge.
  */
 public class HourglassCommand {
+
+    // A default ArgumentType used for time speed arguments.
+    private static final DoubleArgumentType TIME_SPEED_ARGUMENT =
+            DoubleArgumentType.doubleArg(0, 24000);
 
     /**
      * Register all commands. Called by Forge during a RegisterCommandsEvent.
@@ -57,17 +59,17 @@ public class HourglassCommand {
                 .setQuerySuccessHandler(HourglassCommand::onQuerySuccess)
                 .setModifySuccessHandler(HourglassCommand::onModifySuccess)
                 .setModifyFailureHandler(HourglassCommand::onModifyFailure)
-                .register(SERVER_CONFIG.daySpeed, DoubleArgumentType.doubleArg(0, 24000), Double.class)
-                .register(SERVER_CONFIG.nightSpeed, DoubleArgumentType.doubleArg(0, 24000), Double.class)
-                .register(SERVER_CONFIG.enableSleepFeature, BoolArgumentType.bool(), Boolean.class)
-                .register(SERVER_CONFIG.sleepSpeedMin, DoubleArgumentType.doubleArg(0, 24000), Double.class)
-                .register(SERVER_CONFIG.sleepSpeedMax, DoubleArgumentType.doubleArg(0, 24000), Double.class)
-                .register(SERVER_CONFIG.sleepSpeedAll, DoubleArgumentType.doubleArg(-1, 24000), Double.class)
-                .register(SERVER_CONFIG.clearWeatherOnWake, BoolArgumentType.bool(), Boolean.class)
-                .register(SERVER_CONFIG.displayBedClock, BoolArgumentType.bool(), Boolean.class)
-                .register(SERVER_CONFIG.weatherEffect, EnumArgument.enumArgument(EffectCondition.class), EffectCondition.class)
-                .register(SERVER_CONFIG.randomTickEffect, EnumArgument.enumArgument(EffectCondition.class), EffectCondition.class)
-                .register(SERVER_CONFIG.baseRandomTickSpeed, IntegerArgumentType.integer(0), Integer.class);
+                .register(SERVER_CONFIG.daySpeed, TIME_SPEED_ARGUMENT)
+                .register(SERVER_CONFIG.nightSpeed, TIME_SPEED_ARGUMENT)
+                .register(SERVER_CONFIG.enableSleepFeature)
+                .register(SERVER_CONFIG.sleepSpeedMin, TIME_SPEED_ARGUMENT)
+                .register(SERVER_CONFIG.sleepSpeedMax, TIME_SPEED_ARGUMENT)
+                .register(SERVER_CONFIG.sleepSpeedAll, DoubleArgumentType.doubleArg(-1, 24000))
+                .register(SERVER_CONFIG.clearWeatherOnWake)
+                .register(SERVER_CONFIG.displayBedClock)
+                .register(SERVER_CONFIG.weatherEffect, EffectCondition.class)
+                .register(SERVER_CONFIG.randomTickEffect, EffectCondition.class)
+                .register(SERVER_CONFIG.baseRandomTickSpeed, IntegerArgumentType.integer(0));
 
         event.getDispatcher().register(
                 Commands.literal("hourglass").requires(source -> source.hasPermission(2))
