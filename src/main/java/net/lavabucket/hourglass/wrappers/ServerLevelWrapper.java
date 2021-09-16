@@ -38,7 +38,7 @@ import net.minecraftforge.fml.util.ObfuscationReflectionHelper.UnableToAccessFie
  * This class acts as a wrapper for {@link ServerLevel} to increase consistency between Minecraft
  * versions.
  *
- * Since the {@link ServerLevel} class changes its name and package between different versions of
+ * Since the server-level class changes its name and package between different versions of
  * Minecraft, supporting different Minecraft versions would require modifications to any class that
  * imports or references {@link ServerLevel}. This class consolidates these variations into itself,
  * allowing other classes to depend on it instead.
@@ -52,7 +52,7 @@ public class ServerLevelWrapper extends Wrapper<ServerLevel> {
     private static final Class<ServerLevelData> levelDataClass = ServerLevelData.class;
     private static final Class<DerivedLevelData> derivedLevelDataClass = DerivedLevelData.class;
 
-    /** The {@link ServerLevelData} of the wrapped level. */
+    /** The level-data of this level. */
     public final ServerLevelData levelData;
 
     /**
@@ -64,30 +64,31 @@ public class ServerLevelWrapper extends Wrapper<ServerLevel> {
         this.levelData = levelDataClass.cast(this.get().getLevelData());
     }
 
-    /** {@return true if the 'daylight cycle' game rule is enabled in {@link #wrapped}} */
+    /** {@return true if the 'daylight cycle' game rule is enabled in this level} */
     public boolean daylightRuleEnabled() {
-        return wrapped.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
+        return this.get().getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
     }
 
-    /** {@return true if the 'weather cycle' game rule is enabled in {@link #wrapped}} */
+    /** {@return true if the 'weather cycle' game rule is enabled in this level} */
     public boolean weatherRuleEnabled() {
-        return wrapped.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE);
+        return this.get().getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE);
     }
 
     /**
-     * Sets the 'random tick speed' game rule for {@link #wrapped}.
+     * Sets the 'random tick speed' game rule for this level.
      * @param speed  the new random tick speed
      */
     public void setRandomTickSpeed(int speed) {
-        wrapped.getGameRules().getRule(GameRules.RULE_RANDOMTICKING).set(speed, wrapped.getServer());
+        this.get().getGameRules().getRule(GameRules.RULE_RANDOMTICKING)
+                .set(speed, this.get().getServer());
     }
 
     /**
-     * Convenience method that returns true if the weather cycle is progressing in {@link #wrapped}.
-     * @return true if the weather cycle is progressing in {@link #wrapped}
+     * Convenience method that returns true if the weather cycle is progressing in this level.
+     * @return true if the weather cycle is progressing in this level
      */
     public boolean weatherCycleEnabled() {
-        return weatherRuleEnabled() && wrapped.dimensionType().hasSkyLight();
+        return weatherRuleEnabled() && this.get().dimensionType().hasSkyLight();
     }
 
     /**
@@ -102,7 +103,7 @@ public class ServerLevelWrapper extends Wrapper<ServerLevel> {
     }
 
     /**
-     * Sets the {@link ServerLevel} sleep status using reflection, as access modifiers prevent this.
+     * Sets the level sleep status using reflection, as access modifiers prevent this.
      * In Minecraft versions lower than 1.17 this method should do nothing.
      *
      * @param newStatus  the new sleep status
@@ -111,7 +112,7 @@ public class ServerLevelWrapper extends Wrapper<ServerLevel> {
         try {
             Field sleepStatus = ObfuscationReflectionHelper.findField(levelClass, "f_143245_");
             sleepStatus.setAccessible(true);
-            sleepStatus.set(wrapped, newStatus);
+            sleepStatus.set(this.get(), newStatus);
         } catch (IllegalArgumentException | IllegalAccessException | SecurityException | UnableToAccessFieldException e) {
             LOGGER.warn(Hourglass.MARKER, "Error setting sleep status.", e);
             return;
@@ -122,7 +123,7 @@ public class ServerLevelWrapper extends Wrapper<ServerLevel> {
      * Performs vanilla morning wakeup functionality to wake up all sleeping players.
      */
     public void wakeUpAllPlayers() {
-        wrapped.players().stream()
+        this.get().players().stream()
                 .map(player -> new ServerPlayerWrapper(player))
                 .filter(ServerPlayerWrapper::isSleeping)
                 .forEach(player -> player.get().stopSleepInBed(false, false));

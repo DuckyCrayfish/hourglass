@@ -27,7 +27,7 @@ import net.minecraft.network.chat.TranslatableComponent;
  * This class acts as a wrapper for {@link Component} to increase consistency between Minecraft
  * versions.
  *
- * <p>Since the {@link Component} class changes its name and package between different versions of
+ * <p>Since the text component class changes its name and package between different versions of
  * Minecraft, supporting different Minecraft versions would require modifications to any class that
  * imports or references {@link Component}. This class consolidates these variations into itself,
  * allowing other classes to depend on it instead.
@@ -45,7 +45,7 @@ public class TextWrapper extends Wrapper<Component> {
     /**
      * Creates a new {@code TextWrapper} for a translatable text component.
      * @param key  the translation key for the component text
-     * @return wrapped translatable text component for the provided key
+     * @return a wrapped translatable text component for the provided key
      */
     public static TextWrapper translation(String key) {
         return new TextWrapper(new TranslatableComponent(key));
@@ -55,7 +55,7 @@ public class TextWrapper extends Wrapper<Component> {
      * Creates a new {@code TextWrapper} for a translatable text component with arguments.
      * @param key  the translation key for the component text
      * @param args  the arguments used for text substitution in the translated text
-     * @return wrapped translatable text component for the provided key
+     * @return a wrapped translatable text component for the provided key
      */
    public static TextWrapper translation(String key, Object... args) {
        return new TextWrapper(new TranslatableComponent(key, args));
@@ -64,7 +64,7 @@ public class TextWrapper extends Wrapper<Component> {
     /**
      * Creates a new {@code TextWrapper} for a text component with the specified message.
      * @param message  the component's literal message
-     * @return wrapped text component with the provided message
+     * @return a wrapped text component with the provided message
      */
     public static TextWrapper literal(String message) {
         return new TextWrapper(new TextComponent(message));
