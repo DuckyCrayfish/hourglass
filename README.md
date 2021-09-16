@@ -92,6 +92,10 @@ If the `<value>` argument is omitted, this command will display the config optio
 
 Displays the current speed at which time is elapsing.
 
+#### `/hourglass query sleeperCount`
+
+Displays the ratio of players sleeping in the current dimension.
+
 ## Configuration
 
 All configuration values can be changed at runtime without reloading the game.

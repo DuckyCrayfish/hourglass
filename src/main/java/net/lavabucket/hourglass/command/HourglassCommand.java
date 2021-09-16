@@ -79,6 +79,8 @@ public class HourglassCommand {
                     .then(Commands.literal("query")
                         .then(Commands.literal("timeSpeed")
                             .executes(HourglassCommand::onTimeSpeedQuery))
+                        .then(Commands.literal("sleeperCount")
+                            .executes(HourglassCommand::onSleeperCountQuery))
                     )
                 );
     }
@@ -143,7 +145,7 @@ public class HourglassCommand {
 
         if (service == null || !service.managesLevel(wrapper)) {
             TextWrapper response = TextWrapper.translation(
-                    "commands.hourglass.query.timeSpeed.failure");
+                    "commands.hourglass.query.levelNotApplicable");
             context.getSource().sendFailure(response.get());
             return 0;
         }
@@ -151,6 +153,30 @@ public class HourglassCommand {
         TextWrapper response = TextWrapper.translation(
                 "commands.hourglass.query.timeSpeed.success",
                 service.getTimeSpeed(service.getDayTime()));
+        context.getSource().sendSuccess(response.get(), false);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    /**
+     * Handles a sleeper count query command.
+     * @param context  the command context
+     */
+    public static int onSleeperCountQuery(CommandContext<CommandSourceStack> context) {
+        ServerLevelWrapper wrapper = new ServerLevelWrapper(context.getSource().getLevel());
+        TimeService service = TimeServiceManager.service;
+
+        if (service == null || !service.managesLevel(wrapper)) {
+            TextWrapper response = TextWrapper.translation(
+                    "commands.hourglass.query.levelNotApplicable");
+            context.getSource().sendFailure(response.get());
+            return 0;
+        }
+
+        TextWrapper response = TextWrapper.translation(
+                "commands.hourglass.query.sleeperCount.success",
+                service.sleepStatus.percentage(),
+                service.sleepStatus.amountSleeping(),
+                service.sleepStatus.amountActive());
         context.getSource().sendSuccess(response.get(), false);
         return Command.SINGLE_SUCCESS;
     }
