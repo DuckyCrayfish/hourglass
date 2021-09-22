@@ -4,7 +4,7 @@ def vendor = 'lavabucket.net'
 def groupId = 'net.lavabucket.forge.hourglass'
 def modVersion = '1.2.0.0'
 def minecraftVersion = '1.17.1'
-def forgeVersion = '37.0.61'
+def forgeVersion = '37.0.70'
 
 buildscript {
     repositories {
