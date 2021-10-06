@@ -73,6 +73,7 @@ public class HourglassConfig {
         public final DoubleValue sleepSpeedAll;
         public final BooleanValue clearWeatherOnWake;
         public final BooleanValue displayBedClock;
+        public final BooleanValue allowDaySleep;
 
         public final ConfigValue<String> morningMessage;
         public final EnumValue<ChatType> morningMessageType;
@@ -157,6 +158,11 @@ public class HourglassConfig {
                     "Set to 'false' to force weather to pass naturally. Adds realism when accelerateWeather is enabled.",
                     "Note: This setting is ignored if game rule doWeatherCycle is false.")
                     .define("clearWeatherOnWake", true);
+
+                allowDaySleep = builder.comment(
+                    "When true, players are allowed to sleep at all times of day in dimensions controlled by Hourglass.",
+                    "Note: Other mods may override this ability.")
+                    .define("allowDaySleep", false);
 
                 displayBedClock = builder
                     .comment("When true, a clock is displayed in the sleep interface.")

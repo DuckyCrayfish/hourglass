@@ -40,8 +40,32 @@ public class TimeServiceManager {
     public static final Time VANILLA_SLEEP_END = new Time(23460);
 
     /**
-     * Called once per tick for every player who is currently sleeping. Event result determines if
-     * sleep is allowed at the current time.
+     * Modifies permitted sleep times to allow players to sleep during the day. Only applies to
+     * players in levels controlled by Hourglass while sleep feature is enabled.
+     *
+     * <p>Called once per tick for every player who is currently sleeping. Event result determines
+     * if sleep is allowed at the current time.
+     *
+     * @param event  the event provided by the Forge event bus
+     * @see SleepingTimeCheckEvent
+     */
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void onDaySleepCheck(SleepingTimeCheckEvent event) {
+        if (service != null
+                && service.level.get().equals(event.getPlayer().level)
+                && HourglassConfig.SERVER_CONFIG.enableSleepFeature.get()
+                && HourglassConfig.SERVER_CONFIG.allowDaySleep.get()) {
+
+            event.setResult(Result.ALLOW);
+        }
+    }
+
+    /**
+     * Modifies permitted sleep times to allow players to sleep through dawn until day-time 0
+     * while the sleep feature is enabled.
+     *
+     * <p>Called once per tick for every player who is currently sleeping. Event result determines
+     * if sleep is allowed at the current time.
      *
      * @param event  the event provided by the Forge event bus
      * @see SleepingTimeCheckEvent
