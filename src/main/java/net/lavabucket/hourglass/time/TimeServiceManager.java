@@ -33,14 +33,17 @@ import net.minecraftforge.fml.LogicalSide;
  */
 public class TimeServiceManager {
 
+    /** The Overworld {@code TimeService} object. null if Overworld not loaded. */
     public static TimeService service;
+    /** The earliest time at which players are no longer allowed to sleep in vanilla. */
     public static final Time VANILLA_SLEEP_END = new Time(23460);
 
     /**
-     * Called from the Forge EventBus during a SleepingTimeCheckEvent, a forge event that is
-     * called once per tick for every player who is currently sleeping.
+     * Called once per tick for every player who is currently sleeping. Event result determines if
+     * sleep is allowed at the current time.
      *
-     * @param event  the event provided by forge from the EventBus
+     * @param event  the event provided by the Forge event bus
+     * @see SleepingTimeCheckEvent
      */
     @SubscribeEvent
     public static void onSleepingCheckEvent(SleepingTimeCheckEvent event) {
