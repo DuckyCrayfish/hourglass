@@ -19,6 +19,7 @@
 
 package net.lavabucket.hourglass.time;
 
+import net.lavabucket.hourglass.config.HourglassConfig;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
@@ -49,7 +50,8 @@ public class TimeServiceManager {
     public static void onSleepingCheckEvent(SleepingTimeCheckEvent event) {
         if (service != null && service.level.get().equals(event.getPlayer().level)) {
             Time time = service.getDayTime().timeOfDay();
-            if (time.compareTo(VANILLA_SLEEP_END) >= 0) {
+            if (HourglassConfig.SERVER_CONFIG.enableSleepFeature.get()
+                    && time.compareTo(VANILLA_SLEEP_END) >= 0) {
                 event.setResult(Result.ALLOW);
             }
         }
