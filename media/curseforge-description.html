@@ -90,6 +90,24 @@
     </p>
 
     <p style="font-size: 16px;">
+        While many of the configuration options are accessible through via the
+        <a href="https://github.com/DuckyCrayfish/hourglass##hourglass-config-config-key-value" style="font-size: 16px;">config command</a>, some can only be accessed by visiting the
+        mod's config files. Most of the options are located in the mod's
+        <a href="https://github.com/DuckyCrayfish/hourglass##default-server-config" style="font-size: 16px;">server config file</a>, which is located at
+        <code style="font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;">./saves/&lt;save&gt;/serverconfig/hourglass-server.toml</code> for single-player worlds, or
+        <code style="font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;">./world/serverconfig/hourglass-server.toml</code> for multiplayer servers. A few client-specific options
+        also exist and can be found in <code style="font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;">./config/hourglass-client.toml</code>. All paths listed are relative to
+        the Minecraft client/server directory.
+    </p>
+
+    <p style="font-size: 16px;">
+        Modpack developers may customize the Hourglass server settings in their modpack by first tweaking
+        the server settings in a test world and then moving the file to the <code style="font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;">./defaultconfigs</code> folder of
+        their modpack. Forge will move all files in the <code style="font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;">defaultconfigs</code> folder into the <code style="font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;">serverconfig</code>
+        folder of all newly created worlds.
+    </p>
+
+    <p style="font-size: 16px;">
         When customizing Hourglass, the <strong>speed of time</strong> is controlled using a multiplier. A value of 1 is equivalent
         to vanilla speed (20 minutes for a full day-night cycle). Setting daySpeed and nightSpeed to 0.5
         will cut the speed of time in half, doubling the duration of a full day to 40 minutes. Likewise,

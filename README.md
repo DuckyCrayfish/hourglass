@@ -103,6 +103,20 @@ Displays the ratio of players sleeping in the current dimension.
 
 All configuration values can be changed at runtime without reloading the game.
 
+While many of the configuration options are accessible through via the
+[config command](#hourglass-config-config-key-value), some can only be accessed by visiting the
+mod's config files. Most of the options are located in the mod's
+[server config file](#default-server-config), which is located at
+`./saves/<save>/serverconfig/hourglass-server.toml` for single-player worlds, or
+`./world/serverconfig/hourglass-server.toml` for multiplayer servers. A few client-specific options
+also exist and can be found in `./config/hourglass-client.toml`. All paths listed are relative to
+the Minecraft client/server directory.
+
+Modpack developers may customize the Hourglass server settings in their modpack by first tweaking
+the server settings in a test world and then moving the file to the `./defaultconfigs` folder of
+their modpack. Forge will move all files in the `defaultconfigs` folder into the `serverconfig`
+folder of all newly created worlds.
+
 When customizing Hourglass, the **speed of time** is controlled using a multiplier. A value of 1 is equivalent
 to vanilla speed (20 minutes for a full day-night cycle). Setting daySpeed and nightSpeed to 0.5
 will cut the speed of time in half, doubling the duration of a full day to 40 minutes. Likewise,
