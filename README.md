@@ -63,6 +63,7 @@ Hourglass is compatible with the following mods:
 * [Morpheus](https://www.curseforge.com/minecraft/mc-mods/morpheus)  
   * The sleep feature of Hourglass will need to be disabled to use it alongside Morpheus.
     [See note below.](#sleep-vote-mods)
+* [Good Night's Sleep](https://www.curseforge.com/minecraft/mc-mods/good-nights-sleep)
 
 #### Sleep Vote Mods
 
