@@ -85,7 +85,9 @@ installation.
 
 #### `/hourglass config <config-key> [<value>]`
 
-Many config options can be changed in-game via this command.
+Modifies or displays the current value of the specified config option.
+
+Some configurations are not available through this command and need to be accessed via the config files.
 
 If the `<value>` argument is omitted, this command will display the config option's current value.
 
