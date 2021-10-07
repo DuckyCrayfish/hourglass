@@ -66,6 +66,7 @@ public class HourglassConfig {
         public final EnumValue<EffectCondition> weatherEffect;
         public final EnumValue<EffectCondition> randomTickEffect;
         public final IntValue baseRandomTickSpeed;
+        public final EnumValue<EffectCondition> potionEffect;
 
         public final BooleanValue enableSleepFeature;
         public final DoubleValue sleepSpeedMin;
@@ -128,6 +129,13 @@ public class HourglassConfig {
                     baseRandomTickSpeed = builder
                         .comment("The base random tick speed used by the randomTickEffect time effect.")
                         .defineInRange("baseRandomTickSpeed", 3, 0, Integer.MAX_VALUE);
+
+                    potionEffect = builder.comment(
+                        "When applied, this effect progresses potion effects at the same rate as the current time-speed.",
+                        "THIS MAY HAVE A NEGATIVE IMPACT ON PERFORMANCE IN SERVERS WITH MANY PLAYERS.",
+                        "When set to ALWAYS, this effect applies to all players in the dimension, day or night. Has no effect while time speed is 1.0.",
+                        "When set to SLEEPING, this effect only applies to players who are sleeping.")
+                        .defineEnum("potionEffect", EffectCondition.NEVER);
 
                 builder.pop(); // time.effects
             builder.pop(); // time

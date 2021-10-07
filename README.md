@@ -162,6 +162,13 @@ one morning to the next.
 		#Range: > 0
 		baseRandomTickSpeed = 3
 
+		#When applied, this effect progresses potion effects at the same rate as the current time-speed.
+		#THIS MAY HAVE A NEGATIVE IMPACT ON PERFORMANCE IN SERVERS WITH MANY PLAYERS.
+		#When set to ALWAYS, this effect applies to all players in the dimension, day or night. Has no effect while time speed is 1.0.
+		#When set to SLEEPING, this effect only applies to players who are sleeping.
+		#Allowed Values: NEVER, ALWAYS, SLEEPING
+		potionEffect = "NEVER"
+
 [sleep]
 	#Enables or disables the sleep feature of this mod. Enabling this setting will modify the vanilla sleep functionality
 	#and may conflict with other sleep mods. If disabled, all settings in the sleep section will not apply.

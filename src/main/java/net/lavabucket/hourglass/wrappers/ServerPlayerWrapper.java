@@ -19,10 +19,20 @@
 
 package net.lavabucket.hourglass.wrappers;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 public class ServerPlayerWrapper extends Wrapper<ServerPlayer> {
+
+    private static Method tickEffectsMethod = ObfuscationReflectionHelper.findMethod(LivingEntity.class, "m_21217_");
+    static { tickEffectsMethod.setAccessible(true); }
 
     public static Class<ServerPlayer> playerClass = ServerPlayer.class;
 
@@ -47,6 +57,23 @@ public class ServerPlayerWrapper extends Wrapper<ServerPlayer> {
     /** {@return the wrapped level this player is in} */
     public ServerLevelWrapper getLevel() {
         return new ServerLevelWrapper(get().level);
+    }
+
+    /** Ticks all MobEffects applied to this player. */
+    public void tickEffects() {
+        try {
+            tickEffectsMethod.invoke(get());
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            return;
+        }
+    }
+
+    public void sendMobEffectUpdatePackets() {
+        for (MobEffectInstance e : get().getActiveEffects()) {
+            int id = get().getId();
+            ClientboundUpdateMobEffectPacket packet = new ClientboundUpdateMobEffectPacket(id, e);
+            get().connection.send(packet);
+        }
     }
 
 }

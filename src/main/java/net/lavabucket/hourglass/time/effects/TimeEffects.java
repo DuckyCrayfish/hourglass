@@ -36,6 +36,7 @@ public class TimeEffects {
 
     public static RegistryObject<TimeEffect> WEATHER_EFFECT = TIME_EFFECTS.register("weather", () -> new WeatherSleepEffect());
     public static RegistryObject<TimeEffect> RANDOM_TICK_EFFECT = TIME_EFFECTS.register("random_tick", () -> new RandomTickSleepEffect());
+    public static RegistryObject<TimeEffect> POTION_EFFECT = TIME_EFFECTS.register("potion", () -> new PotionTimeEffect());
 
     /**
      * Registers {@link #TIME_EFFECTS}.

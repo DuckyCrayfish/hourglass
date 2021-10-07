@@ -69,7 +69,8 @@ public class HourglassCommand {
                 .register(SERVER_CONFIG.displayBedClock)
                 .register(SERVER_CONFIG.weatherEffect, EffectCondition.class)
                 .register(SERVER_CONFIG.randomTickEffect, EffectCondition.class)
-                .register(SERVER_CONFIG.baseRandomTickSpeed, IntegerArgumentType.integer(0));
+                .register(SERVER_CONFIG.baseRandomTickSpeed, IntegerArgumentType.integer(0))
+                .register(SERVER_CONFIG.potionEffect, EffectCondition.class);
 
         event.getDispatcher().register(
                 Commands.literal("hourglass").requires(source -> source.hasPermission(2))
