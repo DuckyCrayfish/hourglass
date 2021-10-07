@@ -19,6 +19,8 @@
 
 package net.lavabucket.hourglass.time;
 
+import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
+
 /**
  * Provides contextual time and level data to sleep effects.
  *
@@ -56,6 +58,11 @@ public class TimeContext {
     /** {@return the time that has elapsed during this tick} */
     public Time getTimeDelta() {
         return timeDelta;
+    }
+
+    /** {@return the level in which this time tick event occurred} */
+    public ServerLevelWrapper getLevel() {
+        return getTimeService().level;
     }
 
 }

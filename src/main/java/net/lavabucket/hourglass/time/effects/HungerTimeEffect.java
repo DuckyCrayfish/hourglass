@@ -39,7 +39,7 @@ public class HungerTimeEffect extends AbstractTimeEffect {
             return;
         }
 
-        ServerLevelWrapper level = context.getTimeService().level;
+        ServerLevelWrapper level = context.getLevel();
         SleepStatus sleepStatus = context.getTimeService().sleepStatus;
         long extraTicks = context.getTimeDelta().longValue() - 1;
 
