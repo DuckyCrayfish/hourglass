@@ -162,12 +162,20 @@ one morning to the next.
 		#Range: > 0
 		baseRandomTickSpeed = 3
 
-		#When applied, this effect progresses potion effects at the same rate as the current time-speed.
+		#When applied, this effect progresses potion effects to match the rate of the current time-speed.
+		#This effect does not apply if time speed is 1.0 or less.
 		#THIS MAY HAVE A NEGATIVE IMPACT ON PERFORMANCE IN SERVERS WITH MANY PLAYERS.
 		#When set to ALWAYS, this effect applies to all players in the dimension, day or night. Has no effect while time speed is 1.0.
 		#When set to SLEEPING, this effect only applies to players who are sleeping.
 		#Allowed Values: NEVER, ALWAYS, SLEEPING
 		potionEffect = "NEVER"
+
+		#When applied, this effect progresses player hunger effects to match the rate of the current time-speed.
+		#This results in faster healing when food level is full, and faster harm when food level is too low.
+		#This effect does not apply if time speed is 1.0 or less.
+		#When set to ALWAYS, this effect applies to all players in the dimension, day or night. Not recommended on higher difficulty settings
+		#When set to SLEEPING, this effect only applies to players who are sleeping.
+		hungerEffect = "NEVER"
 
 [sleep]
 	#Enables or disables the sleep feature of this mod. Enabling this setting will modify the vanilla sleep functionality

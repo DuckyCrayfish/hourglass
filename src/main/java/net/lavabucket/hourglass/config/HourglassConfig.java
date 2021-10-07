@@ -67,6 +67,7 @@ public class HourglassConfig {
         public final EnumValue<EffectCondition> randomTickEffect;
         public final IntValue baseRandomTickSpeed;
         public final EnumValue<EffectCondition> potionEffect;
+        public final EnumValue<EffectCondition> hungerEffect;
 
         public final BooleanValue enableSleepFeature;
         public final DoubleValue sleepSpeedMin;
@@ -131,11 +132,20 @@ public class HourglassConfig {
                         .defineInRange("baseRandomTickSpeed", 3, 0, Integer.MAX_VALUE);
 
                     potionEffect = builder.comment(
-                        "When applied, this effect progresses potion effects at the same rate as the current time-speed.",
+                        "When applied, this effect progresses potion effects to match the rate of the current time-speed.",
+                        "This effect does not apply if time speed is 1.0 or less.",
                         "THIS MAY HAVE A NEGATIVE IMPACT ON PERFORMANCE IN SERVERS WITH MANY PLAYERS.",
                         "When set to ALWAYS, this effect applies to all players in the dimension, day or night. Has no effect while time speed is 1.0.",
                         "When set to SLEEPING, this effect only applies to players who are sleeping.")
                         .defineEnum("potionEffect", EffectCondition.NEVER);
+
+                    hungerEffect = builder.comment(
+                        "When applied, this effect progresses player hunger effects to match the rate of the current time-speed.",
+                        "This results in faster healing when food level is full, and faster harm when food level is too low.",
+                        "This effect does not apply if time speed is 1.0 or less.",
+                        "When set to ALWAYS, this effect applies to all players in the dimension, day or night. Not recommended on higher difficulty settings",
+                        "When set to SLEEPING, this effect only applies to players who are sleeping.")
+                        .defineEnum("hungerEffect", EffectCondition.NEVER);
 
                 builder.pop(); // time.effects
             builder.pop(); // time
