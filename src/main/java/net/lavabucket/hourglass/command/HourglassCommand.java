@@ -67,6 +67,7 @@ public class HourglassCommand {
                 .register(SERVER_CONFIG.sleepSpeedAll, DoubleArgumentType.doubleArg(-1, 24000))
                 .register(SERVER_CONFIG.clearWeatherOnWake)
                 .register(SERVER_CONFIG.displayBedClock)
+                .register(SERVER_CONFIG.allowDaySleep)
                 .register(SERVER_CONFIG.weatherEffect, EffectCondition.class)
                 .register(SERVER_CONFIG.randomTickEffect, EffectCondition.class)
                 .register(SERVER_CONFIG.baseRandomTickSpeed, IntegerArgumentType.integer(0))
