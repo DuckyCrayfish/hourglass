@@ -175,6 +175,7 @@ one morning to the next.
 		#This effect does not apply if time-speed is 1.0 or less.
 		#When set to ALWAYS, this effect applies to all players in the dimension, day or night. Not recommended on higher difficulty settings
 		#When set to SLEEPING, this effect only applies to players who are sleeping.
+		#Allowed Values: NEVER, ALWAYS, SLEEPING
 		hungerEffect = "NEVER"
 
 [sleep]
