@@ -178,6 +178,12 @@ one morning to the next.
 		#Allowed Values: NEVER, ALWAYS, SLEEPING
 		hungerEffect = "NEVER"
 
+		#When applied, this effect progresses block entities like furnaces, hoppers, and spawners to match the rate of the current time-speed.
+		#This effect does not apply if time speed is 1.0 or less.
+		#When set to SLEEPING, this effect only applies when at least one player is sleeping in a dimension.
+		#Allowed Values: NEVER, ALWAYS, SLEEPING
+		blockEntityEffect = "NEVER"
+
 [sleep]
 	#Enables or disables the sleep feature of this mod. Enabling this setting will modify the vanilla sleep functionality
 	#and may conflict with other sleep mods. If disabled, all settings in the sleep section will not apply.

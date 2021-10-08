@@ -68,6 +68,7 @@ public class HourglassConfig {
         public final IntValue baseRandomTickSpeed;
         public final EnumValue<EffectCondition> potionEffect;
         public final EnumValue<EffectCondition> hungerEffect;
+        public final EnumValue<EffectCondition> blockEntityEffect;
 
         public final BooleanValue enableSleepFeature;
         public final DoubleValue sleepSpeedMin;
@@ -146,6 +147,12 @@ public class HourglassConfig {
                         "When set to ALWAYS, this effect applies to all players in the dimension, day or night. Not recommended on higher difficulty settings",
                         "When set to SLEEPING, this effect only applies to players who are sleeping.")
                         .defineEnum("hungerEffect", EffectCondition.NEVER);
+
+                    blockEntityEffect = builder.comment(
+                        "When applied, this effect progresses block entities like furnaces, hoppers, and spawners to match the rate of the current time-speed.",
+                        "This effect does not apply if time speed is 1.0 or less.",
+                        "When set to SLEEPING, this effect only applies when at least one player is sleeping in a dimension.")
+                        .defineEnum("blockEntityEffect", EffectCondition.NEVER);
 
                 builder.pop(); // time.effects
             builder.pop(); // time

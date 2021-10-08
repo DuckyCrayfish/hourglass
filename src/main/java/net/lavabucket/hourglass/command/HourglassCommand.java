@@ -72,7 +72,8 @@ public class HourglassCommand {
                 .register(SERVER_CONFIG.randomTickEffect, EffectCondition.class)
                 .register(SERVER_CONFIG.baseRandomTickSpeed, IntegerArgumentType.integer(0))
                 .register(SERVER_CONFIG.potionEffect, EffectCondition.class)
-                .register(SERVER_CONFIG.hungerEffect, EffectCondition.class);
+                .register(SERVER_CONFIG.hungerEffect, EffectCondition.class)
+                .register(SERVER_CONFIG.blockEntityEffect, EffectCondition.class);
 
         event.getDispatcher().register(
                 Commands.literal("hourglass").requires(source -> source.hasPermission(2))
