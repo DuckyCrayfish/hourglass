@@ -135,7 +135,7 @@ public class HourglassConfig {
                         "When applied, this effect progresses potion effects to match the rate of the current time-speed.",
                         "This effect does not apply if time speed is 1.0 or less.",
                         "THIS MAY HAVE A NEGATIVE IMPACT ON PERFORMANCE IN SERVERS WITH MANY PLAYERS.",
-                        "When set to ALWAYS, this effect applies to all players in the dimension, day or night. Has no effect while time speed is 1.0.",
+                        "When set to ALWAYS, this effect applies to all players in the dimension, day or night.",
                         "When set to SLEEPING, this effect only applies to players who are sleeping.")
                         .defineEnum("potionEffect", EffectCondition.NEVER);
 
