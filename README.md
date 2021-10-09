@@ -106,11 +106,8 @@ All configuration values can be changed at runtime without reloading the game.
 While many of the configuration options are accessible through via the
 [config command](#hourglass-config-config-key-value), some can only be accessed by visiting the
 mod's config files. Most of the options are located in the mod's
-[server config file](#default-server-config), which is located at
-`./saves/<save>/serverconfig/hourglass-server.toml` for single-player worlds, or
-`./world/serverconfig/hourglass-server.toml` for multiplayer servers. A few client-specific options
-also exist and can be found in `./config/hourglass-client.toml`. All paths listed are relative to
-the Minecraft client/server directory.
+[server config file](#default-server-config) in both single-player worlds and multiplayer servers.
+A few client-specific options also exist in the [client config file](#default-client-config).
 
 Modpack developers may customize the Hourglass server settings in their modpack by first tweaking
 the server settings in a test world and then moving the file to the `./defaultconfigs` folder of
@@ -126,6 +123,10 @@ one morning to the next.
 > _**Warning:** Setting daySpeed and nightSpeed to values higher than 3600 may be unsafe for people with photosensitive epilepsy._
 
 ### Default Server Config
+
+Location relative to Minecraft folder:
+* Single-player worlds: `./saves/<save>/serverconfig/hourglass-server.toml`
+* Multiplayer servers: `./world/serverconfig/hourglass-server.toml`
 
 ```toml
 [time]
@@ -269,6 +270,8 @@ one morning to the next.
 ```
 
 ### Default Client Config
+
+Location relative to Minecraft folder: `./config/hourglass-client.toml`
 
 ```toml
 [gui]
