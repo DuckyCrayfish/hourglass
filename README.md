@@ -87,9 +87,9 @@ installation.
 
 Modifies or displays the current value of the specified config option.
 
-Some configurations are not available through this command and need to be accessed via the config files.
-
 If the `<value>` argument is omitted, this command will display the config option's current value.
+
+Some configurations are not available through this command and need to be accessed via the config files.
 
 #### `/hourglass query timeSpeed`
 
