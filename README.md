@@ -9,7 +9,7 @@
 
 <p align="center">
 	<a href="https://www.curseforge.com/minecraft/mc-mods/hourglass/files">
-		<img src="http://cf.way2muchnoise.eu/versions/hourglass.svg">
+		<img src="https://cf.way2muchnoise.eu/versions/hourglass.svg">
 	</a>
 	&nbsp;
 	<a href="LICENSE">
@@ -17,7 +17,7 @@
 	</a>
 	&nbsp;
 	<a href="https://www.curseforge.com/minecraft/mc-mods/hourglass">
-		<img src="http://cf.way2muchnoise.eu/full_hourglass_downloads.svg">
+		<img src="https://cf.way2muchnoise.eu/full_hourglass_downloads.svg">
 	</a>
 </p>
 
