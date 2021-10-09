@@ -39,14 +39,15 @@ faster depending on the percentage of players who are currently sleeping. This r
 any sleep voting system or player threshold, as any number of players can have an impact on the
 duration of the night.
 
-While sleeping, Hourglass has the ability to **speed up the growth of crops, trees, and grass** by
-modifying the game's [random tick](https://minecraft.fandom.com/wiki/Tick#Random_tick) speed. This
-feature is disabled by default but can be enabled by changing the `randomTickEffect` config option.
-
 Hourglass allows for **customization of the day-night cycle duration**, and can control day and night
 speed independently. Rather than the vanilla duration of 20 minutes, you can slow down time to make
 a day in Minecraft last as long as a day in real life, or speed up the passage of nights for a more
 forgiving experience.
+
+Hourglass also provides a number of **time effects** that may speed up the progression of various
+elements in Minecraft to match the current speed of time. Some examples include crop growth, grass
+growth, weather, potion effects, furnaces, hoppers, etc. Most of these time effects are disabled by
+default but can be enabled by setting their associated [config options](#configuration).
 
 ## Compatibility
 
