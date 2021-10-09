@@ -69,7 +69,7 @@ Hourglass is compatible with the following mods:
 #### Sleep Vote Mods
 
 Hourglass is compatible with mods that enable sleep voting or have sleep percentage systems like
-**Quark** and **Morpheus**, but they conflict with the sleep feature of this mod. These features should
+Quark and Morpheus, but they conflict with the sleep feature of this mod. These features should
 either be disabled in their corresponding mods, or the sleep feature in Hourglass should be disabled.
 The sleep feature can be disabled via command or file by modifying the `enableSleepFeature` option.
 
