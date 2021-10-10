@@ -40,7 +40,7 @@ import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
  */
 public class ServerPlayerWrapper extends Wrapper<ServerPlayer> {
 
-    private static Method tickEffectsMethod = ObfuscationReflectionHelper.findMethod(LivingEntity.class, "m_21217_");
+    private static final Method tickEffectsMethod = ObfuscationReflectionHelper.findMethod(LivingEntity.class, "m_21217_");
     static { tickEffectsMethod.setAccessible(true); }
 
     /** The class that this {@code Wrapper} wraps. */

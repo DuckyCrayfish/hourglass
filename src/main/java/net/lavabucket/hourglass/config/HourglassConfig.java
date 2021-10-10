@@ -39,7 +39,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 /**
  * Configuration class for Hourglass.
  */
-public class HourglassConfig {
+public final class HourglassConfig {
 
     public static final ServerConfig SERVER_CONFIG = new ServerConfig(new Builder());
     public static final ClientConfig CLIENT_CONFIG = new ClientConfig(new Builder());

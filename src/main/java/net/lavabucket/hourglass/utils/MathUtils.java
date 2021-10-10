@@ -25,7 +25,7 @@ package net.lavabucket.hourglass.utils;
  * One purpose of this class is to prevent dependance on Minecraft's math class, as its package
  * name changes between versions.
  */
-public class MathUtils {
+public final class MathUtils {
 
     /**
      * Returns a value from the range of numbers between {@code d0} and {@code d1}. The value's

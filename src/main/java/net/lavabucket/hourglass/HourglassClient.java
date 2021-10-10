@@ -33,7 +33,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
  * client/server distribution separation. Failure to do this could crash a Minecraft server
  * distribution on startup as Java tries to load classes that do not exist.
  */
-public class HourglassClient {
+public final class HourglassClient {
 
     /** Client-specific entry point. */
     public HourglassClient() {
