@@ -230,7 +230,9 @@ public class HourglassConfig {
                             .define("message", "\u00A7e\u00A7oTempus fugit!");
                         morningMessageType = builder.comment("Sets where this message appears.")
                             .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
-                        morningMessageTarget = builder.comment("Sets to whom this message is sent. A target of 'SLEEPING' will send the message to all players who just woke up.")
+                        morningMessageTarget = builder.comment(
+                            "Sets to whom this message is sent.",
+                            "A target of 'SLEEPING' will send the message to all players who just woke up.")
                             .defineEnum("target", MessageTarget.DIMENSION);
                     builder.pop(); // sleep.messages.morning
 

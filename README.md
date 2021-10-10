@@ -247,7 +247,8 @@ Location relative to Minecraft folder:
 			#Sets where this message appears.
 			#Allowed Values: SYSTEM, GAME_INFO
 			type = "GAME_INFO"
-			#Sets to whom this message is sent. A target of 'SLEEPING' will send the message to all players who just woke up.
+			#Sets to whom this message is sent.
+			#A target of 'SLEEPING' will send the message to all players who just woke up.
 			#Allowed Values: ALL, DIMENSION, SLEEPING
 			target = "DIMENSION"
 
