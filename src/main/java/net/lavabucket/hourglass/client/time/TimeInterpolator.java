@@ -17,7 +17,7 @@
  * along with Hourglass.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.lavabucket.hourglass.client;
+package net.lavabucket.hourglass.client.time;
 
 import net.lavabucket.hourglass.time.Time;
 import net.lavabucket.hourglass.wrappers.ClientLevelWrapper;

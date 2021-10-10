@@ -19,9 +19,9 @@
 
 package net.lavabucket.hourglass;
 
-import net.lavabucket.hourglass.client.TimeInterpolator;
 import net.lavabucket.hourglass.client.gui.ConfigScreen;
 import net.lavabucket.hourglass.client.gui.SleepGui;
+import net.lavabucket.hourglass.client.time.TimeInterpolator;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
