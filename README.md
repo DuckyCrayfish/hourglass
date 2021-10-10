@@ -205,6 +205,16 @@ Location relative to Minecraft folder:
 	#Range: -1.0 ~ 24000.0
 	sleepSpeedAll = -1.0
 
+	#This parameter defines the curvature of the interpolation function that translates the sleeping player percentage into time-speed.
+	#The function used is a Normalized Tunable Sigmoid Function.
+	#A value of 0.5 represents a linear relationship.
+	#Smaller values bend the curve toward the X axis, while greater values bend it toward the Y axis.
+	#This graph may be used as a reference for tuning the curve: https://www.desmos.com/calculator/ruksr5wnzt
+	#Credit to Dino Dini for the function: https://dinodini.wordpress.com/2010/04/05/normalized-tunable-sigmoid-functions/
+	#Credit to SmoothSleep for the idea: https://www.spigotmc.org/resources/smoothsleep.32043/
+	#Range: 0.0 ~ 1.0
+	sleepSpeedCurve = 0.25
+
 	#Set to 'true' for the weather to clear when players wake up in the morning as it does in vanilla.
 	#Set to 'false' to force weather to pass naturally. Adds realism when accelerateWeather is enabled.
 	#Note: This setting is ignored if game rule doWeatherCycle is false.

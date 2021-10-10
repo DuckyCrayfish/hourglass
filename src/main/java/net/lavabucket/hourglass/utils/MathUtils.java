@@ -40,4 +40,16 @@ public class MathUtils {
       return d0 + percent * (d1 - d0);
    }
 
+    /**
+     * Maps a number {@code x} in the unit interval [0,1] to a number on a normalized sigmoid
+     * function with a variable curvature defined by {@code c}.
+     *
+     * @param x  the number to map
+     * @param c  the curvature variable
+     * @return the number corresponding to {@code x} in the sigmoid function
+     */
+    public static double normalizedTunableSigmoid(double x, double c) {
+        return c*x / (2*c*x - c - x + 1);
+    }
+
 }

@@ -65,6 +65,7 @@ public class HourglassCommand {
                 .register(SERVER_CONFIG.sleepSpeedMin, TIME_SPEED_ARGUMENT)
                 .register(SERVER_CONFIG.sleepSpeedMax, TIME_SPEED_ARGUMENT)
                 .register(SERVER_CONFIG.sleepSpeedAll, DoubleArgumentType.doubleArg(-1, 24000))
+                .register(SERVER_CONFIG.sleepSpeedCurve, DoubleArgumentType.doubleArg(0, 1))
                 .register(SERVER_CONFIG.clearWeatherOnWake)
                 .register(SERVER_CONFIG.displayBedClock)
                 .register(SERVER_CONFIG.allowDaySleep)

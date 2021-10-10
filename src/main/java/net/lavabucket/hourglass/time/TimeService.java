@@ -212,10 +212,13 @@ public class TimeService {
             return SERVER_CONFIG.sleepSpeedAll.get();
         }
 
-        double percentageSleeping = sleepStatus.ratio();
+        double sleepRatio = sleepStatus.ratio();
+        double curve = SERVER_CONFIG.sleepSpeedCurve.get();
+        double speedRatio = MathUtils.normalizedTunableSigmoid(sleepRatio, curve);
+
         double sleepSpeedMin = SERVER_CONFIG.sleepSpeedMin.get();
         double sleepSpeedMax = SERVER_CONFIG.sleepSpeedMax.get();
-        double multiplier = MathUtils.lerp(percentageSleeping, sleepSpeedMin, sleepSpeedMax);
+        double multiplier = MathUtils.lerp(speedRatio, sleepSpeedMin, sleepSpeedMax);
 
         return multiplier;
     }
