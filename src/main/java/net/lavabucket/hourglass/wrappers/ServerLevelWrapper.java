@@ -52,9 +52,9 @@ public class ServerLevelWrapper extends Wrapper<ServerLevel> {
     private static final Logger LOGGER = LogManager.getLogger();
 
     // Store classes at the top to minimize file changes between Minecraft versions.
-    private static final Class<ServerLevel> levelClass = ServerLevel.class;
-    private static final Class<ServerLevelData> levelDataClass = ServerLevelData.class;
-    private static final Class<DerivedLevelData> derivedLevelDataClass = DerivedLevelData.class;
+    private static final Class<ServerLevel> CLASS = ServerLevel.class;
+    private static final Class<ServerLevelData> DATA_CLASS = ServerLevelData.class;
+    private static final Class<DerivedLevelData> DERIVED_DATA_CLASS = DerivedLevelData.class;
 
     /** The level-data of this level. */
     public final ServerLevelData levelData;
@@ -64,8 +64,8 @@ public class ServerLevelWrapper extends Wrapper<ServerLevel> {
      * @param level  the server level to wrap
      */
     public ServerLevelWrapper(LevelAccessor level) {
-        super(levelClass.cast(level));
-        this.levelData = levelDataClass.cast(this.get().getLevelData());
+        super(CLASS.cast(level));
+        this.levelData = DATA_CLASS.cast(this.get().getLevelData());
     }
 
     /** {@return true if the 'daylight cycle' game rule is enabled in this level} */
@@ -114,7 +114,7 @@ public class ServerLevelWrapper extends Wrapper<ServerLevel> {
      */
     public void setSleepStatus(SleepStatus newStatus) {
         try {
-            Field sleepStatus = ObfuscationReflectionHelper.findField(levelClass, "f_143245_");
+            Field sleepStatus = ObfuscationReflectionHelper.findField(CLASS, "f_143245_");
             sleepStatus.setAccessible(true);
             sleepStatus.set(this.get(), newStatus);
         } catch (IllegalArgumentException | IllegalAccessException | SecurityException | UnableToAccessFieldException e) {
@@ -150,7 +150,7 @@ public class ServerLevelWrapper extends Wrapper<ServerLevel> {
      * @param level  the level to check
      */
     public static boolean isDerived(LevelAccessor level) {
-        return level != null && level.getLevelData().getClass() == derivedLevelDataClass;
+        return level != null && level.getLevelData().getClass().equals(DERIVED_DATA_CLASS);
     }
 
     /**
@@ -158,7 +158,7 @@ public class ServerLevelWrapper extends Wrapper<ServerLevel> {
      * @param level  the level to check
      */
     public static boolean isServerLevel(LevelAccessor level) {
-        return level != null && level.getClass() == levelClass;
+        return level != null && level.getClass().equals(CLASS);
     }
 
 }

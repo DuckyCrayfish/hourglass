@@ -45,7 +45,7 @@ public class HourglassMessages {
 
         if (SERVER_CONFIG.enableSleepFeature.get() == true
                 && event.getPlayer().getSleepTimer() == 1
-                && event.getPlayer().getClass() == ServerPlayerWrapper.playerClass
+                && event.getPlayer().getClass().equals(ServerPlayerWrapper.CLASS)
                 && service != null
                 && service.level.get().equals(event.getPlayer().level)
                 && service.level.get().players().size() > 1
@@ -65,7 +65,7 @@ public class HourglassMessages {
 
         if (SERVER_CONFIG.enableSleepFeature.get() == true
                 && event.updateWorld() == true
-                && event.getPlayer().getClass() == ServerPlayerWrapper.playerClass
+                && event.getPlayer().getClass().equals(ServerPlayerWrapper.CLASS)
                 && service != null
                 && service.level.get().equals(event.getPlayer().level)
                 && service.level.get().players().size() > 1

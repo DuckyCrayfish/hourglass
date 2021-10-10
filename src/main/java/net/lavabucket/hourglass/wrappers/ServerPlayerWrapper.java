@@ -44,14 +44,14 @@ public class ServerPlayerWrapper extends Wrapper<ServerPlayer> {
     static { tickEffectsMethod.setAccessible(true); }
 
     /** The class that this {@code Wrapper} wraps. */
-    public static Class<ServerPlayer> playerClass = ServerPlayer.class;
+    public static final Class<ServerPlayer> CLASS = ServerPlayer.class;
 
     /**
      * Instantiates a new player wrapper.
      * @param player  the player to wrap
      */
     public ServerPlayerWrapper(Player player) {
-        super(playerClass.cast(player));
+        super(CLASS.cast(player));
     }
 
     /**
