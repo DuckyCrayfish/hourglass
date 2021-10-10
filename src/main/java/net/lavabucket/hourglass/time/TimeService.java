@@ -159,31 +159,33 @@ public class TimeService {
         Time timeOfDay = time.timeOfDay();
         Time nextTimeOfDay = nextTime.timeOfDay();
 
-        // day to night transition
-        if (NIGHT_START.betweenMod(timeOfDay, nextTimeOfDay)) {
-            double nextTimeSpeed = getTimeSpeed(nextTime);
-            Time timeUntilBreakpoint = NIGHT_START.subtract(timeOfDay);
-            double breakpointRatio = 1 - timeUntilBreakpoint.divide(timeDelta);
+        if (sleepStatus.allAwake()) {
+            // day to night transition
+            if (NIGHT_START.betweenMod(timeOfDay, nextTimeOfDay)) {
+                double nextTimeSpeed = getTimeSpeed(nextTime);
+                Time timeUntilBreakpoint = NIGHT_START.subtract(timeOfDay);
+                double breakpointRatio = 1 - timeUntilBreakpoint.divide(timeDelta);
 
-            return timeUntilBreakpoint.add(nextTimeSpeed * breakpointRatio);
-        }
+                return timeUntilBreakpoint.add(nextTimeSpeed * breakpointRatio);
+            }
 
-        // day to night transition
-        if (DAY_START.betweenMod(timeOfDay, nextTimeOfDay)) {
-            double nextTimeSpeed = getTimeSpeed(nextTime);
-            Time timeUntilBreakpoint = DAY_START.subtract(timeOfDay);
-            double breakpointRatio = 1 - timeUntilBreakpoint.divide(timeDelta);
+            // day to night transition
+            if (DAY_START.betweenMod(timeOfDay, nextTimeOfDay)) {
+                double nextTimeSpeed = getTimeSpeed(nextTime);
+                Time timeUntilBreakpoint = DAY_START.subtract(timeOfDay);
+                double breakpointRatio = 1 - timeUntilBreakpoint.divide(timeDelta);
 
-            return timeUntilBreakpoint.add(nextTimeSpeed * breakpointRatio);
-        }
+                return timeUntilBreakpoint.add(nextTimeSpeed * breakpointRatio);
+            }
+        } else {
+            // morning transition
+            Time timeUntilMorning = Time.DAY_LENGTH.subtract(timeOfDay);
+            if (timeUntilMorning.compareTo(timeDelta) < 0) {
+                double nextTimeSpeed = SERVER_CONFIG.daySpeed.get();
+                double breakpointRatio = 1 - timeUntilMorning.divide(timeDelta);
 
-        // morning transition
-        Time timeUntilMorning = Time.DAY_LENGTH.subtract(timeOfDay);
-        if (timeUntilMorning.compareTo(timeDelta) < 0 && !sleepStatus.allAwake()) {
-            double nextTimeSpeed = SERVER_CONFIG.daySpeed.get();
-            double breakpointRatio = 1 - timeUntilMorning.divide(timeDelta);
-
-            return timeUntilMorning.add(nextTimeSpeed * breakpointRatio);
+                return timeUntilMorning.add(nextTimeSpeed * breakpointRatio);
+            }
         }
 
         return timeDelta;
