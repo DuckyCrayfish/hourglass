@@ -165,14 +165,14 @@ public class HourglassConfig {
                     "and may conflict with other sleep mods. If disabled, all settings in the sleep section will not apply.")
                     .define("enableSleepFeature", true);
 
-                sleepSpeedMin = builder
-                    .comment("The minimum speed at which time passes when only 1 player is sleeping in a full server.")
-                    .defineInRange("sleepSpeedMin", 1D, 0D, Time.DAY_LENGTH.doubleValue());
-
                 sleepSpeedMax = builder.comment(
                     "The maximum speed at which time passes when all players are sleeping. A value of 120",
                     "is approximately equal to the time it takes to sleep in vanilla.")
                     .defineInRange("sleepSpeedMax", 120D, 0D, Time.DAY_LENGTH.doubleValue());
+
+                sleepSpeedMin = builder
+                    .comment("The minimum speed at which time passes when only 1 player is sleeping in a full server.")
+                    .defineInRange("sleepSpeedMin", 1D, 0D, Time.DAY_LENGTH.doubleValue());
 
                 sleepSpeedAll = builder.comment(
                     "The speed at which time passes when all players are sleeping.",

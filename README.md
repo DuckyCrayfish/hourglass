@@ -191,14 +191,14 @@ Location relative to Minecraft folder:
 	#and may conflict with other sleep mods. If disabled, all settings in the sleep section will not apply.
 	enableSleepFeature = true
 
-	#The minimum speed at which time passes when only 1 player is sleeping in a full server.
-	#Range: 0.0 ~ 24000.0
-	sleepSpeedMin = 1.0
-
 	#The maximum speed at which time passes when all players are sleeping. A value of 120
 	#is approximately equal to the time it takes to sleep in vanilla.
 	#Range: 0.0 ~ 24000.0
 	sleepSpeedMax = 120.0
+
+	#The minimum speed at which time passes when only 1 player is sleeping in a full server.
+	#Range: 0.0 ~ 24000.0
+	sleepSpeedMin = 1.0
 
 	#The speed at which time passes when all players are sleeping.
 	#Set to -1 to disable this feature (sleepSpeedMax will be used when all players are sleeping).
