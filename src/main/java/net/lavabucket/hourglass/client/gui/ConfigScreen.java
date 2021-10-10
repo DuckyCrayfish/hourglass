@@ -60,8 +60,11 @@ public final class ConfigScreen extends Screen {
     private static final String KEY_DONE = "gui.done";
     private static final String KEY_GENERIC_OPTION = "options.generic_value";
 
+    /** The screen that was active prior to this screen opening. */
     protected Screen lastScreen;
+    /** The options list used for the settings in this screen. */
     protected OptionsList optionsList;
+    /** This screen's "done" button. */
     protected Button doneButton;
 
     private ScreenAlignment clockAlignment;
@@ -80,6 +83,10 @@ public final class ConfigScreen extends Screen {
                 () -> new ConfigGuiFactory((mc, screen) -> new ConfigScreen(screen)));
     }
 
+    /**
+     * Instantiates a new {@code ConfigScreen} object.
+     * @param lastScreen  the screen that was active prior to this screen opening
+     */
     public ConfigScreen(Screen lastScreen) {
         super(translation(KEY_TITLE).get());
         this.lastScreen = lastScreen;
@@ -152,6 +159,15 @@ public final class ConfigScreen extends Screen {
         CLIENT_CONFIG.preventClockWobble.set(preventClockWobble);
     }
 
+    /**
+     * Returns a wrapped translatable text component for a generic option that includes a pixel
+     * count.
+     *
+     * @param key  the translation key for the option
+     * @param pixelCount  the pixel count to display
+     * @return the new wrapped text component
+     * @deprecated Do not use, will be removed.
+     */
     public static TextWrapper pixelOptionText(String key, double pixelCount) {
         return translation(KEY_GENERIC_OPTION,
                 translation(key).get(),

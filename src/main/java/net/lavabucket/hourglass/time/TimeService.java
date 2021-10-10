@@ -50,7 +50,9 @@ public class TimeService {
     // The largest number of lunar cycles that can be stored in an int
     private static final int OVERFLOW_THRESHOLD = 11184 * Time.LUNAR_CYCLE_TICKS;
 
+    /** The level managed by this {@code TimeService}. */
     public final ServerLevelWrapper level;
+    /** The {@code SleepStatus} object for this level. */
     public final SleepStatus sleepStatus;
 
     private double timeDecimalAccumulator = 0;

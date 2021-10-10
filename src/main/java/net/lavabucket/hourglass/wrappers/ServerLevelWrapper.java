@@ -153,7 +153,10 @@ public class ServerLevelWrapper extends Wrapper<ServerLevel> {
         return level != null && level.getLevelData().getClass() == derivedLevelDataClass;
     }
 
-    /** {@return true if {@code level} is an instance of a server level} */
+    /**
+     * {@return true if {@code level} is an instance of a server level}
+     * @param level  the level to check
+     */
     public static boolean isServerLevel(LevelAccessor level) {
         return level != null && level.getClass() == levelClass;
     }

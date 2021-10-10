@@ -29,11 +29,21 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
+/**
+ * This class acts as a wrapper for {@link ServerPlayer} to increase the consistency of the
+ * Hourglass codebase between Minecraft versions.
+ *
+ * <p>Since the server player class changes its name and package between different versions of
+ * Minecraft, supporting different Minecraft versions would require modifications to any class that
+ * imports or references {@link ServerPlayer}. This class consolidates these variations so that
+ * other classes may reliably import it instead.
+ */
 public class ServerPlayerWrapper extends Wrapper<ServerPlayer> {
 
     private static Method tickEffectsMethod = ObfuscationReflectionHelper.findMethod(LivingEntity.class, "m_21217_");
     static { tickEffectsMethod.setAccessible(true); }
 
+    /** The class that this {@code Wrapper} wraps. */
     public static Class<ServerPlayer> playerClass = ServerPlayer.class;
 
     /**
@@ -68,6 +78,7 @@ public class ServerPlayerWrapper extends Wrapper<ServerPlayer> {
         }
     }
 
+    /** Sends update packets to this player for each of their active mob effects. */
     public void sendMobEffectUpdatePackets() {
         for (MobEffectInstance e : get().getActiveEffects()) {
             int id = get().getId();

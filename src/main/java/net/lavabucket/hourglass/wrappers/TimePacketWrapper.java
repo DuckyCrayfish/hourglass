@@ -36,7 +36,9 @@ public class TimePacketWrapper extends Wrapper<ClientboundSetTimePacket> {
 
     /**
      * Creates a wrapped time-packet for a level.
+     *
      * @param level  the wrapped level for which to create a time-packet
+     * @return the new wrapped time-packet
      */
     public static TimePacketWrapper create(ServerLevelWrapper level) {
         long gameTime = level.get().getGameTime();

@@ -34,8 +34,12 @@ import net.minecraft.world.entity.player.Player;
  * This class also includes a number of utility methods and getters for use in Hourglass.
  */
 public class SleepStatus extends net.minecraft.server.players.SleepStatus {
+
+    /** The number of active (online and not spectating) players in this dimension. */
     protected int activePlayerCount;
+    /** The number of sleeping players in this dimension. */
     protected int sleepingPlayerCount;
+    /** A {@code Supplier} that determines whether or not vanilla sleep should be suppressed. */
     protected Supplier<Boolean> preventSleepSupplier;
 
     /**

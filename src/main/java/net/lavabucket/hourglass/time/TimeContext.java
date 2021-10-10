@@ -22,21 +22,26 @@ package net.lavabucket.hourglass.time;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 
 /**
- * Provides contextual time and level data to sleep effects.
+ * Holds information about a time change performed by a {@code TimeService} on its level.
+ * This class is used to pass time information to time effects.
  *
- * This class intentionally excludes references to external libraries to minimize changes between
+ * <p>This class intentionally excludes references to external libraries to minimize changes between
  * Minecraft versions.
  */
 public class TimeContext {
 
+    /** The {@code TimeService} for the level whose time changed. */
     protected final TimeService timeService;
+    /** The new time after this time change occurred. */
     protected final Time currentTime;
+    /** The amount of time that passed during this time change. */
     protected final Time timeDelta;
 
     /**
      * Creates a new instance.
      *
-     * @param timeService  the time service for this level
+     * @param timeService  the {@code TimeService} for the level
+     * @param currentTime  the current time after the change occurred
      * @param timeDelta  the time that has elapsed during this tick
      */
     public TimeContext(TimeService timeService, Time currentTime, Time timeDelta) {

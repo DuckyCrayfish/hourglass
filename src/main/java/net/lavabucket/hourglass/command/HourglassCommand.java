@@ -143,6 +143,7 @@ public class HourglassCommand {
     /**
      * Handles a time speed query command.
      * @param context  the command context
+     * @return 1 for success, 0 for failure
      */
     public static int onTimeSpeedQuery(CommandContext<CommandSourceStack> context) {
         ServerLevelWrapper wrapper = new ServerLevelWrapper(context.getSource().getLevel());
@@ -165,6 +166,7 @@ public class HourglassCommand {
     /**
      * Handles a sleeper count query command.
      * @param context  the command context
+     * @return 1 for success, 0 for failure
      */
     public static int onSleeperCountQuery(CommandContext<CommandSourceStack> context) {
         ServerLevelWrapper wrapper = new ServerLevelWrapper(context.getSource().getLevel());
