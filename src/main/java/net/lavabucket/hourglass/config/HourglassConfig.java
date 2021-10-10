@@ -166,8 +166,9 @@ public class HourglassConfig {
                     .define("enableSleepFeature", true);
 
                 sleepSpeedMax = builder.comment(
-                    "The maximum speed at which time passes when all players are sleeping. A value of 120",
-                    "is approximately equal to the time it takes to sleep in vanilla.")
+                    "## THIS SETTING DEFINES THE SLEEP TIME-SPEED IN SINGLE-PLAYER GAMES ###",
+                    "The maximum speed at which time passes when all players are sleeping.",
+                    "A value of 120 is approximately equal to the time it takes to sleep in vanilla.")
                     .defineInRange("sleepSpeedMax", 120D, 0D, Time.DAY_LENGTH.doubleValue());
 
                 sleepSpeedMin = builder

@@ -191,8 +191,9 @@ Location relative to Minecraft folder:
 	#and may conflict with other sleep mods. If disabled, all settings in the sleep section will not apply.
 	enableSleepFeature = true
 
-	#The maximum speed at which time passes when all players are sleeping. A value of 120
-	#is approximately equal to the time it takes to sleep in vanilla.
+	### THIS SETTING DEFINES THE SLEEP TIME-SPEED IN SINGLE-PLAYER GAMES ###
+	#The maximum speed at which time passes when all players are sleeping.
+	#A value of 120 is approximately equal to the time it takes to sleep in vanilla.
 	#Range: 0.0 ~ 24000.0
 	sleepSpeedMax = 120.0
 
