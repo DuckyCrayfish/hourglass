@@ -181,6 +181,7 @@ Location relative to Minecraft folder:
 		hungerEffect = "NEVER"
 
 		#When applied, this effect progresses block entities like furnaces, hoppers, and spawners to match the rate of the current time-speed.
+		#WARNING: This time-effect has a significant impact on performance.
 		#This effect does not apply if time speed is 1.0 or less.
 		#When set to SLEEPING, this effect only applies when at least one player is sleeping in a dimension.
 		#Allowed Values: NEVER, ALWAYS, SLEEPING
