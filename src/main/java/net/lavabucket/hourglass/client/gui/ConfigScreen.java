@@ -159,16 +159,8 @@ public final class ConfigScreen extends Screen {
         CLIENT_CONFIG.preventClockWobble.set(preventClockWobble);
     }
 
-    /**
-     * Returns a wrapped translatable text component for a generic option that includes a pixel
-     * count.
-     *
-     * @param key  the translation key for the option
-     * @param pixelCount  the pixel count to display
-     * @return the new wrapped text component
-     * @deprecated Do not use, will be removed.
-     */
-    public static TextWrapper pixelOptionText(String key, double pixelCount) {
+    // Returns a wrapped translatable text component for a generic option with a pixel count.
+    private static TextWrapper pixelOptionText(String key, double pixelCount) {
         return translation(KEY_GENERIC_OPTION,
                 translation(key).get(),
                 translation(KEY_PIXELS, (int) pixelCount).get());
