@@ -36,9 +36,9 @@ public class MathUtils {
      * @param d1  the second edge of the range
      * @return a value from the range of numbers between {@code d0} and {@code d1}
      */
-   public static double lerp(double percent, double d0, double d1) {
-      return d0 + percent * (d1 - d0);
-   }
+    public static double lerp(double percent, double d0, double d1) {
+        return d0 + percent * (d1 - d0);
+    }
 
     /**
      * Maps a number {@code x} in the unit interval [0,1] to a number on a normalized sigmoid

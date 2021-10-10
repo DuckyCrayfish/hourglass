@@ -57,9 +57,9 @@ public class TextWrapper extends Wrapper<Component> {
      * @param args  the arguments used for text substitution in the translated text
      * @return a wrapped translatable text component for the provided key
      */
-   public static TextWrapper translation(String key, Object... args) {
-       return new TextWrapper(new TranslatableComponent(key, args));
-   }
+    public static TextWrapper translation(String key, Object... args) {
+        return new TextWrapper(new TranslatableComponent(key, args));
+    }
 
     /**
      * Creates a new {@code TextWrapper} for a text component with the specified message.
