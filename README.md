@@ -194,7 +194,7 @@ Location relative to Minecraft folder:
 
 	### THIS SETTING DEFINES THE SLEEP TIME-SPEED IN SINGLE-PLAYER GAMES ###
 	#The maximum speed at which time passes when all players are sleeping.
-	#A value of 120 is approximately equal to the time it takes to sleep in vanilla.
+	#A value of 110 is nearly equal to the time it takes to sleep in vanilla.
 	#Range: 0.0 ~ 24000.0
 	sleepSpeedMax = 120.0
 
