@@ -27,7 +27,7 @@ version="${file.jarVersion}" #mandatory
 displayName="Hourglass" #mandatory
 
 # A URL to query for updates for this mod. See the JSON update specification https://mcforge.readthedocs.io/en/latest/gettingstarted/autoupdate/
-updateJSONURL="https://github.com/DuckyCrayfish/hourglass/blob/main/res/versions.json" #optional
+updateJSONURL="https://raw.githubusercontent.com/DuckyCrayfish/hourglass/main/res/versions.json" #optional
 
 # A URL for the "homepage" for this mod, displayed in the mod UI
 displayURL="https://github.com/DuckyCrayfish/hourglass" #optional
