@@ -186,7 +186,7 @@ public class HourglassConfig {
                     "The function used is a Normalized Tunable Sigmoid Function.",
                     "A value of 0.5 represents a linear relationship.",
                     "Smaller values bend the curve toward the X axis, while greater values bend it toward the Y axis.",
-                    "This graph may be used as a reference for tuning the curve: https://www.desmos.com/calculator/ruksr5wnzt",
+                    "This graph may be used as a reference for tuning the curve: https://www.desmos.com/calculator/w8gntxzfow",
                     "Credit to Dino Dini for the function: https://dinodini.wordpress.com/2010/04/05/normalized-tunable-sigmoid-functions/",
                     "Credit to SmoothSleep for the idea: https://www.spigotmc.org/resources/smoothsleep.32043/")
                     .defineInRange("sleepSpeedCurve", 0.3D, 0D, 1D);
