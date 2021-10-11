@@ -55,13 +55,23 @@ public class ServerPlayerWrapper extends Wrapper<ServerPlayer> {
     }
 
     /**
-     * Wraps the "sleeping" player predicate method to allow for predicates that do not depend on
-     * importing the server player class.
+     * Wraps the "isSleeping" player method to allow for predicates that do not depend on importing
+     * the server player class.
      *
      * @return true if the player is sleeping, false otherwise
      */
     public boolean isSleeping() {
         return wrapped.isSleeping();
+    }
+
+    /**
+     * Wraps the "isSleepingLongEnough" player method to allow for predicates that do not depend on
+     * importing the server player class.
+     *
+     * @return true if the player is sleeping long enough to pass night, false otherwise
+     */
+    public boolean isSleepingLongEnough() {
+        return wrapped.isSleepingLongEnough();
     }
 
     /** {@return the wrapped level this player is in} */
