@@ -23,14 +23,23 @@ package net.lavabucket.hourglass.client.gui;
  * Alignment of a GUI item on the screen.
  */
 public enum ScreenAlignment {
+    /** Top left of screen. */
     TOP_LEFT("hourglass.configgui.screenAlignment.topLeft"),
+    /** Top center of screen. */
     TOP_CENTER("hourglass.configgui.screenAlignment.topCenter"),
+    /** Top right of screen. */
     TOP_RIGHT("hourglass.configgui.screenAlignment.topRight"),
+    /** Left center of screen. */
     CENTER_LEFT("hourglass.configgui.screenAlignment.centerLeft"),
+    /** Center of screen. */
     CENTER_CENTER("hourglass.configgui.screenAlignment.centerCenter"),
+    /** Right center of screen. */
     CENTER_RIGHT("hourglass.configgui.screenAlignment.centerRight"),
+    /** Bottom left of screen. */
     BOTTOM_LEFT("hourglass.configgui.screenAlignment.bottomLeft"),
+    /** Bottom center of screen. */
     BOTTOM_CENTER("hourglass.configgui.screenAlignment.bottomCenter"),
+    /** Bottom right of screen. */
     BOTTOM_RIGHT("hourglass.configgui.screenAlignment.bottomRight");
 
     private final String translationKey;

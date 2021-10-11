@@ -19,6 +19,7 @@
 
 package net.lavabucket.hourglass.time;
 
+import net.lavabucket.hourglass.config.HourglassConfig;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
@@ -33,20 +34,48 @@ import net.minecraftforge.fml.LogicalSide;
  */
 public class TimeServiceManager {
 
+    /** The Overworld {@code TimeService} object. null if Overworld not loaded. */
     public static TimeService service;
+    /** The earliest time at which players are no longer allowed to sleep in vanilla. */
     public static final Time VANILLA_SLEEP_END = new Time(23460);
 
     /**
-     * Called from the Forge EventBus during a SleepingTimeCheckEvent, a forge event that is
-     * called once per tick for every player who is currently sleeping.
+     * Modifies permitted sleep times to allow players to sleep during the day. Only applies to
+     * players in levels controlled by Hourglass while sleep feature is enabled.
      *
-     * @param event  the event provided by forge from the EventBus
+     * <p>Called once per tick for every player who is currently sleeping. Event result determines
+     * if sleep is allowed at the current time.
+     *
+     * @param event  the event provided by the Forge event bus
+     * @see SleepingTimeCheckEvent
+     */
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void onDaySleepCheck(SleepingTimeCheckEvent event) {
+        if (service != null
+                && service.level.get().equals(event.getPlayer().level)
+                && HourglassConfig.SERVER_CONFIG.enableSleepFeature.get()
+                && HourglassConfig.SERVER_CONFIG.allowDaySleep.get()) {
+
+            event.setResult(Result.ALLOW);
+        }
+    }
+
+    /**
+     * Modifies permitted sleep times to allow players to sleep through dawn until day-time 0
+     * while the sleep feature is enabled.
+     *
+     * <p>Called once per tick for every player who is currently sleeping. Event result determines
+     * if sleep is allowed at the current time.
+     *
+     * @param event  the event provided by the Forge event bus
+     * @see SleepingTimeCheckEvent
      */
     @SubscribeEvent
     public static void onSleepingCheckEvent(SleepingTimeCheckEvent event) {
         if (service != null && service.level.get().equals(event.getPlayer().level)) {
             Time time = service.getDayTime().timeOfDay();
-            if (time.compareTo(VANILLA_SLEEP_END) >= 0) {
+            if (HourglassConfig.SERVER_CONFIG.enableSleepFeature.get()
+                    && time.compareTo(VANILLA_SLEEP_END) >= 0) {
                 event.setResult(Result.ALLOW);
             }
         }

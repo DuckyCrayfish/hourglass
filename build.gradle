@@ -2,9 +2,9 @@
 def modId = 'hourglass'
 def vendor = 'lavabucket.net'
 def groupId = 'net.lavabucket.forge.hourglass'
-def modVersion = '1.2.0.0'
+def modVersion = '1.2.1.0'
 def minecraftVersion = '1.17.1'
-def forgeVersion = '37.0.61'
+def forgeVersion = '37.0.84'
 
 buildscript {
     repositories {
@@ -190,7 +190,7 @@ jar {
         include 'README.md'
         include 'README.txt'
     }
-    from('/media') {
+    from('/res') {
         include 'logo.png'
         include 'logo-800x400.png'
     }

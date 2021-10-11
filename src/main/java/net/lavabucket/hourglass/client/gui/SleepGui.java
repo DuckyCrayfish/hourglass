@@ -132,14 +132,15 @@ public class SleepGui {
         ItemRenderer itemRenderer = minecraft.getItemRenderer();
         scale /= 16F;
 
-        PoseStack posestack = RenderSystem.getModelViewStack();
-        posestack.pushPose();
-        posestack.translate(x, y, 0);
-        posestack.scale(scale, scale, 0);
+        PoseStack stack = RenderSystem.getModelViewStack();
+        stack.pushPose();
+        stack.translate(x, y, 0);
+        stack.scale(scale, scale, 0);
         itemRenderer.renderAndDecorateItem(clock, 0, 0);
-        posestack.popPose();
+        stack.popPose();
     }
 
+    /** {@return true if the bed clock is enabled.} */
     public static boolean clockEnabled() {
         return SERVER_CONFIG.enableSleepFeature.get() && SERVER_CONFIG.displayBedClock.get();
     }

@@ -1,6 +1,6 @@
 <p align="center">
 	<a href="https://www.curseforge.com/minecraft/mc-mods/hourglass">
-		<img src="media/logo-wide-588x256.png" alt="Hourglass Logo" width="550">
+		<img src="res/logo-wide-588x256.png" alt="Hourglass Logo" width="550">
 	</a>
 </p>
 
@@ -39,14 +39,15 @@ faster depending on the percentage of players who are currently sleeping. This r
 any sleep voting system or player threshold, as any number of players can have an impact on the
 duration of the night.
 
-While sleeping, Hourglass can **speed up the growth of crops, trees, and grass** by modifying the
-game's [random tick](https://minecraft.fandom.com/wiki/Tick#Random_tick) speed. This feature can be
-enabled by changing the `randomTickEffect` config option via command or file.
-
 Hourglass allows for **customization of the day-night cycle duration**, and can control day and night
 speed independently. Rather than the vanilla duration of 20 minutes, you can slow down time to make
 a day in Minecraft last as long as a day in real life, or speed up the passage of nights for a more
 forgiving experience.
+
+Hourglass also provides a number of **time effects** that may speed up the progression of various
+elements in Minecraft to match the current speed of time. Some examples include crop growth, grass
+growth, weather, potion effects, furnaces, hoppers, etc. Most of these time effects are disabled by
+default but can be enabled by setting their associated [config options](#configuration).
 
 ## Compatibility
 
@@ -63,11 +64,12 @@ Hourglass is compatible with the following mods:
 * [Morpheus](https://www.curseforge.com/minecraft/mc-mods/morpheus)  
   * The sleep feature of Hourglass will need to be disabled to use it alongside Morpheus.
     [See note below.](#sleep-vote-mods)
+* [Good Night's Sleep](https://www.curseforge.com/minecraft/mc-mods/good-nights-sleep)
 
 #### Sleep Vote Mods
 
 Hourglass is compatible with mods that enable sleep voting or have sleep percentage systems like
-**Quark** and **Morpheus**, but they conflict with the sleep feature of this mod. These features should
+Quark and Morpheus, but they conflict with the sleep feature of this mod. These features should
 either be disabled in their corresponding mods, or the sleep feature in Hourglass should be disabled.
 The sleep feature can be disabled via command or file by modifying the `enableSleepFeature` option.
 
@@ -84,9 +86,11 @@ installation.
 
 #### `/hourglass config <config-key> [<value>]`
 
-Many config options can be changed in-game via this command.
+Modifies or displays the current value of the specified config option.
 
 If the `<value>` argument is omitted, this command will display the config option's current value.
+
+Some configurations are not available through this command and need to be accessed via the config files.
 
 #### `/hourglass query timeSpeed`
 
@@ -100,6 +104,17 @@ Displays the ratio of players sleeping in the current dimension.
 
 All configuration values can be changed at runtime without reloading the game.
 
+While many of the configuration options are accessible through via the
+[config command](#hourglass-config-config-key-value), some can only be accessed by visiting the
+mod's config files. Most of the options are located in the mod's
+[server config file](#default-server-config) in both single-player worlds and multiplayer servers.
+A few client-specific options also exist in the [client config file](#default-client-config).
+
+Modpack developers may customize the Hourglass server settings in their modpack by first tweaking
+the server settings in a test world and then moving the file to the `./defaultconfigs` folder of
+their modpack. Forge will move all files in the `defaultconfigs` folder into the `serverconfig`
+folder of all newly created worlds.
+
 When customizing Hourglass, the **speed of time** is controlled using a multiplier. A value of 1 is equivalent
 to vanilla speed (20 minutes for a full day-night cycle). Setting daySpeed and nightSpeed to 0.5
 will cut the speed of time in half, doubling the duration of a full day to 40 minutes. Likewise,
@@ -109,6 +124,10 @@ one morning to the next.
 > _**Warning:** Setting daySpeed and nightSpeed to values higher than 3600 may be unsafe for people with photosensitive epilepsy._
 
 ### Default Server Config
+
+Location relative to Minecraft folder:
+* Single-player worlds: `./saves/<save>/serverconfig/hourglass-server.toml`
+* Multiplayer servers: `./world/serverconfig/hourglass-server.toml`
 
 ```toml
 [time]
@@ -145,24 +164,58 @@ one morning to the next.
 		#Range: > 0
 		baseRandomTickSpeed = 3
 
+		#When applied, this effect progresses potion effects to match the rate of the current time-speed.
+		#This effect does not apply if time-speed is 1.0 or less.
+		#THIS MAY HAVE A NEGATIVE IMPACT ON PERFORMANCE IN SERVERS WITH MANY PLAYERS.
+		#When set to ALWAYS, this effect applies to all players in the dimension, day or night.
+		#When set to SLEEPING, this effect only applies to players who are sleeping.
+		#Allowed Values: NEVER, ALWAYS, SLEEPING
+		potionEffect = "NEVER"
+
+		#When applied, this effect progresses player hunger effects to match the rate of the current time-speed.
+		#This results in faster healing when food level is full, and faster harm when food level is too low.
+		#This effect does not apply if time-speed is 1.0 or less.
+		#When set to ALWAYS, this effect applies to all players in the dimension, day or night. Not recommended on higher difficulty settings
+		#When set to SLEEPING, this effect only applies to players who are sleeping.
+		#Allowed Values: NEVER, ALWAYS, SLEEPING
+		hungerEffect = "NEVER"
+
+		#When applied, this effect progresses block entities like furnaces, hoppers, and spawners to match the rate of the current time-speed.
+		#WARNING: This time-effect has a significant impact on performance.
+		#This effect does not apply if time speed is 1.0 or less.
+		#When set to SLEEPING, this effect only applies when at least one player is sleeping in a dimension.
+		#Allowed Values: NEVER, ALWAYS, SLEEPING
+		blockEntityEffect = "NEVER"
+
 [sleep]
 	#Enables or disables the sleep feature of this mod. Enabling this setting will modify the vanilla sleep functionality
 	#and may conflict with other sleep mods. If disabled, all settings in the sleep section will not apply.
 	enableSleepFeature = true
 
+	### THIS SETTING DEFINES THE SLEEP TIME-SPEED IN SINGLE-PLAYER GAMES ###
+	#The maximum speed at which time passes when all players are sleeping.
+	#A value of 110 is nearly equal to the time it takes to sleep in vanilla.
+	#Range: 0.0 ~ 24000.0
+	sleepSpeedMax = 120.0
+
 	#The minimum speed at which time passes when only 1 player is sleeping in a full server.
 	#Range: 0.0 ~ 24000.0
 	sleepSpeedMin = 1.0
-
-	#The maximum speed at which time passes when all players are sleeping. A value of 120
-	#is approximately equal to the time it takes to sleep in vanilla.
-	#Range: 0.0 ~ 24000.0
-	sleepSpeedMax = 120.0
 
 	#The speed at which time passes when all players are sleeping.
 	#Set to -1 to disable this feature (sleepSpeedMax will be used when all players are sleeping).
 	#Range: -1.0 ~ 24000.0
 	sleepSpeedAll = -1.0
+
+	#This parameter defines the curvature of the interpolation function that translates the sleeping player percentage into time-speed.
+	#The function used is a Normalized Tunable Sigmoid Function.
+	#A value of 0.5 represents a linear relationship.
+	#Smaller values bend the curve toward the X axis, while greater values bend it toward the Y axis.
+	#This graph may be used as a reference for tuning the curve: https://www.desmos.com/calculator/w8gntxzfow
+	#Credit to Dino Dini for the function: https://dinodini.wordpress.com/2010/04/05/normalized-tunable-sigmoid-functions/
+	#Credit to SmoothSleep for the idea: https://www.spigotmc.org/resources/smoothsleep.32043/
+	#Range: 0.0 ~ 1.0
+	sleepSpeedCurve = 0.3
 
 	#Set to 'true' for the weather to clear when players wake up in the morning as it does in vanilla.
 	#Set to 'false' to force weather to pass naturally. Adds realism when accelerateWeather is enabled.
@@ -194,7 +247,8 @@ one morning to the next.
 			#Sets where this message appears.
 			#Allowed Values: SYSTEM, GAME_INFO
 			type = "GAME_INFO"
-			#Sets to whom this message is sent. A target of 'SLEEPING' will send the message to all players who just woke up.
+			#Sets to whom this message is sent.
+			#A target of 'SLEEPING' will send the message to all players who just woke up.
 			#Allowed Values: ALL, DIMENSION, SLEEPING
 			target = "DIMENSION"
 
@@ -230,6 +284,8 @@ one morning to the next.
 ```
 
 ### Default Client Config
+
+Location relative to Minecraft folder: `./config/hourglass-client.toml`
 
 ```toml
 [gui]

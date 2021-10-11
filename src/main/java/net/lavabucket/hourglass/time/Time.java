@@ -60,7 +60,9 @@ public class Time extends Number implements Comparable<Time> {
     /** Time of day at morning in the Overworld. */
     public static final Time MORNING = new Time(0);
 
+    /** The integral component of this {@code Time}. Represents tick count. */
     private final long longPart;
+    /** The fractional component of this {@code Time}, used to represent time between ticks. */
     private final double fractionPart;
 
     /** Instantiates a new time object with a value of 0. */
@@ -86,7 +88,11 @@ public class Time extends Number implements Comparable<Time> {
         this(0, time);
     }
 
-    /** Initializes a time object with a long component and fraction component. */
+    /**
+     * Initializes a time object with a long component and fraction component.
+     * @param longPart  the tick count component, represented as a long
+     * @param fractionPart  the fractional component, used to represent time between ticks
+     */
     public Time(long longPart, double fractionPart) {
         // Constrain fractionPart to 0<= |fractionPart| < 1
         long overflow = (long) fractionPart;

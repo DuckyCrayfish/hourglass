@@ -39,11 +39,14 @@ import net.minecraft.network.chat.ChatType;
  */
 public class TemplateMessage {
 
+    /** A variable map used for variable string substitution. */
+    public HashMap<String, String> variables;
+    /** The {@code StrSubstitutor} object used to perform variable string substitution. */
+    public StrSubstitutor substitutor;
+
     private ChatType type = ChatType.SYSTEM;
     private TextWrapper message;
     private String template;
-    public HashMap<String, String> variables;
-    public StrSubstitutor substitutor;
 
     /** Instantiates a new message builder. */
     public TemplateMessage() {

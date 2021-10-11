@@ -34,8 +34,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
  */
 public class TimeInterpolator {
 
+    /** The current {@code TimeInterpolator} instance running. */
     public static TimeInterpolator instance;
 
+    /** The level whose time this object interpolates. */
     public final ClientLevelWrapper level;
     private boolean initialized;
     private long targetTime;

@@ -65,11 +65,16 @@ public class HourglassCommand {
                 .register(SERVER_CONFIG.sleepSpeedMin, TIME_SPEED_ARGUMENT)
                 .register(SERVER_CONFIG.sleepSpeedMax, TIME_SPEED_ARGUMENT)
                 .register(SERVER_CONFIG.sleepSpeedAll, DoubleArgumentType.doubleArg(-1, 24000))
+                .register(SERVER_CONFIG.sleepSpeedCurve, DoubleArgumentType.doubleArg(0, 1))
                 .register(SERVER_CONFIG.clearWeatherOnWake)
                 .register(SERVER_CONFIG.displayBedClock)
+                .register(SERVER_CONFIG.allowDaySleep)
                 .register(SERVER_CONFIG.weatherEffect, EffectCondition.class)
                 .register(SERVER_CONFIG.randomTickEffect, EffectCondition.class)
-                .register(SERVER_CONFIG.baseRandomTickSpeed, IntegerArgumentType.integer(0));
+                .register(SERVER_CONFIG.baseRandomTickSpeed, IntegerArgumentType.integer(0))
+                .register(SERVER_CONFIG.potionEffect, EffectCondition.class)
+                .register(SERVER_CONFIG.hungerEffect, EffectCondition.class)
+                .register(SERVER_CONFIG.blockEntityEffect, EffectCondition.class);
 
         event.getDispatcher().register(
                 Commands.literal("hourglass").requires(source -> source.hasPermission(2))
@@ -138,6 +143,7 @@ public class HourglassCommand {
     /**
      * Handles a time speed query command.
      * @param context  the command context
+     * @return 1 for success, 0 for failure
      */
     public static int onTimeSpeedQuery(CommandContext<CommandSourceStack> context) {
         ServerLevelWrapper wrapper = new ServerLevelWrapper(context.getSource().getLevel());
@@ -160,6 +166,7 @@ public class HourglassCommand {
     /**
      * Handles a sleeper count query command.
      * @param context  the command context
+     * @return 1 for success, 0 for failure
      */
     public static int onSleeperCountQuery(CommandContext<CommandSourceStack> context) {
         ServerLevelWrapper wrapper = new ServerLevelWrapper(context.getSource().getLevel());

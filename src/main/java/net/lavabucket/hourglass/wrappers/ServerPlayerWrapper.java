@@ -19,11 +19,31 @@
 
 package net.lavabucket.hourglass.wrappers;
 
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
+import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
+
+/**
+ * This class acts as a wrapper for {@link ServerPlayer} to increase the consistency of the
+ * Hourglass codebase between Minecraft versions.
+ *
+ * <p>Since the server player class changes its name and package between different versions of
+ * Minecraft, supporting different Minecraft versions would require modifications to any class that
+ * imports or references {@link ServerPlayer}. This class consolidates these variations so that
+ * other classes may reliably import it instead.
+ */
 public class ServerPlayerWrapper extends Wrapper<ServerPlayer> {
 
+    private static Method tickEffectsMethod = ObfuscationReflectionHelper.findMethod(LivingEntity.class, "m_21217_");
+    static { tickEffectsMethod.setAccessible(true); }
+
+    /** The class that this {@code Wrapper} wraps. */
     public static Class<ServerPlayer> playerClass = ServerPlayer.class;
 
     /**
@@ -35,18 +55,46 @@ public class ServerPlayerWrapper extends Wrapper<ServerPlayer> {
     }
 
     /**
-     * Wraps the {@link ServerPlayer#isSleeping()} method to allow for predicates that do not depend
-     * on importing the server player class.
+     * Wraps the "isSleeping" player method to allow for predicates that do not depend on importing
+     * the server player class.
      *
-     * @return the value of {@link ServerPlayer#isSleeping()}
+     * @return true if the player is sleeping, false otherwise
      */
     public boolean isSleeping() {
         return wrapped.isSleeping();
     }
 
+    /**
+     * Wraps the "isSleepingLongEnough" player method to allow for predicates that do not depend on
+     * importing the server player class.
+     *
+     * @return true if the player is sleeping long enough to pass night, false otherwise
+     */
+    public boolean isSleepingLongEnough() {
+        return wrapped.isSleepingLongEnough();
+    }
+
     /** {@return the wrapped level this player is in} */
     public ServerLevelWrapper getLevel() {
         return new ServerLevelWrapper(get().level);
+    }
+
+    /** Ticks all MobEffects applied to this player. */
+    public void tickEffects() {
+        try {
+            tickEffectsMethod.invoke(get());
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            return;
+        }
+    }
+
+    /** Sends update packets to this player for each of their active mob effects. */
+    public void sendMobEffectUpdatePackets() {
+        for (MobEffectInstance e : get().getActiveEffects()) {
+            int id = get().getId();
+            ClientboundUpdateMobEffectPacket packet = new ClientboundUpdateMobEffectPacket(id, e);
+            get().connection.send(packet);
+        }
     }
 
 }

@@ -36,7 +36,7 @@ public class WeatherSleepEffect extends AbstractTimeEffect {
 
     @Override
     public void onTimeTick(TimeContext context) {
-        ServerLevelWrapper level = context.getTimeService().level;
+        ServerLevelWrapper level = context.getLevel();
         EffectCondition condition = SERVER_CONFIG.weatherEffect.get();
         boolean allAwake = context.getTimeService().sleepStatus.allAwake();
         if (level.weatherCycleEnabled()
@@ -51,7 +51,7 @@ public class WeatherSleepEffect extends AbstractTimeEffect {
      * @param context  the {@link TimeContext} of the current tick
      */
     private void progressWeather(TimeContext context) {
-        ServerLevelWrapper level = context.getTimeService().level;
+        ServerLevelWrapper level = context.getLevel();
         int clearWeatherTime = level.levelData.getClearWeatherTime();
         int thunderTime = level.levelData.getThunderTime();
         int rainTime = level.levelData.getRainTime();

@@ -27,7 +27,7 @@ import net.minecraft.world.level.LevelAccessor;
  * This class acts as a wrapper for {@link ClientLevel} to increase consistency between Minecraft
  * versions.
  *
- * Since the {@link ClientLevel} class changes its name and package between different versions of
+ * Since the client-level class changes its name and package between different versions of
  * Minecraft, supporting different Minecraft versions would require modifications to any class that
  * imports or references {@link ClientLevel}. This class consolidates these variations into itself,
  * allowing other classes to depend on it instead.
@@ -44,12 +44,15 @@ public class ClientLevelWrapper extends Wrapper<ClientLevel> {
 
     /** {@return true if the 'daylight cycle' game rule is enabled in this level} */
     public boolean daylightRuleEnabled() {
-        return wrapped.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
+        return this.get().getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
     }
 
-    /** {@return true if {@code levelAccessor} is an instance of {@link ClientLevel}} */
-    public static boolean isClientLevel(LevelAccessor levelAccessor) {
-        return levelAccessor instanceof ClientLevel;
+    /**
+     * {@return true if {@code level} is an instance of a client-level}
+     * @param level  the level to check
+     */
+    public static boolean isClientLevel(LevelAccessor level) {
+        return level instanceof ClientLevel;
     }
 
 }
