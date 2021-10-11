@@ -215,7 +215,7 @@ Location relative to Minecraft folder:
 	#Credit to Dino Dini for the function: https://dinodini.wordpress.com/2010/04/05/normalized-tunable-sigmoid-functions/
 	#Credit to SmoothSleep for the idea: https://www.spigotmc.org/resources/smoothsleep.32043/
 	#Range: 0.0 ~ 1.0
-	sleepSpeedCurve = 0.25
+	sleepSpeedCurve = 0.3
 
 	#Set to 'true' for the weather to clear when players wake up in the morning as it does in vanilla.
 	#Set to 'false' to force weather to pass naturally. Adds realism when accelerateWeather is enabled.
