@@ -44,7 +44,7 @@ public class HourglassMessages {
         TimeService service = TimeServiceManager.service;
 
         if (SERVER_CONFIG.enableSleepFeature.get() == true
-                && event.getPlayer().getSleepTimer() == 1
+                && event.getPlayer().getSleepTimer() == 2
                 && event.getPlayer().getClass() == ServerPlayerWrapper.playerClass
                 && service != null
                 && service.level.get().equals(event.getPlayer().level)
