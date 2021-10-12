@@ -19,22 +19,19 @@
 
 package net.lavabucket.hourglass.wrappers;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.lavabucket.hourglass.Hourglass;
 import net.lavabucket.hourglass.time.SleepStatus;
+import net.lavabucket.hourglass.utils.ReflectionHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.storage.DerivedLevelData;
 import net.minecraft.world.level.storage.ServerLevelData;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper.UnableToAccessFieldException;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper.UnableToFindMethodException;
 
@@ -114,9 +111,8 @@ public class ServerLevelWrapper extends Wrapper<ServerLevel> {
      */
     public void setSleepStatus(SleepStatus newStatus) {
         try {
-            Field sleepStatus = ObfuscationReflectionHelper.findField(CLASS, "f_143245_");
-            sleepStatus.setAccessible(true);
-            sleepStatus.set(this.get(), newStatus);
+            ReflectionHelper.FIELD_SLEEP_STATUS.setAccessible(true);
+            ReflectionHelper.FIELD_SLEEP_STATUS.set(this.get(), newStatus);
         } catch (IllegalArgumentException | IllegalAccessException | SecurityException | UnableToAccessFieldException e) {
             LOGGER.warn(Hourglass.MARKER, "Error setting sleep status.", e);
             return;
@@ -136,9 +132,8 @@ public class ServerLevelWrapper extends Wrapper<ServerLevel> {
     /** Ticks all loaded block entities in this level. */
     public void tickBlockEntities() {
         try {
-            Method tickBlockEntitiesMethod = ObfuscationReflectionHelper.findMethod(Level.class, "m_46463_");
-            tickBlockEntitiesMethod.setAccessible(true);
-            tickBlockEntitiesMethod.invoke(get());
+            ReflectionHelper.METHOD_TICK_BLOCK_ENTITIES.setAccessible(true);
+            ReflectionHelper.METHOD_TICK_BLOCK_ENTITIES.invoke(get());
         } catch (IllegalArgumentException | SecurityException | UnableToFindMethodException | IllegalAccessException | InvocationTargetException e) {
             LOGGER.warn(Hourglass.MARKER, "Error ticking block entities.", e);
             return;

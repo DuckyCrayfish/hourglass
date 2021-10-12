@@ -20,14 +20,12 @@
 package net.lavabucket.hourglass.wrappers;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
+import net.lavabucket.hourglass.utils.ReflectionHelper;
 import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 /**
  * This class acts as a wrapper for {@link ServerPlayer} to increase the consistency of the
@@ -40,8 +38,7 @@ import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
  */
 public class ServerPlayerWrapper extends Wrapper<ServerPlayer> {
 
-    private static final Method tickEffectsMethod = ObfuscationReflectionHelper.findMethod(LivingEntity.class, "m_21217_");
-    static { tickEffectsMethod.setAccessible(true); }
+    static {  }
 
     /** The class that this {@code Wrapper} wraps. */
     public static final Class<ServerPlayer> CLASS = ServerPlayer.class;
@@ -82,7 +79,8 @@ public class ServerPlayerWrapper extends Wrapper<ServerPlayer> {
     /** Ticks all MobEffects applied to this player. */
     public void tickEffects() {
         try {
-            tickEffectsMethod.invoke(get());
+            ReflectionHelper.METHOD_TICK_EFFECTS.setAccessible(true);
+            ReflectionHelper.METHOD_TICK_EFFECTS.invoke(get());
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             return;
         }
