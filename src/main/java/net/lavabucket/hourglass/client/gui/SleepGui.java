@@ -22,12 +22,14 @@ package net.lavabucket.hourglass.client.gui;
 import static net.lavabucket.hourglass.config.HourglassConfig.CLIENT_CONFIG;
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SleepInMultiplayerScreen;
 import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraftforge.client.event.GuiScreenEvent.DrawScreenEvent;
@@ -132,11 +134,18 @@ public class SleepGui {
         ItemRenderer itemRenderer = minecraft.getItemRenderer();
         scale /= 16F;
 
-        RenderSystem.pushMatrix();
+        MatrixStack stack = new MatrixStack();
+        stack.pushPose();
+        RenderHelper.setupForFlatItems();
+
+        RenderSystem.enableRescaleNormal();
         RenderSystem.translatef(x, y, 0);
         RenderSystem.scalef(scale, scale, 0);
+
         itemRenderer.renderAndDecorateItem(clock, 0, 0);
-        RenderSystem.popMatrix();
+
+        RenderHelper.setupFor3DItems();
+        stack.popPose();
     }
 
     /** {@return true if the bed clock is enabled.} */
