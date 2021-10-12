@@ -17,9 +17,15 @@
  * along with Hourglass.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.lavabucket.hourglass.time.effects;
+package net.lavabucket.hourglass.registry;
 
 import net.lavabucket.hourglass.Hourglass;
+import net.lavabucket.hourglass.time.effects.BlockEntityTimeEffect;
+import net.lavabucket.hourglass.time.effects.HungerTimeEffect;
+import net.lavabucket.hourglass.time.effects.PotionTimeEffect;
+import net.lavabucket.hourglass.time.effects.RandomTickSleepEffect;
+import net.lavabucket.hourglass.time.effects.TimeEffect;
+import net.lavabucket.hourglass.time.effects.WeatherSleepEffect;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
