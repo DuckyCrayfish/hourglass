@@ -37,8 +37,11 @@ import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
  */
 public class ConfigCommandEntry<T> {
 
+    /** The {@code ConfigValue} held by this entry. */
     protected ConfigValue<T> configValue;
+    /** The {@code ArgumentType} used to parse the value of this entry during a modification command. */
     protected ArgumentType<T> argumentType;
+    /** The underlying data class for {@link #configValue} and {@link #argumentType}. */
     protected Class<T> valueClass;
     private String identifier;
 

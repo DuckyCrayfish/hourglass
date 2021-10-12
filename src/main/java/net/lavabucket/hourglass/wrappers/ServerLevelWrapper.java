@@ -20,41 +20,48 @@
 package net.lavabucket.hourglass.wrappers;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.context.ParsedArgument;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import net.lavabucket.hourglass.Hourglass;
 import net.lavabucket.hourglass.time.SleepStatus;
 import net.minecraft.command.CommandSource;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.DerivedWorldInfo;
 import net.minecraft.world.storage.IServerWorldInfo;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper.UnableToFindFieldException;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper.UnableToFindMethodException;
 
 /**
  * This class acts as a wrapper for {@link ServerWorld} to increase consistency between Minecraft
  * versions.
  *
- * Since the {@link ServerWorld} class changes its name and package between different versions of
+ * Since the server-level class changes its name and package between different versions of
  * Minecraft, supporting different Minecraft versions would require modifications to any class that
  * imports or references {@link ServerWorld}. This class consolidates these variations into itself,
  * allowing other classes to depend on it instead.
  */
 public class ServerLevelWrapper extends Wrapper<ServerWorld> {
 
+    private static final Logger LOGGER = LogManager.getLogger();
+
     // Store classes at the top to minimize file changes between Minecraft versions.
     private static final Class<ServerWorld> levelClass = ServerWorld.class;
     private static final Class<IServerWorldInfo> levelDataClass = IServerWorldInfo.class;
     private static final Class<DerivedWorldInfo> derivedLevelDataClass = DerivedWorldInfo.class;
 
-    /** The {@link IServerWorldInfo} of the wrapped level. */
+    /** The level-data of this level. */
     public final IServerWorldInfo levelData;
 
     /**
@@ -66,18 +73,18 @@ public class ServerLevelWrapper extends Wrapper<ServerWorld> {
         this.levelData = levelDataClass.cast(this.get().getLevelData());
     }
 
-    /** {@return true if the 'daylight cycle' game rule is enabled in {@link #wrapped}} */
+    /** {@return true if the 'daylight cycle' game rule is enabled in this level} */
     public boolean daylightRuleEnabled() {
-        return wrapped.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
+        return this.get().getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
     }
 
-    /** {@return true if the 'weather cycle' game rule is enabled in {@link #wrapped}} */
+    /** {@return true if the 'weather cycle' game rule is enabled in this level} */
     public boolean weatherRuleEnabled() {
-        return wrapped.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE);
+        return this.get().getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE);
     }
 
     /**
-     * Sets the 'random tick speed' game rule for {@link #wrapped}.
+     * Sets the 'random tick speed' game rule for this level.
      * @param speed  the new random tick speed
      */
     public void setRandomTickSpeed(int speed) {
@@ -93,11 +100,11 @@ public class ServerLevelWrapper extends Wrapper<ServerWorld> {
     }
 
     /**
-     * Convenience method that returns true if the weather cycle is progressing in {@link #wrapped}.
-     * @return true if the weather cycle is progressing in {@link #wrapped}
+     * Convenience method that returns true if the weather cycle is progressing in this level.
+     * @return true if the weather cycle is progressing in this level
      */
     public boolean weatherCycleEnabled() {
-        return weatherRuleEnabled() && wrapped.dimensionType().hasSkyLight();
+        return weatherRuleEnabled() && this.get().dimensionType().hasSkyLight();
     }
 
     /**
@@ -112,7 +119,7 @@ public class ServerLevelWrapper extends Wrapper<ServerWorld> {
     }
 
     /**
-     * Sets the {@link ServerWorld} sleep status using reflection, as access modifiers prevent this.
+     * Sets the level sleep status using reflection, as access modifiers prevent this.
      * In Minecraft versions lower than 1.17 this method should do nothing.
      *
      * @param newStatus  the new sleep status
@@ -140,10 +147,22 @@ public class ServerLevelWrapper extends Wrapper<ServerWorld> {
      * Performs vanilla morning wakeup functionality to wake up all sleeping players.
      */
     public void wakeUpAllPlayers() {
-        wrapped.players().stream()
+        this.get().players().stream()
                 .map(player -> new ServerPlayerWrapper(player))
                 .filter(ServerPlayerWrapper::isSleeping)
                 .forEach(player -> player.get().stopSleepInBed(false, false));
+    }
+
+    /** Ticks all loaded block entities in this level. */
+    public void tickBlockEntities() {
+        try {
+            Method tickBlockEntitiesMethod = ObfuscationReflectionHelper.findMethod(World.class, "func_217391_K");
+            tickBlockEntitiesMethod.setAccessible(true);
+            tickBlockEntitiesMethod.invoke(get());
+        } catch (IllegalArgumentException | SecurityException | UnableToFindMethodException | IllegalAccessException | InvocationTargetException e) {
+            LOGGER.warn(Hourglass.MARKER, "Error ticking block entities.", e);
+            return;
+        }
     }
 
     /**
@@ -154,7 +173,10 @@ public class ServerLevelWrapper extends Wrapper<ServerWorld> {
         return level != null && level.getLevelData().getClass() == derivedLevelDataClass;
     }
 
-    /** {@return true if {@code level} is an instance of a server level} */
+    /**
+     * {@return true if {@code level} is an instance of a server level}
+     * @param level  the level to check
+     */
     public static boolean isServerLevel(IWorld level) {
         return level != null && level.getClass() == levelClass;
     }

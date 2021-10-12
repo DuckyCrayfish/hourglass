@@ -50,7 +50,9 @@ public class TimeService {
     // The largest number of lunar cycles that can be stored in an int
     private static final int OVERFLOW_THRESHOLD = 11184 * Time.LUNAR_CYCLE_TICKS;
 
+    /** The level managed by this {@code TimeService}. */
     public final ServerLevelWrapper level;
+    /** The {@code SleepStatus} object for this level. */
     public final SleepStatus sleepStatus;
 
     private double timeDecimalAccumulator = 0;
@@ -162,31 +164,33 @@ public class TimeService {
         Time timeOfDay = time.timeOfDay();
         Time nextTimeOfDay = nextTime.timeOfDay();
 
-        // day to night transition
-        if (NIGHT_START.betweenMod(timeOfDay, nextTimeOfDay)) {
-            double nextTimeSpeed = getTimeSpeed(nextTime);
-            Time timeUntilBreakpoint = NIGHT_START.subtract(timeOfDay);
-            double breakpointRatio = 1 - timeUntilBreakpoint.divide(timeDelta);
+        if (sleepStatus.allAwake()) {
+            // day to night transition
+            if (NIGHT_START.betweenMod(timeOfDay, nextTimeOfDay)) {
+                double nextTimeSpeed = getTimeSpeed(nextTime);
+                Time timeUntilBreakpoint = NIGHT_START.subtract(timeOfDay);
+                double breakpointRatio = 1 - timeUntilBreakpoint.divide(timeDelta);
 
-            return timeUntilBreakpoint.add(nextTimeSpeed * breakpointRatio);
-        }
+                return timeUntilBreakpoint.add(nextTimeSpeed * breakpointRatio);
+            }
 
-        // day to night transition
-        if (DAY_START.betweenMod(timeOfDay, nextTimeOfDay)) {
-            double nextTimeSpeed = getTimeSpeed(nextTime);
-            Time timeUntilBreakpoint = DAY_START.subtract(timeOfDay);
-            double breakpointRatio = 1 - timeUntilBreakpoint.divide(timeDelta);
+            // day to night transition
+            if (DAY_START.betweenMod(timeOfDay, nextTimeOfDay)) {
+                double nextTimeSpeed = getTimeSpeed(nextTime);
+                Time timeUntilBreakpoint = DAY_START.subtract(timeOfDay);
+                double breakpointRatio = 1 - timeUntilBreakpoint.divide(timeDelta);
 
-            return timeUntilBreakpoint.add(nextTimeSpeed * breakpointRatio);
-        }
+                return timeUntilBreakpoint.add(nextTimeSpeed * breakpointRatio);
+            }
+        } else {
+            // morning transition
+            Time timeUntilMorning = Time.DAY_LENGTH.subtract(timeOfDay);
+            if (timeUntilMorning.compareTo(timeDelta) < 0) {
+                double nextTimeSpeed = SERVER_CONFIG.daySpeed.get();
+                double breakpointRatio = 1 - timeUntilMorning.divide(timeDelta);
 
-        // morning transition
-        Time timeUntilMorning = Time.DAY_LENGTH.subtract(timeOfDay);
-        if (timeUntilMorning.compareTo(timeDelta) < 0 && !sleepStatus.allAwake()) {
-            double nextTimeSpeed = SERVER_CONFIG.daySpeed.get();
-            double breakpointRatio = 1 - timeUntilMorning.divide(timeDelta);
-
-            return timeUntilMorning.add(nextTimeSpeed * breakpointRatio);
+                return timeUntilMorning.add(nextTimeSpeed * breakpointRatio);
+            }
         }
 
         return timeDelta;
@@ -217,10 +221,13 @@ public class TimeService {
             return SERVER_CONFIG.sleepSpeedAll.get();
         }
 
-        double percentageSleeping = sleepStatus.ratio();
+        double sleepRatio = sleepStatus.ratio();
+        double curve = SERVER_CONFIG.sleepSpeedCurve.get();
+        double speedRatio = MathUtils.normalizedTunableSigmoid(sleepRatio, curve);
+
         double sleepSpeedMin = SERVER_CONFIG.sleepSpeedMin.get();
         double sleepSpeedMax = SERVER_CONFIG.sleepSpeedMax.get();
-        double multiplier = MathUtils.lerp(percentageSleeping, sleepSpeedMin, sleepSpeedMax);
+        double multiplier = MathUtils.lerp(speedRatio, sleepSpeedMin, sleepSpeedMax);
 
         return multiplier;
     }

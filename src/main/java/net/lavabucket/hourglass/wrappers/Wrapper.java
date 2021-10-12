@@ -19,6 +19,7 @@
 
 package net.lavabucket.hourglass.wrappers;
 
+/** A class wrapper used to reduce the number of references to external classes in this codebase. */
 public class Wrapper<T> {
 
     /** The wrapped object. */

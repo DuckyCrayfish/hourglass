@@ -66,13 +66,18 @@ public class HourglassConfig {
         public final EnumValue<EffectCondition> weatherEffect;
         public final EnumValue<EffectCondition> randomTickEffect;
         public final IntValue baseRandomTickSpeed;
+        public final EnumValue<EffectCondition> potionEffect;
+        public final EnumValue<EffectCondition> hungerEffect;
+        public final EnumValue<EffectCondition> blockEntityEffect;
 
         public final BooleanValue enableSleepFeature;
         public final DoubleValue sleepSpeedMin;
         public final DoubleValue sleepSpeedMax;
         public final DoubleValue sleepSpeedAll;
+        public final DoubleValue sleepSpeedCurve;
         public final BooleanValue clearWeatherOnWake;
         public final BooleanValue displayBedClock;
+        public final BooleanValue allowDaySleep;
 
         public final ConfigValue<String> morningMessage;
         public final EnumValue<ChatType> morningMessageType;
@@ -128,6 +133,29 @@ public class HourglassConfig {
                         .comment("The base random tick speed used by the randomTickEffect time effect.")
                         .defineInRange("baseRandomTickSpeed", 3, 0, Integer.MAX_VALUE);
 
+                    potionEffect = builder.comment(
+                        "When applied, this effect progresses potion effects to match the rate of the current time-speed.",
+                        "This effect does not apply if time speed is 1.0 or less.",
+                        "THIS MAY HAVE A NEGATIVE IMPACT ON PERFORMANCE IN SERVERS WITH MANY PLAYERS.",
+                        "When set to ALWAYS, this effect applies to all players in the dimension, day or night.",
+                        "When set to SLEEPING, this effect only applies to players who are sleeping.")
+                        .defineEnum("potionEffect", EffectCondition.NEVER);
+
+                    hungerEffect = builder.comment(
+                        "When applied, this effect progresses player hunger effects to match the rate of the current time-speed.",
+                        "This results in faster healing when food level is full, and faster harm when food level is too low.",
+                        "This effect does not apply if time speed is 1.0 or less.",
+                        "When set to ALWAYS, this effect applies to all players in the dimension, day or night. Not recommended on higher difficulty settings",
+                        "When set to SLEEPING, this effect only applies to players who are sleeping.")
+                        .defineEnum("hungerEffect", EffectCondition.NEVER);
+
+                    blockEntityEffect = builder.comment(
+                        "When applied, this effect progresses block entities like furnaces, hoppers, and spawners to match the rate of the current time-speed.",
+                        "WARNING: This time-effect has a significant impact on performance.",
+                        "This effect does not apply if time speed is 1.0 or less.",
+                        "When set to SLEEPING, this effect only applies when at least one player is sleeping in a dimension.")
+                        .defineEnum("blockEntityEffect", EffectCondition.NEVER);
+
                 builder.pop(); // time.effects
             builder.pop(); // time
 
@@ -138,25 +166,41 @@ public class HourglassConfig {
                     "and may conflict with other sleep mods. If disabled, all settings in the sleep section will not apply.")
                     .define("enableSleepFeature", true);
 
+                sleepSpeedMax = builder.comment(
+                    "## THIS SETTING DEFINES THE SLEEP TIME-SPEED IN SINGLE-PLAYER GAMES ###",
+                    "The maximum speed at which time passes when all players are sleeping.",
+                    "A value of 110 is nearly equal to the time it takes to sleep in vanilla.")
+                    .defineInRange("sleepSpeedMax", 110D, 0D, Time.DAY_LENGTH.doubleValue());
+
                 sleepSpeedMin = builder
                     .comment("The minimum speed at which time passes when only 1 player is sleeping in a full server.")
                     .defineInRange("sleepSpeedMin", 1D, 0D, Time.DAY_LENGTH.doubleValue());
-
-                sleepSpeedMax = builder.comment(
-                    "The maximum speed at which time passes when all players are sleeping. A value of 120",
-                    "is approximately equal to the time it takes to sleep in vanilla.")
-                    .defineInRange("sleepSpeedMax", 120D, 0D, Time.DAY_LENGTH.doubleValue());
 
                 sleepSpeedAll = builder.comment(
                     "The speed at which time passes when all players are sleeping.",
                     "Set to -1 to disable this feature (sleepSpeedMax will be used when all players are sleeping).")
                     .defineInRange("sleepSpeedAll", -1.0D, -1.0D, Time.DAY_LENGTH.doubleValue());
 
+                sleepSpeedCurve = builder.comment(
+                    "This parameter defines the curvature of the interpolation function that translates the sleeping player percentage into time-speed.",
+                    "The function used is a Normalized Tunable Sigmoid Function.",
+                    "A value of 0.5 represents a linear relationship.",
+                    "Smaller values bend the curve toward the X axis, while greater values bend it toward the Y axis.",
+                    "This graph may be used as a reference for tuning the curve: https://www.desmos.com/calculator/w8gntxzfow",
+                    "Credit to Dino Dini for the function: https://dinodini.wordpress.com/2010/04/05/normalized-tunable-sigmoid-functions/",
+                    "Credit to SmoothSleep for the idea: https://www.spigotmc.org/resources/smoothsleep.32043/")
+                    .defineInRange("sleepSpeedCurve", 0.3D, 0D, 1D);
+
                 clearWeatherOnWake = builder.comment(
                     "Set to 'true' for the weather to clear when players wake up in the morning as it does in vanilla.",
                     "Set to 'false' to force weather to pass naturally. Adds realism when accelerateWeather is enabled.",
                     "Note: This setting is ignored if game rule doWeatherCycle is false.")
                     .define("clearWeatherOnWake", true);
+
+                allowDaySleep = builder.comment(
+                    "When true, players are allowed to sleep at all times of day in dimensions controlled by Hourglass.",
+                    "Note: Other mods may override this ability.")
+                    .define("allowDaySleep", false);
 
                 displayBedClock = builder
                     .comment("When true, a clock is displayed in the sleep interface.")
@@ -186,7 +230,9 @@ public class HourglassConfig {
                             .define("message", "\u00A7e\u00A7oTempus fugit!");
                         morningMessageType = builder.comment("Sets where this message appears.")
                             .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
-                        morningMessageTarget = builder.comment("Sets to whom this message is sent. A target of 'SLEEPING' will send the message to all players who just woke up.")
+                        morningMessageTarget = builder.comment(
+                            "Sets to whom this message is sent.",
+                            "A target of 'SLEEPING' will send the message to all players who just woke up.")
                             .defineEnum("target", MessageTarget.DIMENSION);
                     builder.pop(); // sleep.messages.morning
 

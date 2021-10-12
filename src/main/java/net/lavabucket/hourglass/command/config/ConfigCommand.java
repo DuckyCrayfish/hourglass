@@ -53,9 +53,13 @@ public class ConfigCommand {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
+    /** The config entries registered to this command. */
     protected final Map<String, ConfigCommandEntry<?>> entries;
+    /** The function that is called after a successful query command execution. */
     protected BiConsumer<CommandContext<CommandSource>, ConfigCommandEntry<?>> querySuccessHandler;
+    /** The function that is called after a successful modification command execution. */
     protected BiConsumer<CommandContext<CommandSource>, ConfigCommandEntry<?>> modifySuccessHandler;
+    /** The function that is called after a failed modification command execution. */
     protected BiConsumer<CommandContext<CommandSource>, ConfigCommandEntry<?>> modifyFailureHandler;
 
     /** Creates a new instance. */
@@ -142,8 +146,9 @@ public class ConfigCommand {
      *
      * <p>This is a convenience method for {@link #register(ConfigCommandEntry)}.
      *
+     * @param <T>  the underlying enum class of the {@code EnumValue}
      * @param configValue  the {@code EnumValue} to register
-     * @param valueClass  the underlying enum class of the config value
+     * @param valueClass  the underlying enum class of the {@code EnumValue}
      * @return this, for chaining
      */
     public <T extends Enum<T>> ConfigCommand register(EnumValue<T> configValue, Class<T> valueClass) {

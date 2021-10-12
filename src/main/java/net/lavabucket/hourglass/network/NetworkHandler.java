@@ -35,10 +35,14 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
  */
 public class NetworkHandler {
 
+    /** Network channel name. */
     public static final ResourceLocation CHANNEL_NAME = new ResourceLocation(Hourglass.MOD_ID, "channel");
+    /** Current protocol version used to determine compatibility with other versions of this mod. */
     public static final String PROTOCOL_VERSION = "1.0";
+    /** The network ID for the {@code ConfigSynchronizer} message. */
     public static final byte CONFIG_MESSAGE_ID = 1;
 
+    /** The Hourglass network channel. */
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(CHANNEL_NAME,
             () -> PROTOCOL_VERSION,
             PROTOCOL_VERSION::equals,

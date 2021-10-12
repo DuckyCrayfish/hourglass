@@ -27,7 +27,7 @@ import net.minecraft.world.IWorld;
  * This class acts as a wrapper for {@link ClientWorld} to increase consistency between Minecraft
  * versions.
  *
- * Since the {@link ClientWorld} class changes its name and package between different versions of
+ * Since the client-level class changes its name and package between different versions of
  * Minecraft, supporting different Minecraft versions would require modifications to any class that
  * imports or references {@link ClientWorld}. This class consolidates these variations into itself,
  * allowing other classes to depend on it instead.
@@ -44,12 +44,15 @@ public class ClientLevelWrapper extends Wrapper<ClientWorld> {
 
     /** {@return true if the 'daylight cycle' game rule is enabled in this level} */
     public boolean daylightRuleEnabled() {
-        return wrapped.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
+        return this.get().getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
     }
 
-    /** {@return true if {@code levelAccessor} is an instance of {@link ClientWorld}} */
-    public static boolean isClientLevel(IWorld levelAccessor) {
-        return levelAccessor instanceof ClientWorld;
+    /**
+     * {@return true if {@code level} is an instance of a client-level}
+     * @param level  the level to check
+     */
+    public static boolean isClientLevel(IWorld level) {
+        return level instanceof ClientWorld;
     }
 
 }

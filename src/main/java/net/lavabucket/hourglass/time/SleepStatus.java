@@ -22,7 +22,7 @@ package net.lavabucket.hourglass.time;
 import java.util.List;
 import java.util.function.Supplier;
 
-import net.minecraft.entity.player.PlayerEntity;
+import net.lavabucket.hourglass.wrappers.ServerPlayerWrapper;
 import net.minecraft.entity.player.ServerPlayerEntity;
 
 /**
@@ -34,8 +34,12 @@ import net.minecraft.entity.player.ServerPlayerEntity;
  * This class also includes a number of utility methods and getters for use in Hourglass.
  */
 public class SleepStatus {
+
+    /** The number of active (online and not spectating) players in this dimension. */
     protected int activePlayerCount;
+    /** The number of sleeping players in this dimension. */
     protected int sleepingPlayerCount;
+    /** A {@code Supplier} that determines whether or not vanilla sleep should be suppressed. */
     protected Supplier<Boolean> preventSleepSupplier;
 
     /**
@@ -163,10 +167,14 @@ public class SleepStatus {
     public boolean areEnoughDeepSleeping(int percentageRequired, List<ServerPlayerEntity> playerList) {
         if (preventSleepSupplier.get()) {
             return false;
-        } else {
-            long deepSleepers = playerList.stream().filter(PlayerEntity::isSleepingLongEnough).count();
-            return deepSleepers >= sleepersNeeded(percentageRequired);
         }
+
+        long deepSleepers = playerList.stream()
+                .map(ServerPlayerWrapper::new)
+                .filter(ServerPlayerWrapper::isSleepingLongEnough)
+                .count();
+
+        return deepSleepers >= sleepersNeeded(percentageRequired);
     }
 
     /**
