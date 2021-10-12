@@ -189,6 +189,7 @@ jar {
         include 'README'
         include 'README.md'
         include 'README.txt'
+        include 'res/logo/logo-wide-588x256.png'
     }
     from('/res/logo') {
         include 'logo.png'
