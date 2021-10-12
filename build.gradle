@@ -190,7 +190,7 @@ jar {
         include 'README.md'
         include 'README.txt'
     }
-    from('/res') {
+    from('/res/logo') {
         include 'logo.png'
         include 'logo-800x400.png'
     }

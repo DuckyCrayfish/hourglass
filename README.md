@@ -1,6 +1,6 @@
 <p align="center">
 	<a href="https://www.curseforge.com/minecraft/mc-mods/hourglass">
-		<img src="res/logo-wide-588x256.png" alt="Hourglass Logo" width="550">
+		<img src="res/logo/logo-wide-588x256.png" alt="Hourglass Logo" width="550">
 	</a>
 </p>
 

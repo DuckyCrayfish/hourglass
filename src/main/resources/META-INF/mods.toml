@@ -33,7 +33,7 @@ updateJSONURL="https://raw.githubusercontent.com/DuckyCrayfish/hourglass/main/re
 displayURL="https://github.com/DuckyCrayfish/hourglass" #optional
 
 # A file name (in the root of the mod JAR) containing a logo for display
-logoFile="logo-800x400.png" #optional
+logoFile="res/logo/logo-800x400.png" #optional
 
 # A text field displayed in the mod UI
 # credits="Thanks for this example mod goes to Java" #optional
