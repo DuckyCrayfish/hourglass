@@ -199,8 +199,9 @@ public class Time extends Number implements Comparable<Time> {
     }
 
     /**
-     * Returns {@code this} time's corresponding Overworld day, with the first day returning 1.
-     * Days are counted every {@link #DAY_TICKS} ticks.
+     * Returns {@code this} time's corresponding Overworld day, with the first day returning 0.
+     * In other words, this method returns the number of days that have passed since time 0.
+     * A full day has a value of {@value #DAY_TICKS}.
      *
      * @return {@code this} time's corresponding Overworld day
      */
