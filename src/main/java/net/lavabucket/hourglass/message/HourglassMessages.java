@@ -175,10 +175,6 @@ public class HourglassMessages {
                 .setVariable("sleepingPlayers", Integer.toString(sleepStatus.amountSleeping()))
                 .setVariable("sleepingPercentage", Integer.toString(sleepStatus.percentage()))
                 .bake().send(SERVER_CONFIG.morningMessageTarget.get(), level);
-
-        // JSON version to implement later:
-        // ITextComponent morningMessage = ITextComponent.Serializer
-                // .fromJson(HourglassConfig.SERVER.morningMessageJson.get());
     }
 
 }
