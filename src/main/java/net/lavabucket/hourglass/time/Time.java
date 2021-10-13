@@ -111,7 +111,7 @@ public class Time extends Number implements Comparable<Time> {
         }
 
         this.longPart = longPart;
-        this.fractionPart = fractionPart;
+        this.fractionPart = fractionPart + 0.0D;
     }
 
     /**
