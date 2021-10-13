@@ -76,7 +76,7 @@ public final class HourglassConfig {
         public final DoubleValue sleepSpeedAll;
         public final DoubleValue sleepSpeedCurve;
         public final BooleanValue clearWeatherOnWake;
-        public final BooleanValue displayBedClock;
+        public final BooleanValue allowBedClock;
         public final BooleanValue allowDaySleep;
 
         public final ConfigValue<String> morningMessage;
@@ -202,9 +202,10 @@ public final class HourglassConfig {
                     "Note: Other mods may override this ability.")
                     .define("allowDaySleep", false);
 
-                displayBedClock = builder
-                    .comment("When true, a clock is displayed in the sleep interface.")
-                    .define("displayBedClock", true);
+                allowBedClock = builder.comment(
+                    "When true, a clock will appear in the bed interface.",
+                    "This clock may be disabled by players via hideBedClock config setting.")
+                    .define("allowBedClock", true);
 
                 // sleep.messages
                 builder.comment(
@@ -279,6 +280,7 @@ public final class HourglassConfig {
 
         public final ForgeConfigSpec spec;
 
+        public final BooleanValue hideBedClock;
         public final EnumValue<ScreenAlignment> clockAlignment;
         public final IntValue clockScale;
         public final IntValue clockMargin;
@@ -291,6 +293,11 @@ public final class HourglassConfig {
         public ClientConfig(final ForgeConfigSpec.Builder builder) {
 
             builder.push("gui"); // gui
+
+                hideBedClock = builder.comment(
+                    "When false, a clock is displayed in the bed interface, if server settings allow it.",
+                    "When true, the clock is hidden.")
+                    .define("hideBedClock", false);
 
                 clockAlignment = builder.comment("Sets the screen alignment of the bed clock.")
                     .defineEnum("clockAlignment", ScreenAlignment.TOP_RIGHT);

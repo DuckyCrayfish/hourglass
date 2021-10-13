@@ -222,8 +222,9 @@ Location relative to Minecraft folder:
 	#Note: This setting is ignored if game rule doWeatherCycle is false.
 	clearWeatherOnWake = true
 
-	#When true, a clock is displayed in the sleep interface.
-	displayBedClock = true
+	#When true, a clock will appear in the bed interface.
+	#This clock may be disabled by players via hideBedClock config setting.
+	allowBedClock = true
 
 	#This section defines settings for notification messages.
 	#All messages support Minecraft formatting codes (https://minecraft.fandom.com/wiki/Formatting_codes).
@@ -289,6 +290,10 @@ Location relative to Minecraft folder: `./config/hourglass-client.toml`
 
 ```toml
 [gui]
+	#When false, a clock is displayed in the bed interface, if server settings allow it.
+	#When true, the clock is hidden.
+	hideBedClock = false
+
 	#Sets the screen alignment of the bed clock.
 	#Allowed Values: TOP_LEFT, TOP_CENTER, TOP_RIGHT, CENTER_LEFT, CENTER_CENTER, CENTER_RIGHT, BOTTOM_LEFT, BOTTOM_CENTER, BOTTOM_RIGHT
 	clockAlignment = "TOP_RIGHT"

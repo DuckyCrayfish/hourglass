@@ -6,6 +6,7 @@
   "commands.hourglass.query.timeSpeed.success": "The time speed is %s",
   "commands.hourglass.query.sleeperCount.success": "%s%% of players are sleeping. [%s/%s]",
   "hourglass.configgui.title": "Hourglass Config",
+  "hourglass.configgui.showBedClock": "Bed Clock",
   "hourglass.configgui.preventClockWobble": "Prevent Clock Wobble",
   "hourglass.configgui.clockAlignment": "Clock Alignment",
   "hourglass.configgui.clockScale": "Clock Scale",

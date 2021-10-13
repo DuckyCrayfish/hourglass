@@ -52,6 +52,7 @@ public final class ConfigScreen extends Screen {
     private static final int DONE_BUTTON_BOTTOM_MARGIN = 6;
 
     private static final String KEY_TITLE = "hourglass.configgui.title";
+    private static final String KEY_SHOW_BED_CLOCK = "hourglass.configgui.showBedClock";
     private static final String KEY_CLOCK_ALIGNMENT = "hourglass.configgui.clockAlignment";
     private static final String KEY_CLOCK_SCALE = "hourglass.configgui.clockScale";
     private static final String KEY_CLOCK_MARGIN = "hourglass.configgui.clockMargin";
@@ -67,6 +68,7 @@ public final class ConfigScreen extends Screen {
     /** This screen's "done" button. */
     protected Button doneButton;
 
+    private boolean showBedClock;
     private ScreenAlignment clockAlignment;
     private int clockScale;
     private int clockMargin;
@@ -98,6 +100,11 @@ public final class ConfigScreen extends Screen {
 
         optionsList = new OptionsList(minecraft, width, height, OPTIONS_LIST_MARGIN,
                 height - OPTIONS_LIST_BOTTOM_MARGIN, OPTION_HEIGHT);
+
+        optionsList.addBig(CycleOption.createOnOff(
+                KEY_SHOW_BED_CLOCK,
+                settings -> showBedClock,
+                (options, option, value) -> showBedClock = value));
 
         optionsList.addBig(CycleOption.create(KEY_CLOCK_ALIGNMENT,
                 Arrays.asList(ScreenAlignment.values()),
@@ -146,6 +153,7 @@ public final class ConfigScreen extends Screen {
     }
 
     private void fetchSettings() {
+        showBedClock = !CLIENT_CONFIG.hideBedClock.get();
         clockAlignment = CLIENT_CONFIG.clockAlignment.get();
         clockScale = CLIENT_CONFIG.clockScale.get();
         clockMargin = CLIENT_CONFIG.clockMargin.get();
@@ -153,6 +161,7 @@ public final class ConfigScreen extends Screen {
     }
 
     private void saveSettings() {
+        CLIENT_CONFIG.hideBedClock.set(!showBedClock);
         CLIENT_CONFIG.clockAlignment.set(clockAlignment);
         CLIENT_CONFIG.clockScale.set(clockScale);
         CLIENT_CONFIG.clockMargin.set(clockMargin);
