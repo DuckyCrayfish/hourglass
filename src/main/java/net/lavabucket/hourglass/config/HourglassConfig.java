@@ -20,7 +20,7 @@
 package net.lavabucket.hourglass.config;
 
 import net.lavabucket.hourglass.client.gui.ScreenAlignment;
-import net.lavabucket.hourglass.message.MessageTarget;
+import net.lavabucket.hourglass.message.MessageTargetType;
 import net.lavabucket.hourglass.time.Time;
 import net.lavabucket.hourglass.time.effects.EffectCondition;
 import net.minecraft.network.chat.ChatType;
@@ -82,15 +82,15 @@ public final class HourglassConfig {
         public final BooleanValue internationalMode;
         public final ConfigValue<String> morningMessage;
         public final EnumValue<ChatType> morningMessageType;
-        public final EnumValue<MessageTarget> morningMessageTarget;
+        public final EnumValue<MessageTargetType> morningMessageTarget;
 
         public final ConfigValue<String> enterBedMessage;
         public final EnumValue<ChatType> enterBedMessageType;
-        public final EnumValue<MessageTarget> enterBedMessageTarget;
+        public final EnumValue<MessageTargetType> enterBedMessageTarget;
 
         public final ConfigValue<String> leaveBedMessage;
         public final EnumValue<ChatType> leaveBedMessageType;
-        public final EnumValue<MessageTarget> leaveBedMessageTarget;
+        public final EnumValue<MessageTargetType> leaveBedMessageTarget;
 
         /**
          * Constructs an instance of an Hourglass server config.
@@ -242,7 +242,7 @@ public final class HourglassConfig {
                         morningMessageTarget = builder.comment(
                             "Sets to whom this message is sent.",
                             "A target of 'SLEEPING' will send the message to all players who just woke up.")
-                            .defineEnum("target", MessageTarget.DIMENSION);
+                            .defineEnum("target", MessageTargetType.DIMENSION);
                     builder.pop(); // sleep.messages.morning
 
                     // sleep.messages.enterBed
@@ -257,7 +257,7 @@ public final class HourglassConfig {
                         enterBedMessageType = builder.comment("Sets where this message appears.")
                             .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
                         enterBedMessageTarget = builder.comment("Sets to whom this message is sent.")
-                            .defineEnum("target", MessageTarget.DIMENSION);
+                            .defineEnum("target", MessageTargetType.DIMENSION);
                     builder.pop(); // sleep.messages.enterBed
 
                     // sleep.messages.leaveBed
@@ -272,7 +272,7 @@ public final class HourglassConfig {
                         leaveBedMessageType = builder.comment("Sets where this message appears.")
                             .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
                         leaveBedMessageTarget = builder.comment("Sets to whom this message is sent.")
-                            .defineEnum("target", MessageTarget.DIMENSION);
+                            .defineEnum("target", MessageTargetType.DIMENSION);
                     builder.pop(); // sleep.messages.leaveBed
 
                 builder.pop(); // sleep.messages

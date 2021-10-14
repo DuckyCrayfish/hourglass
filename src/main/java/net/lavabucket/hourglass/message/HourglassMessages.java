@@ -138,7 +138,7 @@ public class HourglassMessages {
         }
 
         ChatType type = SERVER_CONFIG.enterBedMessageType.get();
-        MessageTarget target = SERVER_CONFIG.enterBedMessageTarget.get();
+        MessageTargetType target = SERVER_CONFIG.enterBedMessageTarget.get();
         send(message, type, target, timeService.level);
     }
 
@@ -175,7 +175,7 @@ public class HourglassMessages {
         }
 
         ChatType type = SERVER_CONFIG.leaveBedMessageType.get();
-        MessageTarget target = SERVER_CONFIG.leaveBedMessageTarget.get();
+        MessageTargetType target = SERVER_CONFIG.leaveBedMessageTarget.get();
         send(message, type, target, timeService.level);
     }
 
@@ -211,7 +211,7 @@ public class HourglassMessages {
         }
 
         ChatType type = SERVER_CONFIG.morningMessageType.get();
-        MessageTarget target = SERVER_CONFIG.morningMessageTarget.get();
+        MessageTargetType target = SERVER_CONFIG.morningMessageTarget.get();
         send(message, type, target, timeService.level);
     }
 
@@ -224,18 +224,18 @@ public class HourglassMessages {
      * @param type  the {@code ChatType} of the message
      * @param level  the level that generated the message
      */
-    public static void send(TextWrapper message, ChatType type, MessageTarget target,
+    public static void send(TextWrapper message, ChatType type, MessageTargetType target,
             @Nullable ServerLevelWrapper level) {
         Stream<ServerPlayerWrapper> players;
 
-        if (target == MessageTarget.ALL) {
+        if (target == MessageTargetType.ALL) {
             players = level.get().getServer().getPlayerList().getPlayers().stream()
                     .map(ServerPlayerWrapper::new);
         } else {
             players = level.get().players().stream().map(ServerPlayerWrapper::new);
         }
 
-        if (target == MessageTarget.SLEEPING) {
+        if (target == MessageTargetType.SLEEPING) {
             players = players.filter(ServerPlayerWrapper::isSleeping);
         }
 
