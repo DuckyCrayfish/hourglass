@@ -20,7 +20,7 @@
 package net.lavabucket.hourglass.config;
 
 import net.lavabucket.hourglass.client.gui.ScreenAlignment;
-import net.lavabucket.hourglass.message.TemplateMessage.MessageTarget;
+import net.lavabucket.hourglass.message.MessageTarget;
 import net.lavabucket.hourglass.time.Time;
 import net.lavabucket.hourglass.time.effects.EffectCondition;
 import net.minecraft.network.chat.ChatType;
@@ -79,6 +79,7 @@ public final class HourglassConfig {
         public final BooleanValue allowBedClock;
         public final BooleanValue allowDaySleep;
 
+        public final BooleanValue internationalMode;
         public final ConfigValue<String> morningMessage;
         public final EnumValue<ChatType> morningMessageType;
         public final EnumValue<MessageTarget> morningMessageTarget;
@@ -220,6 +221,13 @@ public final class HourglassConfig {
                     "\tDIMENSION: Sends the message to all players in the current dimension.",
                     "\tSLEEPING: Sends the message to all players in the current dimension who are sleeping.")
                     .push("messages");
+
+                    internationalMode = builder.comment(
+                        "When true, sleep messages are sent using language files instead of the message text defined in this config file.",
+                        "This allows for the ability to support multiple languages at a time.",
+                        "When true, resource packs are required for message text customization.",
+                        "Enabling this setting is recommended for modpacks.")
+                        .define("internationalMode", false);
 
                     // sleep.messages.morning
                     builder.comment("This message is sent after a sleep cycle has completed.").push("morning");

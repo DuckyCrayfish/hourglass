@@ -21,12 +21,19 @@ package net.lavabucket.hourglass.message;
 
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
+import java.util.stream.Stream;
+
+import javax.annotation.Nullable;
+
 import net.lavabucket.hourglass.config.HourglassConfig;
 import net.lavabucket.hourglass.time.SleepStatus;
 import net.lavabucket.hourglass.time.TimeService;
 import net.lavabucket.hourglass.time.TimeServiceManager;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 import net.lavabucket.hourglass.wrappers.ServerPlayerWrapper;
+import net.lavabucket.hourglass.wrappers.TextWrapper;
+import net.minecraft.Util;
+import net.minecraft.network.chat.ChatType;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.world.SleepFinishedTimeEvent;
@@ -34,6 +41,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /** This class listens for events and sends out Hourglass chat notifications. */
 public class HourglassMessages {
+
+    public static final String MORNING_KEY = "hourglass.messages.morning";
+    public static final String ENTER_BED_KEY = "hourglass.messages.enterBed";
+    public static final String LEAVE_BED_KEY = "hourglass.messages.leaveBed";
 
     /**
      * Event listener that is called every tick for every player who is sleeping.
@@ -51,7 +62,8 @@ public class HourglassMessages {
                 && service.level.get().players().size() > 1
                 && service.level.daylightRuleEnabled()) {
 
-            sendEnterBedMessage(new ServerPlayerWrapper(event.getPlayer()));
+            ServerPlayerWrapper player = new ServerPlayerWrapper(event.getPlayer());
+            sendEnterBedMessage(service, player);
         }
     }
 
@@ -71,7 +83,8 @@ public class HourglassMessages {
                 && service.level.get().players().size() > 1
                 && service.level.daylightRuleEnabled()) {
 
-            sendLeaveBedMessage(new ServerPlayerWrapper(event.getPlayer()));
+            ServerPlayerWrapper player = new ServerPlayerWrapper(event.getPlayer());
+            sendLeaveBedMessage(service, player);
         }
     }
 
@@ -88,93 +101,145 @@ public class HourglassMessages {
                 && service.level.get().equals(event.getWorld())
                 && service.level.daylightRuleEnabled()) {
 
-            ServerLevelWrapper level = new ServerLevelWrapper(event.getWorld());
-            sendMorningMessage(level);
+            sendMorningMessage(service);
         }
     }
 
     /**
-     * Sends a message to all targeted players informing them that a player has entered their bed.
+     * Sends a message to targeted players informing them that a player has entered their bed.
      *
      * The message is set by {@link HourglassConfig.ServerConfig#enterBedMessage}.
      * The target is set by {@link HourglassConfig.ServerConfig#enterBedMessageTarget}.
      * The message type is set by {@link HourglassConfig.ServerConfig#enterBedMessageType}.
      *
+     * @param timeService  the {@code TimeService} managing the level the player is in
      * @param player  the player who started sleeping
      */
-    public static void sendEnterBedMessage(ServerPlayerWrapper player) {
-        String templateMessage = SERVER_CONFIG.enterBedMessage.get();
-        TimeService timeService = TimeServiceManager.service;
+    public static void sendEnterBedMessage(TimeService timeService, ServerPlayerWrapper player) {
+        final SleepStatus sleepStatus = timeService.sleepStatus;
 
-        if (templateMessage.isEmpty() || timeService == null) {
-            return;
+        final MessageBuilder builder = new MessageBuilder()
+                .setVariable("player", player.get().getGameProfile().getName())
+                .setVariable("sleepingPlayers", sleepStatus.amountSleeping())
+                .setVariable("totalPlayers", sleepStatus.amountActive())
+                .setVariable("sleepingPercentage", sleepStatus.percentage());
+
+        TextWrapper message;
+        if (SERVER_CONFIG.internationalMode.get()) {
+            message = builder.buildFromTranslation(ENTER_BED_KEY);
+        } else {
+            String template = SERVER_CONFIG.enterBedMessage.get();
+
+            if (template.isEmpty()) {
+                return;
+            }
+
+            message = builder.buildFromTemplate(template);
         }
 
-        SleepStatus sleepStatus = timeService.sleepStatus;
-
-        new TemplateMessage().setTemplate(templateMessage)
-                .setType(SERVER_CONFIG.enterBedMessageType.get())
-                .setVariable("player", player.get().getGameProfile().getName())
-                .setVariable("totalPlayers", Integer.toString(sleepStatus.amountActive()))
-                .setVariable("sleepingPlayers", Integer.toString(sleepStatus.amountSleeping()))
-                .setVariable("sleepingPercentage", Integer.toString(sleepStatus.percentage()))
-                .bake().send(SERVER_CONFIG.enterBedMessageTarget.get(), player.getLevel());
+        ChatType type = SERVER_CONFIG.enterBedMessageType.get();
+        MessageTarget target = SERVER_CONFIG.enterBedMessageTarget.get();
+        send(message, type, target, timeService.level);
     }
 
     /**
-     * Sends a message to all targeted players informing them that a player has left their bed.
+     * Sends a message to targeted players informing them that a player has left their bed.
      *
      * The message is set by {@link HourglassConfig.ServerConfig#leaveBedMessage}.
      * The target is set by {@link HourglassConfig.ServerConfig#leaveBedMessageTarget}.
      * The message type is set by {@link HourglassConfig.ServerConfig#leaveBedMessageType}.
      *
+     * @param timeService  the {@code TimeService} managing the level the player is in
      * @param player  the player who left their bed
      */
-    public static void sendLeaveBedMessage(ServerPlayerWrapper player) {
-        String templateMessage = SERVER_CONFIG.leaveBedMessage.get();
-        TimeService timeService = TimeServiceManager.service;
+    public static void sendLeaveBedMessage(TimeService timeService, ServerPlayerWrapper player) {
+        final SleepStatus sleepStatus = timeService.sleepStatus;
 
-        if (templateMessage.isEmpty() || timeService == null) {
-            return;
+        final MessageBuilder builder = new MessageBuilder()
+                .setVariable("player", player.get().getGameProfile().getName())
+                .setVariable("sleepingPlayers", sleepStatus.amountSleeping() - 1)
+                .setVariable("totalPlayers", sleepStatus.amountActive())
+                .setVariable("sleepingPercentage", sleepStatus.percentage());
+
+        TextWrapper message;
+        if (SERVER_CONFIG.internationalMode.get()) {
+            message = builder.buildFromTranslation(LEAVE_BED_KEY);
+        } else {
+            String template = SERVER_CONFIG.leaveBedMessage.get();
+
+            if (template.isEmpty()) {
+                return;
+            }
+
+            message = builder.buildFromTemplate(template);
         }
 
-        SleepStatus sleepStatus = timeService.sleepStatus;
-
-        new TemplateMessage().setTemplate(templateMessage)
-                .setType(SERVER_CONFIG.leaveBedMessageType.get())
-                .setVariable("player", player.get().getGameProfile().getName())
-                .setVariable("totalPlayers", Integer.toString(sleepStatus.amountActive()))
-                .setVariable("sleepingPlayers", Integer.toString(sleepStatus.amountSleeping() - 1))
-                .setVariable("sleepingPercentage", Integer.toString(sleepStatus.percentage()))
-                .bake().send(SERVER_CONFIG.leaveBedMessageTarget.get(), player.getLevel());
+        ChatType type = SERVER_CONFIG.leaveBedMessageType.get();
+        MessageTarget target = SERVER_CONFIG.leaveBedMessageTarget.get();
+        send(message, type, target, timeService.level);
     }
 
     /**
-     * Sends a message to all targeted players informing them that the night has passed in level
-     * after being accelerated by sleeping players.
+     * Sends a message to targeted players informing them that night has passed in {@code level} by
+     * sleeping.
      *
      * The message is set by {@link HourglassConfig.ServerConfig#morningMessage}.
      * The target is set by {@link HourglassConfig.ServerConfig#morningMessageTarget}.
      * The message type is set by {@link HourglassConfig.ServerConfig#morningMessageType}.
      *
-     * @param level  the level that night has passed in
+     * @param timeService  the {@code TimeService} managing the level
      */
-    public static void sendMorningMessage(ServerLevelWrapper level) {
-        String templateMessage = SERVER_CONFIG.morningMessage.get();
-        TimeService timeService = TimeServiceManager.service;
+    public static void sendMorningMessage(TimeService timeService) {
+        final SleepStatus sleepStatus = timeService.sleepStatus;
 
-        if (templateMessage.isEmpty() || timeService == null) {
-            return;
+        final MessageBuilder builder = new MessageBuilder()
+                .setVariable("sleepingPlayers", sleepStatus.amountSleeping())
+                .setVariable("totalPlayers", sleepStatus.amountActive())
+                .setVariable("sleepingPercentage", sleepStatus.percentage());
+
+        TextWrapper message;
+        if (SERVER_CONFIG.internationalMode.get()) {
+            message = builder.buildFromTranslation(MORNING_KEY);
+        } else {
+            String template = SERVER_CONFIG.morningMessage.get();
+
+            if (template.isEmpty()) {
+                return;
+            }
+
+            message = builder.buildFromTemplate(template);
         }
 
-        SleepStatus sleepStatus = timeService.sleepStatus;
+        ChatType type = SERVER_CONFIG.morningMessageType.get();
+        MessageTarget target = SERVER_CONFIG.morningMessageTarget.get();
+        send(message, type, target, timeService.level);
+    }
 
-        new TemplateMessage().setTemplate(templateMessage)
-                .setType(SERVER_CONFIG.morningMessageType.get())
-                .setVariable("totalPlayers", Integer.toString(sleepStatus.amountActive()))
-                .setVariable("sleepingPlayers", Integer.toString(sleepStatus.amountSleeping()))
-                .setVariable("sleepingPercentage", Integer.toString(sleepStatus.percentage()))
-                .bake().send(SERVER_CONFIG.morningMessageTarget.get(), level);
+    /**
+     * Sends the message to the specified targets. If {@code target} is MessageTarget.ALL,
+     * {@code level} may be null.
+     *
+     * @param message  the text component to send
+     * @param target  the target of the message
+     * @param type  the {@code ChatType} of the message
+     * @param level  the level that generated the message
+     */
+    public static void send(TextWrapper message, ChatType type, MessageTarget target,
+            @Nullable ServerLevelWrapper level) {
+        Stream<ServerPlayerWrapper> players;
+
+        if (target == MessageTarget.ALL) {
+            players = level.get().getServer().getPlayerList().getPlayers().stream()
+                    .map(ServerPlayerWrapper::new);
+        } else {
+            players = level.get().players().stream().map(ServerPlayerWrapper::new);
+        }
+
+        if (target == MessageTarget.SLEEPING) {
+            players = players.filter(ServerPlayerWrapper::isSleeping);
+        }
+
+        players.forEach(player -> player.get().sendMessage(message.get(), type, Util.NIL_UUID));
     }
 
 }
