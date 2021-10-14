@@ -53,7 +53,8 @@ public class MessageBuilder {
      * is is used as the variable lookup key, where the {@code index} is a number starting at 0 that
      * increments every time a new variable is added. For example, the first variable has an index
      * of 0, the second one has an index of 1, etc. When using this method, variables may be
-     * inserted into the message using the format {@code {<index>}}.
+     * inserted into the message using the format {@code {<index>}}. Alternatively, Minecraft's
+     * built-in variable substitution syntax may be used, for example "%s".
      *
      * @param key  the variable name to search for in the template
      * @param value  the value to inject into the message
