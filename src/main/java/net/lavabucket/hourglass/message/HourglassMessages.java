@@ -119,7 +119,7 @@ public class HourglassMessages {
         final SleepStatus sleepStatus = timeService.sleepStatus;
 
         final MessageBuilder builder = new MessageBuilder()
-                .setVariable("player", player.get().getGameProfile().getName())
+                .setVariable("player", player.get().getDisplayName())
                 .setVariable("sleepingPlayers", sleepStatus.amountSleeping())
                 .setVariable("totalPlayers", sleepStatus.amountActive())
                 .setVariable("sleepingPercentage", sleepStatus.percentage());
@@ -156,7 +156,7 @@ public class HourglassMessages {
         final SleepStatus sleepStatus = timeService.sleepStatus;
 
         final MessageBuilder builder = new MessageBuilder()
-                .setVariable("player", player.get().getGameProfile().getName())
+                .setVariable("player", player.get().getDisplayName())
                 .setVariable("sleepingPlayers", sleepStatus.amountSleeping() - 1)
                 .setVariable("totalPlayers", sleepStatus.amountActive())
                 .setVariable("sleepingPercentage", sleepStatus.percentage());

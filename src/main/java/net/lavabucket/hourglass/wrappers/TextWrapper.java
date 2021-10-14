@@ -34,12 +34,34 @@ import net.minecraft.network.chat.TranslatableComponent;
  */
 public class TextWrapper extends Wrapper<Component> {
 
+    private static final Class<Component> CLASS = Component.class;
+
     /**
      * Instantiates a new object.
      * @param object  the text component to wrap
      */
     public TextWrapper(Component object) {
         super(object);
+    }
+
+    /**
+     * {@return if {@code obj} is a text component, a wrapped {@code obj}, null otherwise}
+     * @param obj  the component to wrap
+     */
+    public static TextWrapper from(Object obj) {
+        if (isText(obj)) {
+            return new TextWrapper(CLASS.cast(obj));
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * {@return true if {@code obj} is an instance of a text component}
+     * @param obj  the object to check
+    */
+    public static boolean isText(Object obj) {
+        return CLASS.isAssignableFrom(obj.getClass());
     }
 
     /**

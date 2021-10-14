@@ -43,6 +43,8 @@ public class MessageBuilder {
     /**
      * Sets a variable to be substituted in the template message.
      *
+     * <p>All text components values are properly converted to strings.
+     *
      * <p>When this message is built using {@link #buildFromTemplate(String)}, {@code key} is used
      * as the variable lookup key. When using this method, variables may be inserted into the
      * message by using the format {@code ${<key>}}.
@@ -58,6 +60,9 @@ public class MessageBuilder {
      * @return this, for chaining
      */
     public MessageBuilder setVariable(String key, Object value) {
+        if (TextWrapper.isText(value)){
+            value = TextWrapper.from(value).get().getString();
+        }
         this.variables.put(key, value);
         return this;
     }
