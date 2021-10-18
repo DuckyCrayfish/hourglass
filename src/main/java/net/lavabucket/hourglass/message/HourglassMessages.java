@@ -23,8 +23,6 @@ import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
 import java.util.stream.Stream;
 
-import javax.annotation.Nullable;
-
 import net.lavabucket.hourglass.config.HourglassConfig;
 import net.lavabucket.hourglass.time.SleepStatus;
 import net.lavabucket.hourglass.time.TimeService;
@@ -228,7 +226,7 @@ public class HourglassMessages {
      * @param level  the level that generated the message
      */
     public static void send(TextWrapper message, ChatType type, MessageTargetType target,
-            @Nullable ServerLevelWrapper level) {
+            ServerLevelWrapper level) {
         Stream<ServerPlayerWrapper> players;
 
         if (target == MessageTargetType.ALL) {
