@@ -42,8 +42,11 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 /** This class listens for events and sends out Hourglass chat notifications. */
 public class HourglassMessages {
 
+    /** Translation key for the message that is sent at morning. */
     public static final String MORNING_KEY = "hourglass.messages.morning";
+    /** Translation key for the message that is sent when a player enters a bed. */
     public static final String ENTER_BED_KEY = "hourglass.messages.enterBed";
+    /** Translation key for the message that is sent when a player leaves a bed. */
     public static final String LEAVE_BED_KEY = "hourglass.messages.leaveBed";
 
     /**
