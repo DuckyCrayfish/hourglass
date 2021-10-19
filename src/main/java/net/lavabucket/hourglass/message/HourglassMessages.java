@@ -21,6 +21,7 @@ package net.lavabucket.hourglass.message;
 
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import net.lavabucket.hourglass.config.HourglassConfig;
@@ -238,6 +239,8 @@ public class HourglassMessages {
 
         if (target == MessageTargetType.SLEEPING) {
             players = players.filter(ServerPlayerWrapper::isSleeping);
+        } else if (target == MessageTargetType.AWAKE) {
+            players = players.filter(Predicate.not(ServerPlayerWrapper::isSleeping));
         }
 
         players.forEach(player -> player.get().sendMessage(message.get(), type, Util.NIL_UUID));

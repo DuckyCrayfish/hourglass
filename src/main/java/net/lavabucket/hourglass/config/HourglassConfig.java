@@ -219,7 +219,8 @@ public final class HourglassConfig {
                     "The target option controls to whom the message is sent:",
                     "\tALL: Sends the message to all players on the server.",
                     "\tDIMENSION: Sends the message to all players in the current dimension.",
-                    "\tSLEEPING: Sends the message to all players in the current dimension who are sleeping.")
+                    "\tSLEEPING: Sends the message to all sleeping players in the current dimension.",
+                    "\tAWAKE: Sends the message to all awake players in the current dimension.")
                     .push("messages");
 
                     internationalMode = builder.comment(

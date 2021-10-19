@@ -235,7 +235,8 @@ Location relative to Minecraft folder:
 	#The target option controls to whom the message is sent:
 	#	ALL: Sends the message to all players on the server.
 	#	DIMENSION: Sends the message to all players in the current dimension.
-	#	SLEEPING: Sends the message to all players in the current dimension who are sleeping.
+	#	SLEEPING: Sends the message to all sleeping players in the current dimension.
+	#	AWAKE: Sends the message to all awake players in the current dimension.
 	[sleep.messages]
 
 		#This message is sent after a sleep cycle has completed.
@@ -250,7 +251,7 @@ Location relative to Minecraft folder:
 			type = "GAME_INFO"
 			#Sets to whom this message is sent.
 			#A target of 'SLEEPING' will send the message to all players who just woke up.
-			#Allowed Values: ALL, DIMENSION, SLEEPING
+			#Allowed Values: ALL, DIMENSION, SLEEPING, AWAKE
 			target = "DIMENSION"
 
 		#This message is sent when a player enters their bed.
@@ -265,7 +266,7 @@ Location relative to Minecraft folder:
 			#Allowed Values: SYSTEM, GAME_INFO
 			type = "GAME_INFO"
 			#Sets to whom this message is sent.
-			#Allowed Values: ALL, DIMENSION, SLEEPING
+			#Allowed Values: ALL, DIMENSION, SLEEPING, AWAKE
 			target = "DIMENSION"
 
 		#This message is sent when a player leaves their bed (without being woken up naturally by morning).
@@ -280,7 +281,7 @@ Location relative to Minecraft folder:
 			#Allowed Values: SYSTEM, GAME_INFO
 			type = "GAME_INFO"
 			#Sets to whom this message is sent.
-			#Allowed Values: ALL, DIMENSION, SLEEPING
+			#Allowed Values: ALL, DIMENSION, SLEEPING, AWAKE
 			target = "DIMENSION"
 ```
 

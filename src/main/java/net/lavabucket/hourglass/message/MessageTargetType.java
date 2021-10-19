@@ -6,6 +6,8 @@ public enum MessageTargetType {
     ALL,
     /** Targets all players in the associated dimension. */
     DIMENSION,
-    /** Targets all sleeping players. */
-    SLEEPING
+    /** Targets all sleeping players in the dimension. */
+    SLEEPING,
+    /** Targets all awake players in the dimension. */
+    AWAKE
 }
