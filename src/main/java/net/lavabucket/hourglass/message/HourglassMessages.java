@@ -228,22 +228,29 @@ public class HourglassMessages {
      */
     public static void send(TextWrapper message, ChatType type, MessageTargetType target,
             ServerLevelWrapper level) {
-        Stream<ServerPlayerWrapper> players;
+
+        Stream<ServerPlayerWrapper> players = getTargetPlayers(target, level);
+        players.forEach(player -> player.get().sendMessage(message.get(), type, Util.NIL_UUID));
+    }
+
+    private static Stream<ServerPlayerWrapper> getTargetPlayers(MessageTargetType target,
+            ServerLevelWrapper level) {
 
         if (target == MessageTargetType.ALL) {
-            players = level.get().getServer().getPlayerList().getPlayers().stream()
+            return level.get().getServer().getPlayerList().getPlayers().stream()
                     .map(ServerPlayerWrapper::new);
-        } else {
-            players = level.get().players().stream().map(ServerPlayerWrapper::new);
         }
+
+        Stream<ServerPlayerWrapper> players = level.get().players().stream()
+                .map(ServerPlayerWrapper::new);
 
         if (target == MessageTargetType.SLEEPING) {
             players = players.filter(ServerPlayerWrapper::isSleeping);
-        } else if (target == MessageTargetType.AWAKE) {
+        }
+        if (target == MessageTargetType.AWAKE) {
             players = players.filter(Predicate.not(ServerPlayerWrapper::isSleeping));
         }
-
-        players.forEach(player -> player.get().sendMessage(message.get(), type, Util.NIL_UUID));
+        return players;
     }
 
 }
