@@ -29,7 +29,8 @@ import org.apache.logging.log4j.Logger;
 
 import net.lavabucket.hourglass.registry.HourglassRegistry;
 import net.lavabucket.hourglass.time.effects.TimeEffect;
-import net.lavabucket.hourglass.utils.MathUtils;
+import net.lavabucket.hourglass.time.providers.SystemBasedTimeProvider;
+import net.lavabucket.hourglass.time.providers.TimeProvider;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 import net.lavabucket.hourglass.wrappers.TimePacketWrapper;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -41,12 +42,6 @@ public class TimeService {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** Time of day when the sun rises above the horizon. */
-    public static final Time DAY_START = new Time(23500);
-
-    /** Time of day when the sun sets below the horizon. */
-    public static final Time NIGHT_START = new Time(12500);
-
     // The largest number of lunar cycles that can be stored in an int
     private static final int OVERFLOW_THRESHOLD = 11184 * Time.LUNAR_CYCLE_TICKS;
 
@@ -54,6 +49,8 @@ public class TimeService {
     public final ServerLevelWrapper level;
     /** The {@code SleepStatus} object for this level. */
     public final SleepStatus sleepStatus;
+
+    public TimeProvider timeProvider;
 
     private double timeDecimalAccumulator = 0;
 
@@ -66,6 +63,7 @@ public class TimeService {
         this.level = level;
         this.sleepStatus = new SleepStatus(() -> SERVER_CONFIG.enableSleepFeature.get());
         this.level.setSleepStatus(this.sleepStatus);
+        this.timeProvider = new SystemBasedTimeProvider();
     }
 
     /**
@@ -77,9 +75,11 @@ public class TimeService {
         }
 
         Time oldTime = getDayTime();
-        Time deltaTime = tickTime();
-        Time time = getDayTime();
+        Time time = timeProvider.updateTime();
+        setDayTime(time);
+        Time deltaTime = time.subtract(oldTime);
 
+        timeProvider.updateTime();
         TimeContext context = new TimeContext(this, time, deltaTime);
         getActiveTimeEffects().forEach(effect -> effect.onTimeTick(context));
 
@@ -128,103 +128,6 @@ public class TimeService {
         if (time > OVERFLOW_THRESHOLD) {
             level.get().setDayTime(time - OVERFLOW_THRESHOLD);
         }
-    }
-
-    /**
-     * Progresses time in this {@link #level} based on the current time-speed.
-     * This method should be called every tick.
-     *
-     * @return the amount of time that elapsed
-     */
-    private Time tickTime() {
-        Time time = getDayTime();
-
-        Time timeDelta = new Time(getTimeSpeed(time));
-        timeDelta = correctForOvershoot(time, timeDelta);
-
-        setDayTime(time.add(timeDelta));
-        return timeDelta;
-    }
-
-    /**
-     * Checks to see if the time-speed will change after elapsing time by {@code timeDelta}, and
-     * correct for any overshooting (or undershooting) based on the new speed.
-     *
-     * @param time  the current time
-     * @param timeDelta  the proposed amount of time to elapse
-     * @return the adjusted amount of time to elapse
-     */
-    private Time correctForOvershoot(Time time, Time timeDelta) {
-        Time nextTime = time.add(timeDelta);
-        Time timeOfDay = time.timeOfDay();
-        Time nextTimeOfDay = nextTime.timeOfDay();
-
-        if (sleepStatus.allAwake()) {
-            // day to night transition
-            if (NIGHT_START.betweenMod(timeOfDay, nextTimeOfDay)) {
-                double nextTimeSpeed = getTimeSpeed(nextTime);
-                Time timeUntilBreakpoint = NIGHT_START.subtract(timeOfDay);
-                double breakpointRatio = 1 - timeUntilBreakpoint.divide(timeDelta);
-
-                return timeUntilBreakpoint.add(nextTimeSpeed * breakpointRatio);
-            }
-
-            // day to night transition
-            if (DAY_START.betweenMod(timeOfDay, nextTimeOfDay)) {
-                double nextTimeSpeed = getTimeSpeed(nextTime);
-                Time timeUntilBreakpoint = DAY_START.subtract(timeOfDay);
-                double breakpointRatio = 1 - timeUntilBreakpoint.divide(timeDelta);
-
-                return timeUntilBreakpoint.add(nextTimeSpeed * breakpointRatio);
-            }
-        } else {
-            // morning transition
-            Time timeUntilMorning = Time.DAY_LENGTH.subtract(timeOfDay);
-            if (timeUntilMorning.compareTo(timeDelta) < 0) {
-                double nextTimeSpeed = SERVER_CONFIG.daySpeed.get();
-                double breakpointRatio = 1 - timeUntilMorning.divide(timeDelta);
-
-                return timeUntilMorning.add(nextTimeSpeed * breakpointRatio);
-            }
-        }
-
-        return timeDelta;
-    }
-
-    /**
-     * Calculates the current time-speed multiplier based on the time-of-day and number of sleeping
-     * players.
-     *
-     * Accepts time as a parameter to allow for prediction of other times. Prediction of times other
-     * than the current time may not be accurate due to sleeping player changes.
-     *
-     * A return value of 1 is equivalent to vanilla time speed.
-     *
-     * @param time  the time at which to calculate the time-speed
-     * @return the time-speed
-     */
-    public double getTimeSpeed(Time time) {
-        if (!SERVER_CONFIG.enableSleepFeature.get() || sleepStatus.allAwake()) {
-            if (time.equals(DAY_START) || time.timeOfDay().betweenMod(DAY_START, NIGHT_START)) {
-                return SERVER_CONFIG.daySpeed.get();
-            } else {
-                return SERVER_CONFIG.nightSpeed.get();
-            }
-        }
-
-        if (sleepStatus.allAsleep() && SERVER_CONFIG.sleepSpeedAll.get() >= 0) {
-            return SERVER_CONFIG.sleepSpeedAll.get();
-        }
-
-        double sleepRatio = sleepStatus.ratio();
-        double curve = SERVER_CONFIG.sleepSpeedCurve.get();
-        double speedRatio = MathUtils.normalizedTunableSigmoid(sleepRatio, curve);
-
-        double sleepSpeedMin = SERVER_CONFIG.sleepSpeedMin.get();
-        double sleepSpeedMax = SERVER_CONFIG.sleepSpeedMax.get();
-        double multiplier = MathUtils.lerp(speedRatio, sleepSpeedMin, sleepSpeedMax);
-
-        return multiplier;
     }
 
     /**

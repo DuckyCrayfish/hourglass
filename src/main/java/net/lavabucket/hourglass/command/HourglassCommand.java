@@ -156,10 +156,11 @@ public class HourglassCommand {
             return 0;
         }
 
-        TextWrapper response = TextWrapper.translation(
-                "commands.hourglass.query.timeSpeed.success",
-                service.getTimeSpeed(service.getDayTime()));
-        context.getSource().sendSuccess(response.get(), false);
+        // TODO: Fix
+        // TextWrapper response = TextWrapper.translation(
+        //         "commands.hourglass.query.timeSpeed.success",
+        //         service.getTimeSpeed(service.getDayTime()));
+        // context.getSource().sendSuccess(response.get(), false);
         return Command.SINGLE_SUCCESS;
     }
 
