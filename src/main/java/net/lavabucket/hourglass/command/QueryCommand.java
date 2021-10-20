@@ -61,7 +61,8 @@ public final class QueryCommand {
 
         TextWrapper response = TextWrapper.translation(
                 "commands.hourglass.query.timeSpeed.success",
-                service.getTimeSpeed(service.getDayTime()));
+                1);
+                // TODO: service.getTimeSpeed(service.getDayTime()));
         context.getSource().sendSuccess(response.get(), false);
         return Command.SINGLE_SUCCESS;
     }

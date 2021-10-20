@@ -29,7 +29,8 @@ import org.apache.logging.log4j.Logger;
 
 import net.lavabucket.hourglass.registry.TimeEffects;
 import net.lavabucket.hourglass.time.effects.TimeEffect;
-import net.lavabucket.hourglass.utils.MathUtils;
+import net.lavabucket.hourglass.time.providers.StandardTimeProvider;
+import net.lavabucket.hourglass.time.providers.TimeProvider;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 import net.lavabucket.hourglass.wrappers.TimePacketWrapper;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -68,6 +69,9 @@ public class TimeService {
     /** The {@code SleepStatus} object for this level. */
     public final SleepStatus sleepStatus;
 
+    /** The {@code TimeProvider} object that supplies time changes every tick. */
+    public TimeProvider timeProvider;
+
     /** The fractional portion of the current time. */
     protected double timeFraction = 0;
 
@@ -80,6 +84,7 @@ public class TimeService {
         this.level = level;
         this.sleepStatus = new SleepStatus(this::isHandlingSleep);
         this.level.setSleepStatus(this.sleepStatus);
+        this.timeProvider = new StandardTimeProvider(this);
     }
 
     /**
@@ -106,12 +111,11 @@ public class TimeService {
      */
     private TimeContext tickTime() {
         Time oldTime = getDayTime();
-        double timeSpeed = getTimeSpeed(oldTime);
-        Time timeDelta = new Time(timeSpeed);
-        timeDelta = correctForOvershoot(oldTime, timeDelta);
-        Time newTime = oldTime.add(timeDelta);
-        setDayTime(newTime);
-        TimeContext context = new TimeContext(this, oldTime, newTime);
+        Time time = timeProvider.updateTime();
+        setDayTime(time);
+        Time deltaTime = time.subtract(oldTime);
+
+        TimeContext context = new TimeContext(this, time, deltaTime);
         return context;
     }
 
@@ -180,87 +184,6 @@ public class TimeService {
      */
     private void vanillaTimeCompensation() {
         level.get().setDayTime(level.get().getDayTime() - 1);
-    }
-
-    /**
-     * Calculates the current time-speed multiplier based on the time of day and number of sleeping
-     * players.
-     *
-     * A return value of 1 is equivalent to vanilla time speed.
-     *
-     * <p>Accepts time as a parameter to allow for prediction of other times. Prediction of times
-     * other than the current time may not be accurate due to sleeping player changes.
-     *
-     * @param time  the time at which to calculate the time-speed
-     * @return the time-speed
-     */
-    public double getTimeSpeed(Time time) {
-        if (!isHandlingSleep() || sleepStatus.allAwake()) {
-            if (time.equals(DAY_START) || time.timeOfDay().betweenMod(DAY_START, NIGHT_START)) {
-                return SERVER_CONFIG.daySpeed.get();
-            } else {
-                return SERVER_CONFIG.nightSpeed.get();
-            }
-        }
-
-        if (sleepStatus.allAsleep() && SERVER_CONFIG.sleepSpeedAll.get() >= 0) {
-            return SERVER_CONFIG.sleepSpeedAll.get();
-        }
-
-        double sleepRatio = sleepStatus.ratio();
-        double curve = SERVER_CONFIG.sleepSpeedCurve.get();
-        double speedRatio = MathUtils.normalizedTunableSigmoid(sleepRatio, curve);
-
-        double sleepSpeedMin = SERVER_CONFIG.sleepSpeedMin.get();
-        double sleepSpeedMax = SERVER_CONFIG.sleepSpeedMax.get();
-        double multiplier = MathUtils.lerp(speedRatio, sleepSpeedMin, sleepSpeedMax);
-
-        return multiplier;
-    }
-
-    /**
-     * Checks to see if the time-speed will change after elapsing time by {@code timeDelta}, and
-     * correct for any overshooting (or undershooting) based on the new speed.
-     *
-     * @param time  the current time
-     * @param timeDelta  the proposed amount of time to elapse
-     * @return the adjusted amount of time to elapse
-     */
-    private Time correctForOvershoot(Time time, Time timeDelta) {
-        Time nextTime = time.add(timeDelta);
-        Time timeOfDay = time.timeOfDay();
-        Time nextTimeOfDay = nextTime.timeOfDay();
-
-        if (sleepStatus.allAwake()) {
-            // day to night transition
-            if (NIGHT_START.betweenMod(timeOfDay, nextTimeOfDay)) {
-                double nextTimeSpeed = getTimeSpeed(nextTime);
-                Time timeUntilBreakpoint = NIGHT_START.subtract(timeOfDay);
-                double breakpointRatio = 1 - timeUntilBreakpoint.divide(timeDelta);
-
-                return timeUntilBreakpoint.add(nextTimeSpeed * breakpointRatio);
-            }
-
-            // day to night transition
-            if (DAY_START.betweenMod(timeOfDay, nextTimeOfDay)) {
-                double nextTimeSpeed = getTimeSpeed(nextTime);
-                Time timeUntilBreakpoint = DAY_START.subtract(timeOfDay);
-                double breakpointRatio = 1 - timeUntilBreakpoint.divide(timeDelta);
-
-                return timeUntilBreakpoint.add(nextTimeSpeed * breakpointRatio);
-            }
-        } else {
-            // morning transition
-            Time timeUntilMorning = Time.DAY_LENGTH.subtract(timeOfDay);
-            if (timeUntilMorning.compareTo(timeDelta) < 0) {
-                double nextTimeSpeed = SERVER_CONFIG.daySpeed.get();
-                double breakpointRatio = 1 - timeUntilMorning.divide(timeDelta);
-
-                return timeUntilMorning.add(nextTimeSpeed * breakpointRatio);
-            }
-        }
-
-        return timeDelta;
     }
 
     /**
