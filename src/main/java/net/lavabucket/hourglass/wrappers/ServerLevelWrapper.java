@@ -140,12 +140,9 @@ public class ServerLevelWrapper extends Wrapper<ServerLevel> {
         }
     }
 
-    /**
-     * {@return true if {@code level} is a derived level}
-     * @param level  the level to check
-     */
-    public static boolean isDerived(LevelAccessor level) {
-        return level != null && level.getLevelData().getClass().equals(DERIVED_DATA_CLASS);
+    /** {@return true if this level is a derived level} */
+    public boolean isDerived() {
+        return get().getLevelData().getClass().equals(DERIVED_DATA_CLASS);
     }
 
     /**

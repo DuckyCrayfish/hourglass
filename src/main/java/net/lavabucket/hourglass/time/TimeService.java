@@ -293,10 +293,8 @@ public class TimeService {
      * @return true if {@code levelToCheck} has its time managed by this object, or false otherwise.
      */
     public boolean managesLevel(ServerLevelWrapper levelToCheck) {
-        if (level.get().equals(levelToCheck.get())) {
-            return true;
-        } else if (level.get().equals(level.get().getServer().overworld())
-                && ServerLevelWrapper.isDerived(levelToCheck.get())) {
+        if ((level.get().equals(level.get().getServer().overworld()) && levelToCheck.isDerived())
+                || level.get().equals(levelToCheck.get())) {
             return true;
         } else {
             return false;
