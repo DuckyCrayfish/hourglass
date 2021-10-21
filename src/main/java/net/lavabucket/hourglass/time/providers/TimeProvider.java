@@ -21,8 +21,15 @@ package net.lavabucket.hourglass.time.providers;
 
 import net.lavabucket.hourglass.time.Time;
 
+/**
+ * Provides time to the {@link TimeService} every tick.
+ */
 public interface TimeProvider {
 
+    /**
+     * Calculates the new time value. Called every tick.
+     * @return the new time
+     */
     public Time updateTime();
 
 }

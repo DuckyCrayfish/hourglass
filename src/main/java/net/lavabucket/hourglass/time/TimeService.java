@@ -49,14 +49,13 @@ public class TimeService {
     public final ServerLevelWrapper level;
     /** The {@code SleepStatus} object for this level. */
     public final SleepStatus sleepStatus;
-
+    /** The {@code TimeProvider} currently providing the level time. */
     public TimeProvider timeProvider;
 
     private double timeDecimalAccumulator = 0;
 
     /**
      * Creates a new instance.
-     *
      * @param level  the wrapped level whose time this object should manage
      */
     public TimeService(ServerLevelWrapper level) {
@@ -66,9 +65,7 @@ public class TimeService {
         this.timeProvider = new SystemBasedTimeProvider();
     }
 
-    /**
-     * Performs all time, sleep, and weather calculations. Should run once per tick.
-     */
+    /** Ticks the level's time and all time effects. Broadcasts the new time to all players. */
     public void tick() {
         if (!level.daylightRuleEnabled()) {
             return;
@@ -93,6 +90,7 @@ public class TimeService {
         vanillaTimeCompensation();
     }
 
+    /** Handles all morning operations. */
     private void handleMorning() {
         long time = level.get().getDayTime();
         ForgeEventFactory.onSleepFinished(level.get(), time, time);
@@ -120,8 +118,9 @@ public class TimeService {
     }
 
     /**
-     * Prevents time value from getting too large by essentially keeping it modulo a multiple of the
-     * lunar cycle.
+     * Prevents time value from getting too large by keeping it between 0 and
+     * {@link #OVERFLOW_THRESHOLD} using modulo operations. This process should not visibly
+     * interrupt the solar or lunar cycle appearance.
      */
     private void preventTimeOverflow() {
         long time = level.get().getDayTime();
@@ -130,9 +129,7 @@ public class TimeService {
         }
     }
 
-    /**
-     * {@return this level's time as an instance of {@link Time}}
-     */
+    /** {@return this level's time as an instance of {@link Time}} */
     public Time getDayTime() {
         return new Time(level.get().getDayTime(), timeDecimalAccumulator);
     }
@@ -140,7 +137,7 @@ public class TimeService {
     /**
      * Sets this level's 'daytime' to the integer component of {@code time}.
      * @param time  the time to set
-     * @return the new time
+     * @return the new time that was set
      */
     public Time setDayTime(Time time) {
         timeDecimalAccumulator = time.fractionalValue();
@@ -148,9 +145,7 @@ public class TimeService {
         return time;
     }
 
-    /**
-     * Broadcasts the current time to all players who observe it.
-     */
+    /** Broadcasts the current time to all players who observe it. */
     public void broadcastTime() {
         TimePacketWrapper timePacket = TimePacketWrapper.create(level);
         level.get().getServer().getPlayerList().getPlayers().stream()
@@ -177,6 +172,7 @@ public class TimeService {
         }
     }
 
+    /** {@return the current time effects active for this level} */
     private Collection<TimeEffect> getActiveTimeEffects() {
         return HourglassRegistry.TIME_EFFECT.getValues();
     }

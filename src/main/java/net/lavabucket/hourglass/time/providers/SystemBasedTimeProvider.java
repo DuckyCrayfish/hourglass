@@ -25,6 +25,11 @@ import java.time.ZonedDateTime;
 
 import net.lavabucket.hourglass.time.Time;
 
+/**
+ * A time provider that is based on system time, allowing Minecraft time to sync with real-life.
+ *
+ * <p>This class matches Minecraft time 0 with 6:00 a.m. in real-life.
+ */
 public class SystemBasedTimeProvider implements TimeProvider {
 
     @Override

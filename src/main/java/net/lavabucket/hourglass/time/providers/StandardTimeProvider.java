@@ -26,6 +26,9 @@ import net.lavabucket.hourglass.time.Time;
 import net.lavabucket.hourglass.time.TimeService;
 import net.lavabucket.hourglass.utils.MathUtils;
 
+/**
+ * A time provider that progresses time relative to its current state using a time speed multiplier.
+ */
 public class StandardTimeProvider implements TimeProvider {
 
     /** Time of day when the sun rises above the horizon. */
@@ -43,9 +46,7 @@ public class StandardTimeProvider implements TimeProvider {
     }
 
     /**
-     * Progresses time in this {@link #level} based on the current time-speed.
-     * This method should be called every tick.
-     *
+     * Progresses time based on the current time-speed.
      * @return the new time
      */
     @Override
@@ -105,13 +106,12 @@ public class StandardTimeProvider implements TimeProvider {
     }
 
     /**
-     * Calculates the current time-speed multiplier based on the time-of-day and number of sleeping
-     * players.
-     *
-     * Accepts time as a parameter to allow for prediction of other times. Prediction of times other
-     * than the current time may not be accurate due to sleeping player changes.
+     * Calculates the current time speed based on the time-of-day and number of sleeping players.
      *
      * A return value of 1 is equivalent to vanilla time speed.
+     *
+     * <p>Accepts time as a parameter to allow for prediction of other times. Prediction of times
+     * other than the current time may not be accurate due to sleeping player changes.
      *
      * @param time  the time at which to calculate the time-speed
      * @return the time-speed
