@@ -95,6 +95,23 @@ public class TimeService {
     }
 
     /**
+     * Progresses time in this {@link #level} based on the current time-speed.
+     * This method should be called every tick.
+     *
+     * @return a {@code TimeContext} for the time change
+     */
+    private TimeContext tickTime() {
+        Time oldTime = getDayTime();
+        double timeSpeed = getTimeSpeed(oldTime);
+        Time timeDelta = new Time(timeSpeed);
+        timeDelta = correctForOvershoot(oldTime, timeDelta);
+        Time newTime = oldTime.add(timeDelta);
+        setDayTime(newTime);
+        TimeContext context = new TimeContext(this, oldTime, newTime);
+        return context;
+    }
+
+    /**
      * Detects if morning has passed and performs all morning functionality if so.
      * @param context  the {@code TimeContext} of the time change that occurred
      */
@@ -119,6 +136,29 @@ public class TimeService {
     }
 
     /**
+     * Prevents time value from getting too large by essentially keeping it modulo a multiple of the
+     * lunar cycle.
+     */
+    private void preventTimeOverflow() {
+        long time = level.get().getDayTime();
+        if (time > OVERFLOW_THRESHOLD) {
+            level.get().setDayTime(time - OVERFLOW_THRESHOLD);
+        }
+    }
+
+    /**
+     * Broadcasts the current time to all players who observe it. This includes all players in
+     * the current level, and if the current level is the Overworld, the players in all derived
+     * levels as well.
+     */
+    protected void broadcastTime() {
+        TimePacketWrapper timePacket = TimePacketWrapper.create(level);
+        level.get().getServer().getPlayerList().getPlayers().stream()
+                .filter(player -> managesLevel(new ServerLevelWrapper(player.level)))
+                .forEach(player -> player.connection.send(timePacket.get()));
+    }
+
+    /**
      * This method compensates for time changes made by the vanilla server every tick.
      *
      * The vanilla server increments time at a rate of 1 every tick. Since this functionality
@@ -131,31 +171,39 @@ public class TimeService {
     }
 
     /**
-     * Prevents time value from getting too large by essentially keeping it modulo a multiple of the
-     * lunar cycle.
-     */
-    private void preventTimeOverflow() {
-        long time = level.get().getDayTime();
-        if (time > OVERFLOW_THRESHOLD) {
-            level.get().setDayTime(time - OVERFLOW_THRESHOLD);
-        }
-    }
-
-    /**
-     * Progresses time in this {@link #level} based on the current time-speed.
-     * This method should be called every tick.
+     * Calculates the current time-speed multiplier based on the time of day and number of sleeping
+     * players.
      *
-     * @return a {@code TimeContext} for the time change
+     * A return value of 1 is equivalent to vanilla time speed.
+     *
+     * <p>Accepts time as a parameter to allow for prediction of other times. Prediction of times
+     * other than the current time may not be accurate due to sleeping player changes.
+     *
+     * @param time  the time at which to calculate the time-speed
+     * @return the time-speed
      */
-    private TimeContext tickTime() {
-        Time oldTime = getDayTime();
-        double timeSpeed = getTimeSpeed(oldTime);
-        Time timeDelta = new Time(timeSpeed);
-        timeDelta = correctForOvershoot(oldTime, timeDelta);
-        Time newTime = oldTime.add(timeDelta);
-        setDayTime(newTime);
-        TimeContext context = new TimeContext(this, oldTime, newTime);
-        return context;
+    public double getTimeSpeed(Time time) {
+        if (!SERVER_CONFIG.enableSleepFeature.get() || sleepStatus.allAwake()) {
+            if (time.equals(DAY_START) || time.timeOfDay().betweenMod(DAY_START, NIGHT_START)) {
+                return SERVER_CONFIG.daySpeed.get();
+            } else {
+                return SERVER_CONFIG.nightSpeed.get();
+            }
+        }
+
+        if (sleepStatus.allAsleep() && SERVER_CONFIG.sleepSpeedAll.get() >= 0) {
+            return SERVER_CONFIG.sleepSpeedAll.get();
+        }
+
+        double sleepRatio = sleepStatus.ratio();
+        double curve = SERVER_CONFIG.sleepSpeedCurve.get();
+        double speedRatio = MathUtils.normalizedTunableSigmoid(sleepRatio, curve);
+
+        double sleepSpeedMin = SERVER_CONFIG.sleepSpeedMin.get();
+        double sleepSpeedMax = SERVER_CONFIG.sleepSpeedMax.get();
+        double multiplier = MathUtils.lerp(speedRatio, sleepSpeedMin, sleepSpeedMax);
+
+        return multiplier;
     }
 
     /**
@@ -204,42 +252,6 @@ public class TimeService {
     }
 
     /**
-     * Calculates the current time-speed multiplier based on the time of day and number of sleeping
-     * players.
-     *
-     * A return value of 1 is equivalent to vanilla time speed.
-     *
-     * <p>Accepts time as a parameter to allow for prediction of other times. Prediction of times
-     * other than the current time may not be accurate due to sleeping player changes.
-     *
-     * @param time  the time at which to calculate the time-speed
-     * @return the time-speed
-     */
-    public double getTimeSpeed(Time time) {
-        if (!SERVER_CONFIG.enableSleepFeature.get() || sleepStatus.allAwake()) {
-            if (time.equals(DAY_START) || time.timeOfDay().betweenMod(DAY_START, NIGHT_START)) {
-                return SERVER_CONFIG.daySpeed.get();
-            } else {
-                return SERVER_CONFIG.nightSpeed.get();
-            }
-        }
-
-        if (sleepStatus.allAsleep() && SERVER_CONFIG.sleepSpeedAll.get() >= 0) {
-            return SERVER_CONFIG.sleepSpeedAll.get();
-        }
-
-        double sleepRatio = sleepStatus.ratio();
-        double curve = SERVER_CONFIG.sleepSpeedCurve.get();
-        double speedRatio = MathUtils.normalizedTunableSigmoid(sleepRatio, curve);
-
-        double sleepSpeedMin = SERVER_CONFIG.sleepSpeedMin.get();
-        double sleepSpeedMax = SERVER_CONFIG.sleepSpeedMax.get();
-        double multiplier = MathUtils.lerp(speedRatio, sleepSpeedMin, sleepSpeedMax);
-
-        return multiplier;
-    }
-
-    /**
      * {@return this level's time as an instance of a {@code Time} object}.
      * Includes the last time fraction set by {@link #setDayTime(Time)}.
      */
@@ -258,18 +270,6 @@ public class TimeService {
         timeFraction = time.fractionalValue();
         level.get().setDayTime(time.longValue());
         return time;
-    }
-
-    /**
-     * Broadcasts the current time to all players who observe it. This includes all players in
-     * the current level, and if the current level is the Overworld, the players in all derived
-     * levels as well.
-     */
-    public void broadcastTime() {
-        TimePacketWrapper timePacket = TimePacketWrapper.create(level);
-        level.get().getServer().getPlayerList().getPlayers().stream()
-                .filter(player -> managesLevel(new ServerLevelWrapper(player.level)))
-                .forEach(player -> player.connection.send(timePacket.get()));
     }
 
     /**
