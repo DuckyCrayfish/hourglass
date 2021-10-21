@@ -86,15 +86,11 @@ public class TimeService {
             return;
         }
 
-        Time oldTime = getDayTime();
-        tickTime();
-        Time newTime = getDayTime();
-
-        TimeContext context = new TimeContext(this, oldTime, newTime);
+        TimeContext context = tickTime();
         getActiveTimeEffects().forEach(effect -> effect.onTimeTick(context));
 
         boolean overrideSleep = SERVER_CONFIG.enableSleepFeature.get();
-        if (overrideSleep && !sleepStatus.allAwake() && Time.crossedMorning(oldTime, newTime)) {
+        if (overrideSleep && !sleepStatus.allAwake() && Time.crossedMorning(context.getOldTime(), context.getNewTime())) {
             handleMorning();
         }
 
@@ -144,16 +140,17 @@ public class TimeService {
      * Progresses time in this {@link #level} based on the current time-speed.
      * This method should be called every tick.
      *
-     * @return the amount of time that elapsed
+     * @return a {@code TimeContext} for the time change
      */
-    private Time tickTime() {
-        Time time = getDayTime();
-
-        Time timeDelta = new Time(getTimeSpeed(time));
-        timeDelta = correctForOvershoot(time, timeDelta);
-
-        setDayTime(time.add(timeDelta));
-        return timeDelta;
+    private TimeContext tickTime() {
+        Time oldTime = getDayTime();
+        double timeSpeed = getTimeSpeed(oldTime);
+        Time timeDelta = new Time(timeSpeed);
+        timeDelta = correctForOvershoot(oldTime, timeDelta);
+        Time newTime = oldTime.add(timeDelta);
+        setDayTime(newTime);
+        TimeContext context = new TimeContext(this, oldTime, newTime);
+        return context;
     }
 
     /**
