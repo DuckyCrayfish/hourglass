@@ -36,6 +36,7 @@ import net.minecraftforge.event.ForgeEventFactory;
 
 /**
  * Handles the Hourglass time and sleep functionality for a level.
+ * A level should only have one associated {@code TimeService}.
  */
 public class TimeService {
 
@@ -201,13 +202,13 @@ public class TimeService {
     }
 
     /**
-     * Calculates the current time-speed multiplier based on the time-of-day and number of sleeping
+     * Calculates the current time-speed multiplier based on the time of day and number of sleeping
      * players.
      *
-     * Accepts time as a parameter to allow for prediction of other times. Prediction of times other
-     * than the current time may not be accurate due to sleeping player changes.
-     *
      * A return value of 1 is equivalent to vanilla time speed.
+     *
+     * <p>Accepts time as a parameter to allow for prediction of other times. Prediction of times
+     * other than the current time may not be accurate due to sleeping player changes.
      *
      * @param time  the time at which to calculate the time-speed
      * @return the time-speed
@@ -237,14 +238,17 @@ public class TimeService {
     }
 
     /**
-     * {@return this level's time as an instance of {@link Time}}
+     * {@return this level's time as an instance of a {@code Time} object}.
+     * Includes the last time fraction set by {@link #setDayTime(Time)}.
      */
     public Time getDayTime() {
         return new Time(level.get().getDayTime(), timeFraction);
     }
 
     /**
-     * Sets this level's 'daytime' to the integer component of {@code time}.
+     * Sets this level's 'daytime' to the integer component of {@code time}, and saves the
+     * fractional component.
+     *
      * @param time  the time to set
      * @return the new time
      */
@@ -255,7 +259,9 @@ public class TimeService {
     }
 
     /**
-     * Broadcasts the current time to all players who observe it.
+     * Broadcasts the current time to all players who observe it. This includes all players in
+     * the current level, and if the current level is the Overworld, the players in all derived
+     * levels as well.
      */
     public void broadcastTime() {
         TimePacketWrapper timePacket = TimePacketWrapper.create(level);
@@ -283,6 +289,7 @@ public class TimeService {
         }
     }
 
+    /** {@return all time effects currently active in this level} */
     private Collection<TimeEffect> getActiveTimeEffects() {
         return HourglassRegistry.TIME_EFFECT.getValues();
     }
