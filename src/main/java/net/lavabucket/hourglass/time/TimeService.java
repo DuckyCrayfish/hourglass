@@ -47,8 +47,15 @@ public class TimeService {
     /** Time of day when the sun sets below the horizon. */
     public static final Time NIGHT_START = new Time(12500);
 
-    // The largest number of lunar cycles that can be stored in an int
-    private static final int OVERFLOW_THRESHOLD = 11184 * Time.LUNAR_CYCLE_TICKS;
+    /**
+     * Threshold at which time is set back relative to zero.
+     * This is done to prevent the time value from getting too high and causing jerky movements of
+     * the skybox when time is ultimately cast to a floating-point representation by Minecraft.
+     *
+     * <p>This number was chosen somewhat arbitrarily as the largest multiple of the lunar cycle
+     * duration that can fit inside of an int.
+     */
+    public static final long OVERFLOW_THRESHOLD = 11184 * Time.LUNAR_CYCLE_TICKS;
 
     /** The level managed by this {@code TimeService}. */
     public final ServerLevelWrapper level;
