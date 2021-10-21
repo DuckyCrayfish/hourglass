@@ -294,7 +294,7 @@ public class TimeService {
      */
     public boolean managesLevel(ServerLevelWrapper levelToCheck) {
         if ((level.get().equals(level.get().getServer().overworld()) && levelToCheck.isDerived())
-                || level.get().equals(levelToCheck.get())) {
+                || level.equals(levelToCheck)) {
             return true;
         } else {
             return false;

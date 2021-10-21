@@ -38,4 +38,29 @@ public class Wrapper<T> {
         return wrapped;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((wrapped == null) ? 0 : wrapped.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        ServerLevelWrapper other = (ServerLevelWrapper) obj;
+        if (wrapped == null) {
+            return other.wrapped == null;
+        } else {
+            return wrapped.equals(other.wrapped);
+        }
+    }
+
 }
