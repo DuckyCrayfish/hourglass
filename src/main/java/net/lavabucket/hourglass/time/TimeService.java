@@ -91,7 +91,7 @@ public class TimeService {
         }
 
         TimeContext context = tickTime();
-        getActiveTimeEffects().forEach(effect -> effect.onTimeTick(context));
+        executeTimeEffects(context);
         handleMorning(context);
         preventTimeOverflow();
         broadcastTime();
@@ -113,6 +113,14 @@ public class TimeService {
         setDayTime(newTime);
         TimeContext context = new TimeContext(this, oldTime, newTime);
         return context;
+    }
+
+    /**
+     * Executes all active time effects on a level using the given {@code TimeContext}.
+     * @param context  the {@code TimeContext} of a time change.
+    */
+    private void executeTimeEffects(TimeContext context) {
+        getActiveTimeEffects().forEach(effect -> effect.onTimeTick(context));
     }
 
     /**
