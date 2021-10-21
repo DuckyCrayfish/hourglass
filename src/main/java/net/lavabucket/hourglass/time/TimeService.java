@@ -88,20 +88,25 @@ public class TimeService {
 
         TimeContext context = tickTime();
         getActiveTimeEffects().forEach(effect -> effect.onTimeTick(context));
-
-        boolean overrideSleep = SERVER_CONFIG.enableSleepFeature.get();
-        if (overrideSleep && !sleepStatus.allAwake() && Time.crossedMorning(context.getOldTime(), context.getNewTime())) {
-            handleMorning();
-        }
-
+        handleMorning(context);
         preventTimeOverflow();
         broadcastTime();
         vanillaTimeCompensation();
     }
 
-    private void handleMorning() {
-        long time = level.get().getDayTime();
-        ForgeEventFactory.onSleepFinished(level.get(), time, time);
+    /**
+     * Detects if morning has passed and performs all morning functionality if so.
+     * @param context  the {@code TimeContext} of the time change that occurred
+     */
+    private void handleMorning(TimeContext context) {
+        Time oldTime = context.getOldTime();
+        Time newTime = context.getNewTime();
+        boolean overrideSleep = SERVER_CONFIG.enableSleepFeature.get();
+        if (!overrideSleep || sleepStatus.allAwake() || !Time.crossedMorning(oldTime, newTime)) {
+            return;
+        }
+
+        ForgeEventFactory.onSleepFinished(level.get(), newTime.longValue(), newTime.longValue());
         sleepStatus.removeAllSleepers();
         level.wakeUpAllPlayers();
 
