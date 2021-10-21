@@ -59,10 +59,12 @@ public class TimeService {
 
     /** The level managed by this {@code TimeService}. */
     public final ServerLevelWrapper level;
+
     /** The {@code SleepStatus} object for this level. */
     public final SleepStatus sleepStatus;
 
-    private double timeDecimalAccumulator = 0;
+    /** The fractional portion of the current time. */
+    protected double timeFraction = 0;
 
     /**
      * Creates a new instance.
@@ -238,7 +240,7 @@ public class TimeService {
      * {@return this level's time as an instance of {@link Time}}
      */
     public Time getDayTime() {
-        return new Time(level.get().getDayTime(), timeDecimalAccumulator);
+        return new Time(level.get().getDayTime(), timeFraction);
     }
 
     /**
@@ -247,7 +249,7 @@ public class TimeService {
      * @return the new time
      */
     public Time setDayTime(Time time) {
-        timeDecimalAccumulator = time.fractionalValue();
+        timeFraction = time.fractionalValue();
         level.get().setDayTime(time.longValue());
         return time;
     }
