@@ -36,7 +36,11 @@ import net.minecraftforge.event.ForgeEventFactory;
 
 /**
  * Handles the Hourglass time and sleep functionality for a level.
- * A level should only have one associated {@code TimeService}.
+ *
+ * <p>No level should have more than one associated {@code TimeService}, and every
+ * {@code TimeService} manages exactly one level. One outlier to this rule is "derived levels",
+ * which, since they derive their time from the Overworld, will indirectly have their time managed
+ * by the Overworld {@code TimeService}.
  */
 public class TimeService {
 
@@ -95,7 +99,7 @@ public class TimeService {
     }
 
     /**
-     * Progresses time in this {@link #level} based on the current time-speed.
+     * Progresses time in this level based on the current time-speed.
      * This method should be called every tick.
      *
      * @return a {@code TimeContext} for the time change

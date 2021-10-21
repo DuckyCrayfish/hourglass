@@ -36,7 +36,7 @@ public class TimeServiceManager {
 
     /** The Overworld {@code TimeService} object. null if Overworld not loaded. */
     public static TimeService service;
-    /** The earliest time at which players are no longer allowed to sleep in vanilla. */
+    /** The last time at which players are allowed to sleep under normal conditions in vanilla. */
     public static final Time VANILLA_SLEEP_END = new Time(23460);
 
     /**
@@ -61,7 +61,7 @@ public class TimeServiceManager {
     }
 
     /**
-     * Modifies permitted sleep times to allow players to sleep through dawn until day-time 0
+     * Modifies the permitted sleep times to allow players to sleep through dawn until day-time 0
      * while the sleep feature is enabled.
      *
      * <p>Called once per tick for every player who is currently sleeping. Event result determines
@@ -83,7 +83,6 @@ public class TimeServiceManager {
 
     /**
      * Event listener that is called when a new level is loaded.
-     *
      * @param event  the event provided by the Forge event bus
      */
     @SubscribeEvent
@@ -98,7 +97,6 @@ public class TimeServiceManager {
 
     /**
      * Event listener that is called when a level is unloaded.
-     *
      * @param event  the event provided by the Forge event bus
      */
     @SubscribeEvent
@@ -110,7 +108,6 @@ public class TimeServiceManager {
 
     /**
      * Event listener that is called every tick per level.
-     *
      * @param event  the event provided by the Forge event bus
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
