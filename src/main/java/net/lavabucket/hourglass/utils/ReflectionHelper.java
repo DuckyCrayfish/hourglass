@@ -42,7 +42,7 @@ public final class ReflectionHelper {
     /** Reflection reference to {@code LivingEntity#tickEffects()} method. */
     public static final Method METHOD_TICK_EFFECTS = ObfuscationReflectionHelper.findMethod(LivingEntity.class, "m_21217_");
 
-    // Private constructor to forbid object instantiation.
+    // Private constructor to prohibit instantiation.
     private ReflectionHelper() {}
 
 }

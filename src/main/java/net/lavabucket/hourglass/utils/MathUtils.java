@@ -27,9 +27,6 @@ package net.lavabucket.hourglass.utils;
  */
 public final class MathUtils {
 
-    // Private constructor to prevent instantiation.
-    private MathUtils() {}
-
     /**
      * Returns a value from the range of numbers between {@code d0} and {@code d1}. The value's
      * position in this range is proportional to the argument {@code percent} as a fraction.
@@ -54,5 +51,8 @@ public final class MathUtils {
     public static double normalizedTunableSigmoid(double x, double c) {
         return c*x / (2*c*x - c - x + 1);
     }
+
+    // Private constructor to prohibit instantiation.
+    private MathUtils() {}
 
 }
