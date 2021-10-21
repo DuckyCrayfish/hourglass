@@ -51,11 +51,12 @@ public class StandardTimeProvider implements TimeProvider {
     @Override
     public Time updateTime() {
         Time time = timeService.getDayTime();
-
-        Time timeDelta = new Time(getTimeSpeed(time));
+        double timeSpeed = getTimeSpeed(time);
+        Time timeDelta = new Time(timeSpeed);
         timeDelta = correctForOvershoot(time, timeDelta);
 
-        return time.add(timeDelta);
+        time = time.add(timeDelta);
+        return time;
     }
 
     /**
