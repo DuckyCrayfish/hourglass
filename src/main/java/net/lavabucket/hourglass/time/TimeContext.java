@@ -22,45 +22,49 @@ package net.lavabucket.hourglass.time;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 
 /**
- * Holds information about a time change performed by a {@code TimeService} on its level.
+ * An immutable snapshot of a time progression event.
  * This class is used to pass time information to time effects.
  *
- * <p>This class intentionally excludes references to external libraries to minimize changes between
- * Minecraft versions.
+ * <p>This class intentionally excludes references to Minecraft objects (like the level class) to
+ * minimize changes between Minecraft versions.
  */
 public class TimeContext {
 
-    /** The {@code TimeService} for the level whose time changed. */
-    protected final TimeService timeService;
-    /** The new time after this time change occurred. */
-    protected final Time currentTime;
-    /** The amount of time that passed during this time change. */
-    protected final Time timeDelta;
+    private final TimeService timeService;
+    private final Time oldTime;
+    private final Time newTime;
+    private final Time timeDelta;
 
     /**
      * Creates a new instance.
      *
      * @param timeService  the {@code TimeService} for the level
-     * @param currentTime  the current time after the change occurred
-     * @param timeDelta  the time that has elapsed during this tick
+     * @param oldTime  the old time before the change occurred
+     * @param newTime  the new time after the change occurred
      */
-    public TimeContext(TimeService timeService, Time currentTime, Time timeDelta) {
+    public TimeContext(TimeService timeService, Time oldTime, Time newTime) {
         this.timeService = timeService;
-        this.currentTime = currentTime;
-        this.timeDelta = timeDelta;
+        this.oldTime = oldTime;
+        this.newTime = newTime;
+        this.timeDelta = newTime.subtract(oldTime);
     }
 
     /** {@return the time service for the level} */
-    public TimeService getTimeService() {
+    public final TimeService getTimeService() {
         return timeService;
     }
 
-    /** {@return the new time set during this tick} */
-    public Time getCurrentTime() {
-        return currentTime;
+    /** {@return the old time before this change occurred} */
+    public final Time getOldTime() {
+        return oldTime;
     }
 
-    /** {@return the time that has elapsed during this tick} */
+    /** {@return the new time set during this tick} */
+    public final Time getNewTime() {
+        return newTime;
+    }
+
+    /** {@return the cached value of {@code getNewTime().subtract(getOldTime)}} */
     public Time getTimeDelta() {
         return timeDelta;
     }

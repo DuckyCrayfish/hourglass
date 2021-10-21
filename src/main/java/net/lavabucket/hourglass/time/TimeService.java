@@ -87,14 +87,14 @@ public class TimeService {
         }
 
         Time oldTime = getDayTime();
-        Time deltaTime = tickTime();
-        Time time = getDayTime();
+        tickTime();
+        Time newTime = getDayTime();
 
-        TimeContext context = new TimeContext(this, time, deltaTime);
+        TimeContext context = new TimeContext(this, oldTime, newTime);
         getActiveTimeEffects().forEach(effect -> effect.onTimeTick(context));
 
         boolean overrideSleep = SERVER_CONFIG.enableSleepFeature.get();
-        if (overrideSleep && !sleepStatus.allAwake() && Time.crossedMorning(oldTime, time)) {
+        if (overrideSleep && !sleepStatus.allAwake() && Time.crossedMorning(oldTime, newTime)) {
             handleMorning();
         }
 
