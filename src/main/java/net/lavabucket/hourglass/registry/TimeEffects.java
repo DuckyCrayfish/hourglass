@@ -47,7 +47,7 @@ public class TimeEffects {
     public static RegistryObject<TimeEffect> BLOCK_ENTITY_EFFECT = TIME_EFFECTS.register("block_entity", () -> new BlockEntityTimeEffect());
 
     /**
-     * Registers {@link #TIME_EFFECTS}.
+     * Registers all {@code TimeEffect} objects created in this class to the registry.
      * @param event  the event, provided by the mod event bus
      */
     @SubscribeEvent
