@@ -54,9 +54,9 @@ public class SleepGui {
         Minecraft minecraft = Minecraft.getInstance();
 
         if (event.phase == Phase.START
+                && minecraft.level != null
                 && CLIENT_CONFIG.preventClockWobble.get()
                 && clockEnabled()
-                && minecraft.level != null
                 && !minecraft.isPaused()) {
 
             // Render a clock every tick to prevent clock wobble after getting in bed.
