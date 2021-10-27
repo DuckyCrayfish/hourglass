@@ -47,4 +47,7 @@ public final class HourglassRegistry {
         TIME_EFFECT = new RegistryBuilder<TimeEffect>().setName(TIME_EFFECT_KEY).setType(TimeEffect.class).create();
     }
 
+    // Private constructor to prohibit instantiation.
+    private HourglassRegistry() {}
+
 }
