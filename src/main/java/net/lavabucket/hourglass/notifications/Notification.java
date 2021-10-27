@@ -19,45 +19,14 @@
 
 package net.lavabucket.hourglass.notifications;
 
-import java.util.stream.Stream;
-
 import net.lavabucket.hourglass.notifications.target.NotificationTarget;
-import net.lavabucket.hourglass.notifications.target.TargetContext;
-import net.lavabucket.hourglass.notifications.textbuilder.TextBuilder;
-import net.lavabucket.hourglass.wrappers.ServerPlayerWrapper;
-import net.lavabucket.hourglass.wrappers.TextWrapper;
-import net.minecraft.Util;
-import net.minecraft.network.chat.ChatType;
 
-public class Notification {
+public interface Notification {
 
-    protected final NotificationTarget target;
-    protected final ChatType type;
-    protected final TextBuilder messageBuilder;
-    protected final TargetContext context;
+    /** Sends the notification to all target recipients. */
+    void send();
 
-    public Notification(NotificationTarget target, TargetContext context, ChatType type,
-            TextBuilder messageBuilder) {
-        this.target = target;
-        this.context = context;
-        this.type = type;
-        this.messageBuilder = messageBuilder;
-    }
-
-    public void send() {
-        getRecipients().forEach(this::sendToPlayer);
-    }
-
-    protected TextWrapper getMessage() {
-        return messageBuilder.build();
-    }
-
-    protected Stream<ServerPlayerWrapper> getRecipients() {
-        return target.findMatches(context);
-    }
-
-    protected void sendToPlayer(ServerPlayerWrapper player) {
-        player.get().sendMessage(getMessage().get(), type, Util.NIL_UUID);
-    }
+    /** {@return the {@code NotificationTarget} of this notification} */
+    NotificationTarget getTarget();
 
 }

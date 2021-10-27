@@ -21,7 +21,7 @@ package net.lavabucket.hourglass.notifications.factory;
 
 import java.util.function.Supplier;
 
-import net.lavabucket.hourglass.notifications.Notification;
+import net.lavabucket.hourglass.notifications.GenericNotification;
 import net.lavabucket.hourglass.notifications.target.NotificationTarget;
 import net.lavabucket.hourglass.notifications.target.TargetContext;
 import net.lavabucket.hourglass.notifications.textbuilder.TemplateTextBuilder;
@@ -51,13 +51,13 @@ public class ConfigurableNotificationFactory {
         this.translationModeSupplier = translationModeSupplier;
     }
 
-    public Notification create(TargetContext context) {
+    public GenericNotification create(TargetContext context) {
         TextBuilder builder = getMessageBuilder(context);
         return create(context, builder);
     }
 
-    public Notification create(TargetContext context, TextBuilder builder) {
-        return new Notification(targetSupplier.get(), context, typeSupplier.get(), builder);
+    public GenericNotification create(TargetContext context, TextBuilder builder) {
+        return new GenericNotification(targetSupplier.get(), context, typeSupplier.get(), builder);
     }
 
     protected TextBuilder getMessageBuilder(TargetContext context) {
