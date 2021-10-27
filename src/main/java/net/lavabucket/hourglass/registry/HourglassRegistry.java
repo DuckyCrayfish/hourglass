@@ -20,7 +20,7 @@
 package net.lavabucket.hourglass.registry;
 
 import net.lavabucket.hourglass.Hourglass;
-import net.lavabucket.hourglass.message.target.NotificationTarget;
+import net.lavabucket.hourglass.notifications.target.NotificationTarget;
 import net.lavabucket.hourglass.time.effects.TimeEffect;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;

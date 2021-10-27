@@ -1,4 +1,4 @@
-package net.lavabucket.hourglass.message.textbuilder;
+package net.lavabucket.hourglass.notifications.textbuilder;
 
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.lookup.AbstractLookup;

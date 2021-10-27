@@ -17,7 +17,7 @@
  * along with Hourglass.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.lavabucket.hourglass.message.target;
+package net.lavabucket.hourglass.notifications.target;
 
 import net.lavabucket.hourglass.time.TimeService;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;

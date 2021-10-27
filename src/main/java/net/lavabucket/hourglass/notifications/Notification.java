@@ -17,13 +17,13 @@
  * along with Hourglass.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.lavabucket.hourglass.message;
+package net.lavabucket.hourglass.notifications;
 
 import java.util.stream.Stream;
 
-import net.lavabucket.hourglass.message.target.NotificationTarget;
-import net.lavabucket.hourglass.message.target.TargetContext;
-import net.lavabucket.hourglass.message.textbuilder.TextBuilder;
+import net.lavabucket.hourglass.notifications.target.NotificationTarget;
+import net.lavabucket.hourglass.notifications.target.TargetContext;
+import net.lavabucket.hourglass.notifications.textbuilder.TextBuilder;
 import net.lavabucket.hourglass.wrappers.ServerPlayerWrapper;
 import net.lavabucket.hourglass.wrappers.TextWrapper;
 import net.minecraft.Util;

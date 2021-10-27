@@ -1,4 +1,4 @@
-package net.lavabucket.hourglass.message.textbuilder;
+package net.lavabucket.hourglass.notifications.textbuilder;
 
 import net.lavabucket.hourglass.wrappers.TextWrapper;
 

@@ -1,11 +1,11 @@
-package net.lavabucket.hourglass.message.factory;
+package net.lavabucket.hourglass.notifications.factory;
 
 import java.util.function.Supplier;
 
-import net.lavabucket.hourglass.message.target.NotificationTarget;
-import net.lavabucket.hourglass.message.target.TargetContext;
-import net.lavabucket.hourglass.message.target.TargetParam;
-import net.lavabucket.hourglass.message.textbuilder.TextBuilder;
+import net.lavabucket.hourglass.notifications.target.NotificationTarget;
+import net.lavabucket.hourglass.notifications.target.TargetContext;
+import net.lavabucket.hourglass.notifications.target.TargetParam;
+import net.lavabucket.hourglass.notifications.textbuilder.TextBuilder;
 import net.lavabucket.hourglass.time.SleepStatus;
 import net.minecraft.network.chat.ChatType;
 

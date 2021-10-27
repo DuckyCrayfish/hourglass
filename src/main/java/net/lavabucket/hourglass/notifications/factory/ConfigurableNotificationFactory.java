@@ -17,16 +17,16 @@
  * along with Hourglass.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.lavabucket.hourglass.message.factory;
+package net.lavabucket.hourglass.notifications.factory;
 
 import java.util.function.Supplier;
 
-import net.lavabucket.hourglass.message.Notification;
-import net.lavabucket.hourglass.message.target.NotificationTarget;
-import net.lavabucket.hourglass.message.target.TargetContext;
-import net.lavabucket.hourglass.message.textbuilder.TemplateTextBuilder;
-import net.lavabucket.hourglass.message.textbuilder.TextBuilder;
-import net.lavabucket.hourglass.message.textbuilder.TranslatableTextBuilder;
+import net.lavabucket.hourglass.notifications.Notification;
+import net.lavabucket.hourglass.notifications.target.NotificationTarget;
+import net.lavabucket.hourglass.notifications.target.TargetContext;
+import net.lavabucket.hourglass.notifications.textbuilder.TemplateTextBuilder;
+import net.lavabucket.hourglass.notifications.textbuilder.TextBuilder;
+import net.lavabucket.hourglass.notifications.textbuilder.TranslatableTextBuilder;
 import net.lavabucket.hourglass.registry.HourglassRegistry;
 import net.lavabucket.hourglass.utils.Utils;
 import net.minecraft.network.chat.ChatType;

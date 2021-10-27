@@ -17,7 +17,7 @@
  * along with Hourglass.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.lavabucket.hourglass.message.textbuilder;
+package net.lavabucket.hourglass.notifications.textbuilder;
 
 import java.util.LinkedHashMap;
 

@@ -24,9 +24,9 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import net.lavabucket.hourglass.Hourglass;
-import net.lavabucket.hourglass.message.target.NotificationTarget;
-import net.lavabucket.hourglass.message.target.TargetContext;
-import net.lavabucket.hourglass.message.target.TargetParam;
+import net.lavabucket.hourglass.notifications.target.NotificationTarget;
+import net.lavabucket.hourglass.notifications.target.TargetContext;
+import net.lavabucket.hourglass.notifications.target.TargetParam;
 import net.lavabucket.hourglass.wrappers.ServerPlayerWrapper;
 import net.minecraft.server.players.PlayerList;
 import net.minecraftforge.eventbus.api.IEventBus;

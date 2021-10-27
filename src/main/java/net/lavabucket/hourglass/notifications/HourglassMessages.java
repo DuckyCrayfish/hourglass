@@ -17,15 +17,15 @@
  * along with Hourglass.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.lavabucket.hourglass.message;
+package net.lavabucket.hourglass.notifications;
 
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
-import net.lavabucket.hourglass.message.factory.ConfigurableNotificationFactory;
-import net.lavabucket.hourglass.message.factory.SleepNotificationFactory;
-import net.lavabucket.hourglass.message.factory.TimeServiceNotificationFactory;
-import net.lavabucket.hourglass.message.target.TargetContext;
-import net.lavabucket.hourglass.message.target.TargetParam;
+import net.lavabucket.hourglass.notifications.factory.ConfigurableNotificationFactory;
+import net.lavabucket.hourglass.notifications.factory.SleepNotificationFactory;
+import net.lavabucket.hourglass.notifications.factory.TimeServiceNotificationFactory;
+import net.lavabucket.hourglass.notifications.target.TargetContext;
+import net.lavabucket.hourglass.notifications.target.TargetParam;
 import net.lavabucket.hourglass.time.TimeService;
 import net.lavabucket.hourglass.time.TimeServiceManager;
 import net.lavabucket.hourglass.wrappers.ServerPlayerWrapper;
