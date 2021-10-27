@@ -20,6 +20,7 @@
 package net.lavabucket.hourglass.registry;
 
 import net.lavabucket.hourglass.Hourglass;
+import net.lavabucket.hourglass.message.target.NotificationTarget;
 import net.lavabucket.hourglass.time.effects.TimeEffect;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
@@ -34,9 +35,13 @@ public final class HourglassRegistry {
 
     /** Registry for time effects. See {@link TimeEffect} for details on time effects. */
     public static IForgeRegistry<TimeEffect> TIME_EFFECT;
+    /** Registry of {@code MessageTarget} objects. */
+    public static IForgeRegistry<NotificationTarget> MESSAGE_TARGET;
 
-    /** The resource key for the {@link #TIME_EFFECT} registry. */
+    /** Registry key for the {@link #TIME_EFFECT} registry. */
     public static final ResourceLocation TIME_EFFECT_KEY = new ResourceLocation(Hourglass.MOD_ID, "time_effect");
+    /** Registry key for the {@link #MESSAGE_TARGET} registry. */
+    public static final ResourceLocation MESSAGE_TARGET_KEY = new ResourceLocation(Hourglass.MOD_ID, "message_target");
 
     /**
      * Creates all new registries in this class.
@@ -45,6 +50,7 @@ public final class HourglassRegistry {
     @SubscribeEvent
     public static void newRegistryEvent(RegistryEvent.NewRegistry event) {
         TIME_EFFECT = new RegistryBuilder<TimeEffect>().setName(TIME_EFFECT_KEY).setType(TimeEffect.class).create();
+        MESSAGE_TARGET = new RegistryBuilder<NotificationTarget>().setName(MESSAGE_TARGET_KEY).setType(NotificationTarget.class).create();
     }
 
 }

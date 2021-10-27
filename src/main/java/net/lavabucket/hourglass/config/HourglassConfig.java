@@ -20,9 +20,10 @@
 package net.lavabucket.hourglass.config;
 
 import net.lavabucket.hourglass.client.gui.ScreenAlignment;
-import net.lavabucket.hourglass.message.MessageTargetType;
+import net.lavabucket.hourglass.registry.HourglassRegistry;
 import net.lavabucket.hourglass.time.Time;
 import net.lavabucket.hourglass.time.effects.EffectCondition;
+import net.lavabucket.hourglass.utils.Utils;
 import net.minecraft.network.chat.ChatType;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
@@ -33,7 +34,7 @@ import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 
 /**
@@ -41,16 +42,20 @@ import net.minecraftforge.fml.ModLoadingContext;
  */
 public final class HourglassConfig {
 
-    public static final ServerConfig SERVER_CONFIG = new ServerConfig(new Builder());
-    public static final ClientConfig CLIENT_CONFIG = new ClientConfig(new Builder());
+    public static ServerConfig SERVER_CONFIG;
+    public static ClientConfig CLIENT_CONFIG;
 
     /**
      * Register this class's configs with the mod loading context.
      * @param event  the event, provided by the mod event bus
      */
     @SubscribeEvent
-    public static void onConstructModEvent(FMLConstructModEvent event) {
+    public static void onCommonSetupEvent(FMLCommonSetupEvent event) {
         final ModLoadingContext context = ModLoadingContext.get();
+
+        SERVER_CONFIG = new ServerConfig(new Builder());
+        CLIENT_CONFIG = new ClientConfig(new Builder());
+
         context.registerConfig(ModConfig.Type.SERVER, SERVER_CONFIG.spec);
         context.registerConfig(ModConfig.Type.CLIENT, CLIENT_CONFIG.spec);
     }
@@ -82,15 +87,15 @@ public final class HourglassConfig {
         public final BooleanValue internationalMode;
         public final ConfigValue<String> morningMessage;
         public final EnumValue<ChatType> morningMessageType;
-        public final EnumValue<MessageTargetType> morningMessageTarget;
+        public final ConfigValue<String> morningMessageTarget;
 
         public final ConfigValue<String> enterBedMessage;
         public final EnumValue<ChatType> enterBedMessageType;
-        public final EnumValue<MessageTargetType> enterBedMessageTarget;
+        public final ConfigValue<String> enterBedMessageTarget;
 
         public final ConfigValue<String> leaveBedMessage;
         public final EnumValue<ChatType> leaveBedMessageType;
-        public final EnumValue<MessageTargetType> leaveBedMessageTarget;
+        public final ConfigValue<String> leaveBedMessageTarget;
 
         /**
          * Constructs an instance of an Hourglass server config.
@@ -243,7 +248,7 @@ public final class HourglassConfig {
                         morningMessageTarget = builder.comment(
                             "Sets to whom this message is sent.",
                             "A target of 'SLEEPING' will send the message to all players who just woke up.")
-                            .defineEnum("target", MessageTargetType.DIMENSION);
+                            .define("target", () -> "dimension", value -> Utils.isValidRegistryKey(HourglassRegistry.MESSAGE_TARGET, (String) value));
                     builder.pop(); // sleep.messages.morning
 
                     // sleep.messages.enterBed
@@ -257,8 +262,9 @@ public final class HourglassConfig {
                             .define("message", "${player} is now sleeping. [${sleepingPlayers}/${totalPlayers}]");
                         enterBedMessageType = builder.comment("Sets where this message appears.")
                             .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
-                        enterBedMessageTarget = builder.comment("Sets to whom this message is sent.")
-                            .defineEnum("target", MessageTargetType.DIMENSION);
+                        enterBedMessageTarget = builder.comment(
+                            "Sets to whom this message is sent.")
+                            .define("target", () -> "dimension", value -> Utils.isValidRegistryKey(HourglassRegistry.MESSAGE_TARGET, (String) value));
                     builder.pop(); // sleep.messages.enterBed
 
                     // sleep.messages.leaveBed
@@ -272,8 +278,9 @@ public final class HourglassConfig {
                             .define("message", "${player} has left their bed. [${sleepingPlayers}/${totalPlayers}]");
                         leaveBedMessageType = builder.comment("Sets where this message appears.")
                             .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
-                        leaveBedMessageTarget = builder.comment("Sets to whom this message is sent.")
-                            .defineEnum("target", MessageTargetType.DIMENSION);
+                        leaveBedMessageTarget = builder.comment(
+                            "Sets to whom this message is sent.")
+                            .define("target", () -> "dimension", value -> Utils.isValidRegistryKey(HourglassRegistry.MESSAGE_TARGET, (String) value));
                     builder.pop(); // sleep.messages.leaveBed
 
                 builder.pop(); // sleep.messages
