@@ -26,7 +26,7 @@ import net.lavabucket.hourglass.command.HourglassCommand;
 import net.lavabucket.hourglass.config.ConfigSynchronizer;
 import net.lavabucket.hourglass.config.HourglassConfig;
 import net.lavabucket.hourglass.network.NetworkHandler;
-import net.lavabucket.hourglass.notifications.HourglassMessages;
+import net.lavabucket.hourglass.notifications.NotificationService;
 import net.lavabucket.hourglass.registry.HourglassRegistry;
 import net.lavabucket.hourglass.registry.NotificationTargets;
 import net.lavabucket.hourglass.registry.TimeEffects;
@@ -60,7 +60,7 @@ public final class Hourglass {
         modBus.register(NotificationTargets.class);
 
         forgeBus.register(TimeServiceManager.class);
-        forgeBus.register(HourglassMessages.class);
+        forgeBus.register(NotificationService.class);
         forgeBus.register(HourglassCommand.class);
 
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> HourglassClient::new);
