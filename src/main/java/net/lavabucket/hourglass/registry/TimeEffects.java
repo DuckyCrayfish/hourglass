@@ -36,15 +36,15 @@ import net.minecraftforge.registries.DeferredRegister;
 /**
  * This class registers all of the first-party time effects that come with Hourglass.
  */
-public class TimeEffects {
+public final class TimeEffects {
 
-    private static DeferredRegister<TimeEffect> TIME_EFFECTS = DeferredRegister.create(TimeEffect.class, Hourglass.MOD_ID);
+    private final static DeferredRegister<TimeEffect> TIME_EFFECTS = DeferredRegister.create(TimeEffect.class, Hourglass.MOD_ID);
 
-    public static RegistryObject<TimeEffect> WEATHER_EFFECT = TIME_EFFECTS.register("weather", () -> new WeatherSleepEffect());
-    public static RegistryObject<TimeEffect> RANDOM_TICK_EFFECT = TIME_EFFECTS.register("random_tick", () -> new RandomTickSleepEffect());
-    public static RegistryObject<TimeEffect> POTION_EFFECT = TIME_EFFECTS.register("potion", () -> new PotionTimeEffect());
-    public static RegistryObject<TimeEffect> HUNGER_EFFECT = TIME_EFFECTS.register("hunger", () -> new HungerTimeEffect());
-    public static RegistryObject<TimeEffect> BLOCK_ENTITY_EFFECT = TIME_EFFECTS.register("block_entity", () -> new BlockEntityTimeEffect());
+    public final static RegistryObject<TimeEffect> WEATHER_EFFECT = TIME_EFFECTS.register("weather", () -> new WeatherSleepEffect());
+    public final static RegistryObject<TimeEffect> RANDOM_TICK_EFFECT = TIME_EFFECTS.register("random_tick", () -> new RandomTickSleepEffect());
+    public final static RegistryObject<TimeEffect> POTION_EFFECT = TIME_EFFECTS.register("potion", () -> new PotionTimeEffect());
+    public final static RegistryObject<TimeEffect> HUNGER_EFFECT = TIME_EFFECTS.register("hunger", () -> new HungerTimeEffect());
+    public final static RegistryObject<TimeEffect> BLOCK_ENTITY_EFFECT = TIME_EFFECTS.register("block_entity", () -> new BlockEntityTimeEffect());
 
     /**
      * Registers all {@code TimeEffect} objects created in this class to the registry.
@@ -55,5 +55,8 @@ public class TimeEffects {
         final IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         TIME_EFFECTS.register(modBus);
     }
+
+    // Private constructor to prohibit instantiation.
+    private TimeEffects() {}
 
 }
