@@ -81,7 +81,7 @@ public class NotificationTarget extends ForgeRegistryEntry<NotificationTarget> {
     public Stream<ServerPlayerWrapper> findMatches(TargetContext context) {
         if (!hasRequiredParams(context)) {
             Set<TargetParam<?>> missing = getMissingParams(context);
-            throw new IllegalArgumentException("Context is missing the following params: " + missing);
+            throw new IllegalArgumentException("Notification target context is missing the following params: " + missing);
         }
         return function.apply(context);
     }
