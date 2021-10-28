@@ -224,10 +224,13 @@ public final class HourglassConfig {
                 "\tSYSTEM: Appears as a message in the chat. (e.g., \"Respawn point set\")",
                 "\tGAME_INFO: Game information that appears above the hotbar (e.g., \"You may not rest now, the bed is too far away\").",
                 "The target option controls to whom the notification is sent:",
-                "\tALL: Sends the message to all players on the server.",
-                "\tDIMENSION: Sends the message to all players in the current dimension.",
-                "\tSLEEPING: Sends the message to all sleeping players in the current dimension.",
-                "\tAWAKE: Sends the message to all awake players in the current dimension.")
+                "\tnone: Disables the notification.",
+                "\tall: Send to all players on the server.",
+                "\toperators: Send to all operators on the server.",
+                "\tdimension: Send to all players in the current dimension.",
+                "\tasleep: Send to all asleep players in the current dimension.",
+                "\tawake: Send to all awake players in the current dimension.",
+                "\tself: Send only to the player who is the subject of the notification.")
                 .push("notifications");
 
                 internationalMode = builder.comment(
