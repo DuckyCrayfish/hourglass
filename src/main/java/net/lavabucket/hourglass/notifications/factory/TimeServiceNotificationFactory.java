@@ -64,8 +64,8 @@ public class TimeServiceNotificationFactory extends ConfigurableNotificationFact
      * @return the {@code TextBuilder} to use for the notification
      */
     @Override
-    protected TextBuilder getMessageBuilder(TargetContext context) {
-        TextBuilder builder = super.getMessageBuilder(context);
+    protected TextBuilder getContentBuilder(TargetContext context) {
+        TextBuilder builder = super.getContentBuilder(context);
         SleepStatus sleepStatus = context.getParam(TargetParam.TIME_SERVICE).sleepStatus;
         builder.setVariable("sleepingPlayers", sleepStatus.amountSleeping())
                 .setVariable("totalPlayers", sleepStatus.amountActive())

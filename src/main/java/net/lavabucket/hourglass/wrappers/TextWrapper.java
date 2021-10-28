@@ -84,12 +84,12 @@ public class TextWrapper extends Wrapper<Component> {
     }
 
     /**
-     * Creates a new {@code TextWrapper} for a text component with the specified message.
-     * @param message  the component's literal message
-     * @return a wrapped text component with the provided message
+     * Creates a new {@code TextWrapper} for a text component with the specified content.
+     * @param content  the component's {@code String} literal content
+     * @return a wrapped text component with the provided content
      */
-    public static TextWrapper literal(String message) {
-        return new TextWrapper(new TextComponent(message));
+    public static TextWrapper literal(String content) {
+        return new TextWrapper(new TextComponent(content));
     }
 
 }

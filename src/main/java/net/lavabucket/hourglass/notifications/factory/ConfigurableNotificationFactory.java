@@ -50,9 +50,9 @@ public class ConfigurableNotificationFactory {
 
     /** The {@code Supplier} for the notification's target. */
     protected final Supplier<NotificationTarget> targetSupplier;
-    /** The {@code Supplier} for the message's {@link TranslatableTextBuilder} translation key. */
+    /** The {@code Supplier} for the notification's {@link TranslatableTextBuilder} translation key. */
     protected final Supplier<String> translationKeySupplier;
-    /** The {@code Supplier} for the message's {@link TemplateTextBuilder} template string. */
+    /** The {@code Supplier} for the notification's {@link TemplateTextBuilder} template string. */
     protected final Supplier<String> templateSupplier;
     /** The {@code Supplier} for the notification's message {@code ChatType}. */
     protected final Supplier<ChatType> typeSupplier;
@@ -62,9 +62,9 @@ public class ConfigurableNotificationFactory {
     /**
      * Creates a new instance.
      * @param targetSupplier  {@code Supplier} for the notification's target
-     * @param translationKeySupplier  {@code Supplier} for the message translation key
-     * @param templateSupplier  {@code Supplier} for the message template
-     * @param typeSupplier  {@code Supplier} for the chat message type
+     * @param translationKeySupplier  {@code Supplier} for the notification translation key
+     * @param templateSupplier  {@code Supplier} for the notification template
+     * @param typeSupplier  {@code Supplier} for the notification's message {@code ChatType}
      * @param translationModeSupplier  {@code Supplier} for the translation mode flag
      */
     public ConfigurableNotificationFactory(Supplier<NotificationTarget> targetSupplier,
@@ -80,7 +80,7 @@ public class ConfigurableNotificationFactory {
     }
 
     public GenericNotification create(TargetContext context) {
-        TextBuilder builder = getMessageBuilder(context);
+        TextBuilder builder = getContentBuilder(context);
         return create(context, builder);
     }
 
@@ -95,11 +95,11 @@ public class ConfigurableNotificationFactory {
     }
 
     /**
-     * Creates and returns the {@code TextBuilder} for the notification.
+     * Creates and returns the {@code TextBuilder} for the notification message content.
      * @param context  the notification {@code TargetContext}
      * @return  the new {@code TextBuilder}
      */
-    protected TextBuilder getMessageBuilder(TargetContext context) {
+    protected TextBuilder getContentBuilder(TargetContext context) {
         if (translationModeSupplier.get()) {
             return new TranslatableTextBuilder(translationKeySupplier.get());
         } else {
@@ -110,19 +110,19 @@ public class ConfigurableNotificationFactory {
     /** Builder class for {@code ConfigurableNotificationFactory} objects. */
     public static class Builder {
 
-        /** The target supplier for the notification. */
+        /** The {@code Supplier} for the notification's target. */
         protected Supplier<NotificationTarget> targetSupplier;
-        /** The translation key {@code Supplier} for the {@link TranslationTextBuilder}. */
+        /** The {@code Supplier} for the notification's {@link TranslatableTextBuilder} translation key. */
         protected Supplier<String> translationKeySupplier;
-        /** The template {@code Supplier} for the {@link TemplateTextBuilder}. */
+        /** The {@code Supplier} for the notification's {@link TemplateTextBuilder} template string. */
         protected Supplier<String> templateSupplier;
-        /** The {@code ChatType} supplier for the notification message. */
+        /** The {@code Supplier} for the notification's message {@code ChatType}. */
         protected Supplier<ChatType> typeSupplier;
-        /** The translation mode supplier. */
+        /** The {@code Supplier} for the translation mode flag. */
         protected Supplier<Boolean> translationModeSupplier;
 
         /**
-         * Sets the notification target {@code Supplier}.
+         * Sets the {@code Supplier} for the notification's target.
          * @param targetSupplier  the target {@code Supplier} to set
          * @return this {@code Builder} object
          */
@@ -167,7 +167,7 @@ public class ConfigurableNotificationFactory {
         }
 
         /**
-         * Sets the {@code ChatType} {@code Supplier} for the notification message.
+         * Sets the {@code Supplier} for the notification's message {@code ChatType}.
          * @param typeSupplier  the {@code ChatType} {@code Supplier}
          * @return this {@code Builder} object
          */

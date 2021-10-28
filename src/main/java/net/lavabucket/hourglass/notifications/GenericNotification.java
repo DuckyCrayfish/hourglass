@@ -36,8 +36,8 @@ public class GenericNotification implements Notification {
     protected final NotificationTarget target;
     /** This notification's message {@code ChatType}. */
     protected final ChatType type;
-    /** The {@code TextBuilder} for this notification's message content. */
-    protected final TextBuilder messageBuilder;
+    /** The {@code TextBuilder} for this notification's content. */
+    protected final TextBuilder textBuilder;
     /** The {@code TargetContext} for {@link #target}. */
     protected final TargetContext context;
 
@@ -46,14 +46,14 @@ public class GenericNotification implements Notification {
      * @param target  this notification's target
      * @param context  the {@code TargetContext} for {@code target}
      * @param type  this notification's message {@code ChatType}
-     * @param messageBuilder  the {@code TextBuilder} for this notification's message content
+     * @param textBuilder  the {@code TextBuilder} for this notification's content
      */
     public GenericNotification(NotificationTarget target, TargetContext context, ChatType type,
-            TextBuilder messageBuilder) {
+            TextBuilder textBuilder) {
         this.target = target;
         this.context = context;
         this.type = type;
-        this.messageBuilder = messageBuilder;
+        this.textBuilder = textBuilder;
     }
 
     /** {@return this notification's target} */
@@ -69,9 +69,9 @@ public class GenericNotification implements Notification {
      */
     @Override
     public void send() {
-        TextWrapper message = messageBuilder.build();
+        TextWrapper content = textBuilder.build();
         getTarget().findMatches(context).forEach(player -> {
-            player.get().sendMessage(message.get(), type, Util.NIL_UUID);
+            player.get().sendMessage(content.get(), type, Util.NIL_UUID);
         });
     }
 

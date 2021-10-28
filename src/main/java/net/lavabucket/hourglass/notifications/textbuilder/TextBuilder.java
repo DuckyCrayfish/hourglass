@@ -23,7 +23,7 @@ import java.util.LinkedHashMap;
 
 import net.lavabucket.hourglass.wrappers.TextWrapper;
 
-/** Message builder for Hourglass notifications that allow for variable substitution. */
+/** Text content builder for Hourglass notifications that allow for variable substitution. */
 public abstract class TextBuilder {
 
     /** The substitution variable map. */
@@ -40,7 +40,7 @@ public abstract class TextBuilder {
      * <p>All text components values are properly converted to strings.
      *
      * @param key  the variable name to search for in the template
-     * @param value  the value to inject into the message
+     * @param value  the value to inject into the text component
      * @return this, for chaining
      */
     public TextBuilder setVariable(String key, Object value) {

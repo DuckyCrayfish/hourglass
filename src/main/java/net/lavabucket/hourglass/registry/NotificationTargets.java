@@ -37,7 +37,7 @@ import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 import net.minecraftforge.registries.DeferredRegister;
 
-/** This class contains a collection of default {@code MessageTarget} registry objects. */
+/** This class contains a collection of default {@code NotificationTarget} registry objects. */
 public final class NotificationTargets {
 
     private static final DeferredRegister<NotificationTarget> NOTIFICATION_TARGETS = DeferredRegister.create(NotificationTarget.class, Hourglass.MOD_ID);
@@ -105,7 +105,7 @@ public final class NotificationTargets {
                 .create());
 
     /**
-     * Registers all {@code MessageTarget} objects created in this class to the registry.
+     * Registers all {@code NotificationTarget} objects created in this class to the registry.
      * @param event  the event, provided by the mod event bus
      */
     @SubscribeEvent

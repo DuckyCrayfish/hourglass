@@ -35,7 +35,7 @@ public final class HourglassRegistry {
 
     /** Registry for time effects. See {@link TimeEffect} for details on time effects. */
     public static IForgeRegistry<TimeEffect> TIME_EFFECT;
-    /** Registry of {@code MessageTarget} objects. */
+    /** Registry of {@code NotificationTarget} objects. */
     public static IForgeRegistry<NotificationTarget> NOTIFICATION_TARGET;
 
     /** Registry key for the {@link #TIME_EFFECT} registry. */

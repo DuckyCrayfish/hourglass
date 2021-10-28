@@ -30,7 +30,7 @@ import com.google.common.collect.ImmutableMap;
 */
 public class TargetContext {
 
-    /** Message context parameters. */
+    /** Notification target context parameters. */
     protected final ImmutableMap<TargetParam<?>, Object> params;
 
     /**

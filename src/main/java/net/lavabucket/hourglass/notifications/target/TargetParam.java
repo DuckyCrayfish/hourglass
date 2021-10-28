@@ -31,11 +31,11 @@ import net.minecraft.resources.ResourceLocation;
  */
 public class TargetParam<T> {
 
-    /** The level associated with the message. */
+    /** The level associated with the notification. */
     public static final TargetParam<ServerLevelWrapper> LEVEL = create("level");
-    /** The player associated with the message. */
+    /** The player associated with the notification. */
     public static final TargetParam<ServerPlayerWrapper> PLAYER = create("player");
-    /** The time service for the level associated with the message. */
+    /** The time service for the level associated with the notification. */
     public static final TargetParam<TimeService> TIME_SERVICE = create("time_service");
 
     /** Creates a new {@code TargetPara} with the given name. */

@@ -61,8 +61,8 @@ public class SleepNotificationFactory extends TimeServiceNotificationFactory {
      * @return the {@code TextBuilder} to use for the notification
      */
     @Override
-    protected TextBuilder getMessageBuilder(TargetContext context) {
-        TextBuilder builder = super.getMessageBuilder(context);
+    protected TextBuilder getContentBuilder(TargetContext context) {
+        TextBuilder builder = super.getContentBuilder(context);
         ServerPlayerWrapper player = context.getParam(TargetParam.PLAYER);
         builder.setVariable("player", player.get().getDisplayName());
         return builder;
