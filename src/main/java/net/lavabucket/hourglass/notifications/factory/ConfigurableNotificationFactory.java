@@ -85,12 +85,12 @@ public class ConfigurableNotificationFactory {
     }
 
     /**
-     * Creates a new notification using the provided {@code TextBuilder}. TODO: set to protected
+     * Creates a new notification using the provided {@code TextBuilder}.
      * @param context  the {@code TargetContext} for the notification
      * @param builder  the {@code TextBuilder} for the notification message content
      * @return  the new notification
      */
-    public GenericNotification create(TargetContext context, TextBuilder builder) {
+    protected GenericNotification create(TargetContext context, TextBuilder builder) {
         return new GenericNotification(targetSupplier.get(), context, typeSupplier.get(), builder);
     }
 
