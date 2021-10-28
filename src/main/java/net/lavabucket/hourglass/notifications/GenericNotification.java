@@ -22,7 +22,6 @@ package net.lavabucket.hourglass.notifications;
 import net.lavabucket.hourglass.notifications.target.NotificationTarget;
 import net.lavabucket.hourglass.notifications.target.TargetContext;
 import net.lavabucket.hourglass.notifications.textbuilder.TextBuilder;
-import net.lavabucket.hourglass.wrappers.ServerPlayerWrapper;
 import net.lavabucket.hourglass.wrappers.TextWrapper;
 import net.minecraft.Util;
 import net.minecraft.network.chat.ChatType;
@@ -68,24 +67,12 @@ public class GenericNotification implements Notification {
      * context provided. The content of this notification is obtained by building this
      * notification's {@code TextBuilder} instance.
      */
+    @Override
     public void send() {
-        getTarget().findMatches(context).forEach(this::sendToPlayer);
-    }
-
-    /**
-     * Builds and returns this notification's message content.
-     * @return this notification's message content
-     */
-    protected TextWrapper getMessage() {
-        return messageBuilder.build();
-    }
-
-    /**
-     * Sends this notification to {@code player} using the content provided by
-     * {@link #getMessage()}.
-     */
-    protected void sendToPlayer(ServerPlayerWrapper player) {
-        player.get().sendMessage(getMessage().get(), type, Util.NIL_UUID);
+        TextWrapper message = messageBuilder.build();
+        getTarget().findMatches(context).forEach(player -> {
+            player.get().sendMessage(message.get(), type, Util.NIL_UUID);
+        });
     }
 
 }
