@@ -227,8 +227,8 @@ Location relative to Minecraft folder:
 	allowBedClock = true
 
 #This section defines settings for notification messages.
-#All messages support Minecraft formatting codes (https://minecraft.fandom.com/wiki/Formatting_codes).
-#All messages have variables that can be inserted using the following format: ${variableName}
+#All notifications support Minecraft formatting codes (https://minecraft.fandom.com/wiki/Formatting_codes).
+#All notifications have variables that can be inserted using the following format: ${variableName}
 #The type option controls where the message appears:
 #	SYSTEM: Appears as a message in the chat. (e.g., "Respawn point set")
 #	GAME_INFO: Game information that appears above the hotbar (e.g., "You may not rest now, the bed is too far away").
@@ -237,11 +237,11 @@ Location relative to Minecraft folder:
 #	DIMENSION: Sends the message to all players in the current dimension.
 #	SLEEPING: Sends the message to all sleeping players in the current dimension.
 #	AWAKE: Sends the message to all awake players in the current dimension.
-[messages]
+[notifications]
 
 	#This message is sent after a sleep cycle has completed.
 	#Not sent if sleep feature is disabled.
-	[messages.morning]
+	[notifications.morning]
 		#Available variables:
 		#sleepingPlayers -> the number of players in the current dimension who were sleeping.
 		#totalPlayers -> the number of players in the current dimension (spectators are not counted).
@@ -257,7 +257,7 @@ Location relative to Minecraft folder:
 
 	#This message is sent when a player enters their bed.
 	#Not sent if sleep feature is disabled.
-	[messages.enterBed]
+	[notifications.enterBed]
 		#Available variables:
 		#player -> the player who started sleeping.
 		#sleepingPlayers -> the number of players in the current dimension who are sleeping.
@@ -273,7 +273,7 @@ Location relative to Minecraft folder:
 
 	#This message is sent when a player leaves their bed (without being woken up naturally by morning).
 	#Not sent if sleep feature is disabled.
-	[messages.leaveBed]
+	[notifications.leaveBed]
 		#Available variables:
 		#player -> the player who left their bed.
 		#sleepingPlayers -> the number of players in the current dimension who are sleeping.

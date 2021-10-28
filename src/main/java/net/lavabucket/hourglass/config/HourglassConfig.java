@@ -215,11 +215,11 @@ public final class HourglassConfig {
 
             builder.pop(); // sleep
 
-            // messages
+            // notifications
             builder.comment(
                 "This section defines settings for notification messages.",
-                "All messages support Minecraft formatting codes (https://minecraft.fandom.com/wiki/Formatting_codes).",
-                "All messages have variables that can be inserted using the following format: ${variableName}",
+                "All notifications support Minecraft formatting codes (https://minecraft.fandom.com/wiki/Formatting_codes).",
+                "All notifications have variables that can be inserted using the following format: ${variableName}",
                 "The type option controls where the message appears:",
                 "\tSYSTEM: Appears as a message in the chat. (e.g., \"Respawn point set\")",
                 "\tGAME_INFO: Game information that appears above the hotbar (e.g., \"You may not rest now, the bed is too far away\").",
@@ -228,16 +228,16 @@ public final class HourglassConfig {
                 "\tDIMENSION: Sends the message to all players in the current dimension.",
                 "\tSLEEPING: Sends the message to all sleeping players in the current dimension.",
                 "\tAWAKE: Sends the message to all awake players in the current dimension.")
-                .push("messages");
+                .push("notifications");
 
                 internationalMode = builder.comment(
-                    "When true, sleep messages are sent using language files instead of the message text defined in this config file.",
+                    "When true, sleep notifications are sent using language files instead of the message text defined in this config file.",
                     "This allows for the ability to support multiple languages at a time.",
                     "When true, resource packs are required for message text customization.",
                     "Enabling this setting is recommended for modpacks.")
                     .define("internationalMode", false);
 
-                // messages.morning
+                // notifications.morning
                 builder.comment(
                     "This message is sent after a sleep cycle has completed.",
                     "Not sent if sleep feature is disabled.")
@@ -254,9 +254,9 @@ public final class HourglassConfig {
                         "Sets to whom this message is sent.",
                         "A target of 'SLEEPING' will send the message to all players who just woke up.")
                         .define("target", () -> "dimension", value -> Utils.isValidRegistryKey(HourglassRegistry.MESSAGE_TARGET, (String) value));
-                builder.pop(); // messages.morning
+                builder.pop(); // notifications.morning
 
-                // messages.enterBed
+                // notifications.enterBed
                 builder.comment(
                     "This message is sent when a player enters their bed.",
                     "Not sent if sleep feature is disabled.")
@@ -273,9 +273,9 @@ public final class HourglassConfig {
                     enterBedMessageTarget = builder.comment(
                         "Sets to whom this message is sent.")
                         .define("target", () -> "dimension", value -> Utils.isValidRegistryKey(HourglassRegistry.MESSAGE_TARGET, (String) value));
-                builder.pop(); // messages.enterBed
+                builder.pop(); // notifications.enterBed
 
-                // messages.leaveBed
+                // notifications.leaveBed
                 builder.comment(
                     "This message is sent when a player leaves their bed (without being woken up naturally by morning).",
                     "Not sent if sleep feature is disabled.")
@@ -292,9 +292,9 @@ public final class HourglassConfig {
                     leaveBedMessageTarget = builder.comment(
                         "Sets to whom this message is sent.")
                         .define("target", () -> "dimension", value -> Utils.isValidRegistryKey(HourglassRegistry.MESSAGE_TARGET, (String) value));
-                builder.pop(); // messages.leaveBed
+                builder.pop(); // notifications.leaveBed
 
-            builder.pop(); // messages
+            builder.pop(); // notifications
 
             spec = builder.build();
         }
