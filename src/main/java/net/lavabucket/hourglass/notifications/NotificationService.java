@@ -37,6 +37,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 /** This class listens for events and sends out Hourglass chat notifications. */
 public class NotificationService {
 
+    /**
+     * Factory for a notification that is sent at morning after a sleep cycle has completed while
+     * level's sleep mechanism is being handled by a time service.
+     */
     public static final ConfigurableNotificationFactory MORNING_MESSAGE =
             new TimeServiceNotificationFactory.Builder()
                 .stringTarget(SERVER_CONFIG.morningMessageTarget::get)
@@ -46,6 +50,10 @@ public class NotificationService {
                 .translationMode(SERVER_CONFIG.internationalMode::get)
                 .create();
 
+    /**
+     * Factory for a notification that is sent when a player enters a bed while the level's sleep
+     * mechanism is being handled by a time service.
+     */
     public static final ConfigurableNotificationFactory ENTER_BED_MESSAGE =
             new SleepNotificationFactory.Builder()
                 .stringTarget(SERVER_CONFIG.enterBedMessageTarget::get)
@@ -55,6 +63,10 @@ public class NotificationService {
                 .translationMode(SERVER_CONFIG.internationalMode::get)
                 .create();
 
+    /**
+     * Factory for a notification that is sent when a player leaves a bed while the level's sleep
+     * mechanism is being handled by a time service.
+     */
     public static final ConfigurableNotificationFactory LEAVE_BED_MESSAGE =
             new SleepNotificationFactory.Builder()
                 .stringTarget(SERVER_CONFIG.leaveBedMessageTarget::get)

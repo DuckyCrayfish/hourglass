@@ -28,8 +28,18 @@ import net.lavabucket.hourglass.notifications.textbuilder.TextBuilder;
 import net.lavabucket.hourglass.wrappers.ServerPlayerWrapper;
 import net.minecraft.network.chat.ChatType;
 
+/** Factory for sleep event notifications. */
 public class SleepNotificationFactory extends TimeServiceNotificationFactory {
 
+    /**
+     * Creates a new instance.
+     * @param targetSupplier  supplier for the notification target
+     * @param translationKeySupplier  supplier for the message translation key
+     * @param templateSupplier  supplier for the message template
+     * @param typeSupplier  supplier for the chat message type
+     * @param translationModeSupplier  supplier for the translation mode switch
+     * @see ConfigurableNotificationFactory#ConfigurableNotificationFactory(Supplier, Supplier, Supplier, Supplier, Supplier)
+     */
     public SleepNotificationFactory(Supplier<NotificationTarget> targetSupplier,
             Supplier<String> translationKeySupplier,
             Supplier<String> templateSupplier,
@@ -40,6 +50,16 @@ public class SleepNotificationFactory extends TimeServiceNotificationFactory {
                 translationModeSupplier);
     }
 
+    /**
+     * Fetches a {@code TextBuilder} from
+     * {@link TimeServiceNotificationFactory#getTextBuilder(TargetContext)}, adds the following
+     * variable to it, and then returns the result:
+     *
+     * <p>"player" -> the player's name who initiated the event.
+     *
+     * @param context  the {@code TargetContext} for the notification
+     * @return the {@code TextBuilder} to use for the notification
+     */
     @Override
     protected TextBuilder getMessageBuilder(TargetContext context) {
         TextBuilder builder = super.getMessageBuilder(context);
@@ -48,8 +68,10 @@ public class SleepNotificationFactory extends TimeServiceNotificationFactory {
         return builder;
     }
 
+    /** Builder class for {@code SleepNotificationFactory} objects. */
     public static class Builder extends ConfigurableNotificationFactory.Builder {
 
+        /** {@return a new {@code SleepNotificationFactory} using the supplied parameters} */
         public ConfigurableNotificationFactory create() {
             return new SleepNotificationFactory(targetSupplier,
                     translationKeySupplier,

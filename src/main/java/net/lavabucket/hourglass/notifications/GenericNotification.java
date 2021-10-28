@@ -27,13 +27,28 @@ import net.lavabucket.hourglass.wrappers.TextWrapper;
 import net.minecraft.Util;
 import net.minecraft.network.chat.ChatType;
 
+/**
+ * A generic notification that is sent as a Minecraft chat message whose content is provided by a
+ * {@link TextBuilder} instance.
+ */
 public class GenericNotification implements Notification {
 
+    /** This notification's target. */
     protected final NotificationTarget target;
+    /** This notification's message {@code ChatType}. */
     protected final ChatType type;
+    /** The {@code TextBuilder} for this notification's message content. */
     protected final TextBuilder messageBuilder;
+    /** The {@code TargetContext} for {@link #target}. */
     protected final TargetContext context;
 
+    /**
+     * Creates a new instance.
+     * @param target  this notification's target
+     * @param context  the {@code TargetContext} for {@code target}
+     * @param type  this notification's message {@code ChatType}
+     * @param messageBuilder  the {@code TextBuilder} for this notification's message content
+     */
     public GenericNotification(NotificationTarget target, TargetContext context, ChatType type,
             TextBuilder messageBuilder) {
         this.target = target;
@@ -42,19 +57,33 @@ public class GenericNotification implements Notification {
         this.messageBuilder = messageBuilder;
     }
 
+    /** {@return this notification's target} */
     @Override
     public NotificationTarget getTarget() {
         return target;
     }
 
+    /**
+     * Sends this notification to all players matching this notification's target, using the target
+     * context provided. The content of this notification is obtained by building this
+     * notification's {@code TextBuilder} instance.
+     */
     public void send() {
         getTarget().findMatches(context).forEach(this::sendToPlayer);
     }
 
+    /**
+     * Builds and returns this notification's message content.
+     * @return this notification's message content
+     */
     protected TextWrapper getMessage() {
         return messageBuilder.build();
     }
 
+    /**
+     * Sends this notification to {@code player} using the content provided by
+     * {@link #getMessage()}.
+     */
     protected void sendToPlayer(ServerPlayerWrapper player) {
         player.get().sendMessage(getMessage().get(), type, Util.NIL_UUID);
     }

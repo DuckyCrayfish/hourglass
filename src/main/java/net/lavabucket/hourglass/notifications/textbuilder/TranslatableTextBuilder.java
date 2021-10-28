@@ -37,7 +37,7 @@ public class TranslatableTextBuilder extends TextBuilder {
     protected String translationKey;
 
     /**
-     * Instantiates a new builder.
+     * Creates a new instance.
      * @param translationKey  the translation key used to look up the translated message content
      */
     public TranslatableTextBuilder(String translationKey) {

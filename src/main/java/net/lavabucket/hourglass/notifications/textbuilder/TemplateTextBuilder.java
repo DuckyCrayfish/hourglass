@@ -38,7 +38,7 @@ public class TemplateTextBuilder extends TextBuilder {
     private String template;
 
     /**
-     * Instantiates a new builder.
+     * Creates a new instance.
      * @param template  the message template literal used for baking variables
      */
     public TemplateTextBuilder(String template) {

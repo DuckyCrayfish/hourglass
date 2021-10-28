@@ -28,8 +28,18 @@ import net.lavabucket.hourglass.notifications.textbuilder.TextBuilder;
 import net.lavabucket.hourglass.time.SleepStatus;
 import net.minecraft.network.chat.ChatType;
 
+/** Factory for {@code TimeService} event notifications. */
 public class TimeServiceNotificationFactory extends ConfigurableNotificationFactory {
 
+    /**
+     * Creates a new instance.
+     * @param targetSupplier  supplier for the notification target
+     * @param translationKeySupplier  supplier for the message translation key
+     * @param templateSupplier  supplier for the message template
+     * @param typeSupplier  supplier for the chat message type
+     * @param translationModeSupplier  supplier for the translation mode switch
+     * @see ConfigurableNotificationFactory#ConfigurableNotificationFactory(Supplier, Supplier, Supplier, Supplier, Supplier)
+     */
     public TimeServiceNotificationFactory(Supplier<NotificationTarget> targetSupplier,
             Supplier<String> translationKeySupplier,
             Supplier<String> templateSupplier,
@@ -40,6 +50,19 @@ public class TimeServiceNotificationFactory extends ConfigurableNotificationFact
                 translationModeSupplier);
     }
 
+    /**
+     * Returns a {@code TextBuilder} to use for the notification.
+     *
+     * <p>The builder includes the following variables:
+     * <ul>
+     *   <li>"sleepingPlayers" -> the number of sleeping players in the level</li>
+     *   <li>"totalPlayers" -> the number of active players in the level</li>
+     *   <li>"sleepingPercentage" -> an integer percentage of players who are sleeping</li>
+     * </ul>
+     *
+     * @param context  the {@code TargetContext} for the notification
+     * @return the {@code TextBuilder} to use for the notification
+     */
     @Override
     protected TextBuilder getMessageBuilder(TargetContext context) {
         TextBuilder builder = super.getMessageBuilder(context);
@@ -50,8 +73,10 @@ public class TimeServiceNotificationFactory extends ConfigurableNotificationFact
         return builder;
     }
 
+    /** Builder class for {@code TimeServiceNotificationFactory} objects. */
     public static class Builder extends ConfigurableNotificationFactory.Builder {
 
+        /** {@return a new {@code TimeServiceNotificationFactory} using the supplied parameters} */
         public ConfigurableNotificationFactory create() {
             return new TimeServiceNotificationFactory(targetSupplier,
                     translationKeySupplier,

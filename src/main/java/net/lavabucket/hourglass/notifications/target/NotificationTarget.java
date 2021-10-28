@@ -42,7 +42,7 @@ public class NotificationTarget extends ForgeRegistryEntry<NotificationTarget> {
     protected final Function<TargetContext, Stream<ServerPlayerWrapper>> function;
 
     /**
-     * Instantiates a new object.
+     * Creates a new instance.
      * @param requiredParams  the required context parameters for this target
      * @param function  the function used to fetch players using a given {@code NotificationContext}
      */

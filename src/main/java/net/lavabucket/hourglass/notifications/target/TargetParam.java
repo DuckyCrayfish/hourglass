@@ -46,7 +46,7 @@ public class TargetParam<T> {
     private final ResourceLocation name;
 
     /**
-     * Instantiates a new object.
+     * Creates a new instance.
      * @param name  the identifier of the {@code TargetParam}
      */
     public TargetParam(ResourceLocation name) {

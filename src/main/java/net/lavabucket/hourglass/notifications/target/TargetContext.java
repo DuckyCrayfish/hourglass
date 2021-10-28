@@ -34,7 +34,7 @@ public class TargetContext {
     protected final ImmutableMap<TargetParam<?>, Object> params;
 
     /**
-     * Instantiates a new object.
+     * Creates a new instance.
      * @param params  context parameters
      */
     public TargetContext(Map<TargetParam<?>, Object> params) {
