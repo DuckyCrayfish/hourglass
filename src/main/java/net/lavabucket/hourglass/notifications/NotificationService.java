@@ -43,9 +43,9 @@ public class NotificationService {
      */
     public static final ConfigurableNotificationFactory MORNING_MESSAGE =
             new TimeServiceNotificationFactory.Builder()
-                .stringTarget(SERVER_CONFIG.morningMessageTarget::get)
-                .type(SERVER_CONFIG.morningMessageType::get)
-                .template(SERVER_CONFIG.morningMessage::get)
+                .stringTarget(SERVER_CONFIG.morningNotificationTarget::get)
+                .type(SERVER_CONFIG.morningNotificationType::get)
+                .template(SERVER_CONFIG.morningNotificationContent::get)
                 .translationKey(() ->  "hourglass.messages.morning")
                 .translationMode(SERVER_CONFIG.internationalMode::get)
                 .create();
@@ -56,9 +56,9 @@ public class NotificationService {
      */
     public static final ConfigurableNotificationFactory ENTER_BED_MESSAGE =
             new SleepNotificationFactory.Builder()
-                .stringTarget(SERVER_CONFIG.enterBedMessageTarget::get)
-                .type(SERVER_CONFIG.enterBedMessageType::get)
-                .template(SERVER_CONFIG.enterBedMessage::get)
+                .stringTarget(SERVER_CONFIG.enterBedNotificationTarget::get)
+                .type(SERVER_CONFIG.enterBedNotificationType::get)
+                .template(SERVER_CONFIG.enterBedNotificationContent::get)
                 .translationKey(() ->  "hourglass.messages.enterBed")
                 .translationMode(SERVER_CONFIG.internationalMode::get)
                 .create();
@@ -69,9 +69,9 @@ public class NotificationService {
      */
     public static final ConfigurableNotificationFactory LEAVE_BED_MESSAGE =
             new SleepNotificationFactory.Builder()
-                .stringTarget(SERVER_CONFIG.leaveBedMessageTarget::get)
-                .type(SERVER_CONFIG.leaveBedMessageType::get)
-                .template(SERVER_CONFIG.leaveBedMessage::get)
+                .stringTarget(SERVER_CONFIG.leaveBedNotificationTarget::get)
+                .type(SERVER_CONFIG.leaveBedNotificationType::get)
+                .template(SERVER_CONFIG.leaveBedNotificationContent::get)
                 .translationKey(() ->  "hourglass.messages.leaveBed")
                 .translationMode(SERVER_CONFIG.internationalMode::get)
                 .create();
