@@ -46,7 +46,7 @@ public class NotificationService {
                 .stringTarget(SERVER_CONFIG.morningNotificationTarget::get)
                 .type(SERVER_CONFIG.morningNotificationType::get)
                 .template(SERVER_CONFIG.morningNotificationContent::get)
-                .translationKey(() ->  "hourglass.messages.morning")
+                .translationKey(() ->  "hourglass.notifications.morning")
                 .translationMode(SERVER_CONFIG.internationalMode::get)
                 .create();
 
@@ -59,7 +59,7 @@ public class NotificationService {
                 .stringTarget(SERVER_CONFIG.enterBedNotificationTarget::get)
                 .type(SERVER_CONFIG.enterBedNotificationType::get)
                 .template(SERVER_CONFIG.enterBedNotificationContent::get)
-                .translationKey(() ->  "hourglass.messages.enterBed")
+                .translationKey(() ->  "hourglass.notifications.enterBed")
                 .translationMode(SERVER_CONFIG.internationalMode::get)
                 .create();
 
@@ -72,7 +72,7 @@ public class NotificationService {
                 .stringTarget(SERVER_CONFIG.leaveBedNotificationTarget::get)
                 .type(SERVER_CONFIG.leaveBedNotificationType::get)
                 .template(SERVER_CONFIG.leaveBedNotificationContent::get)
-                .translationKey(() ->  "hourglass.messages.leaveBed")
+                .translationKey(() ->  "hourglass.notifications.leaveBed")
                 .translationMode(SERVER_CONFIG.internationalMode::get)
                 .create();
 

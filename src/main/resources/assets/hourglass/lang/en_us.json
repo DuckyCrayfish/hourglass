@@ -21,7 +21,7 @@
   "hourglass.configgui.screenAlignment.bottomLeft": "Bottom Left",
   "hourglass.configgui.screenAlignment.centerLeft": "Center Left",
   "hourglass.configgui.screenAlignment.centerCenter": "Center Center",
-  "hourglass.messages.morning": "\u00A7e\u00A7oTempus fugit!",
-  "hourglass.messages.enterBed": "{0} is now sleeping. [{1}/{2}]",
-  "hourglass.messages.leaveBed": "{0} has left their bed. [{1}/{2}]"
+  "hourglass.notifications.morning": "\u00A7e\u00A7oTempus fugit!",
+  "hourglass.notifications.enterBed": "{0} is now sleeping. [{1}/{2}]",
+  "hourglass.notifications.leaveBed": "{0} has left their bed. [{1}/{2}]"
 }
