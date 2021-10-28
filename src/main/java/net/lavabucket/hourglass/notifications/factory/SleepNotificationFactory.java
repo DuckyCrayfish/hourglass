@@ -33,11 +33,11 @@ public class SleepNotificationFactory extends TimeServiceNotificationFactory {
 
     /**
      * Creates a new instance.
-     * @param targetSupplier  supplier for the notification target
-     * @param translationKeySupplier  supplier for the message translation key
-     * @param templateSupplier  supplier for the message template
-     * @param typeSupplier  supplier for the chat message type
-     * @param translationModeSupplier  supplier for the translation mode switch
+     * @param targetSupplier  {@code Supplier} for the notification's target
+     * @param translationKeySupplier  {@code Supplier} for the notification translation key
+     * @param templateSupplier  {@code Supplier} for the notification template
+     * @param typeSupplier  {@code Supplier} for the notification's message {@code ChatType}
+     * @param translationModeSupplier  {@code Supplier} for the translation mode flag
      * @see ConfigurableNotificationFactory#ConfigurableNotificationFactory(Supplier, Supplier, Supplier, Supplier, Supplier)
      */
     public SleepNotificationFactory(Supplier<NotificationTarget> targetSupplier,
