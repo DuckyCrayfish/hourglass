@@ -36,12 +36,12 @@ public final class HourglassRegistry {
     /** Registry for time effects. See {@link TimeEffect} for details on time effects. */
     public static IForgeRegistry<TimeEffect> TIME_EFFECT;
     /** Registry of {@code MessageTarget} objects. */
-    public static IForgeRegistry<NotificationTarget> MESSAGE_TARGET;
+    public static IForgeRegistry<NotificationTarget> NOTIFICATION_TARGET;
 
     /** Registry key for the {@link #TIME_EFFECT} registry. */
     public static final ResourceLocation TIME_EFFECT_KEY = new ResourceLocation(Hourglass.MOD_ID, "time_effect");
-    /** Registry key for the {@link #MESSAGE_TARGET} registry. */
-    public static final ResourceLocation MESSAGE_TARGET_KEY = new ResourceLocation(Hourglass.MOD_ID, "message_target");
+    /** Registry key for the {@link #NOTIFICATION_TARGET} registry. */
+    public static final ResourceLocation NOTIFICATION_TARGET_KEY = new ResourceLocation(Hourglass.MOD_ID, "notification_target");
 
     /**
      * Creates all new registries in this class.
@@ -50,7 +50,7 @@ public final class HourglassRegistry {
     @SubscribeEvent
     public static void newRegistryEvent(RegistryEvent.NewRegistry event) {
         TIME_EFFECT = new RegistryBuilder<TimeEffect>().setName(TIME_EFFECT_KEY).setType(TimeEffect.class).create();
-        MESSAGE_TARGET = new RegistryBuilder<NotificationTarget>().setName(MESSAGE_TARGET_KEY).setType(NotificationTarget.class).create();
+        NOTIFICATION_TARGET = new RegistryBuilder<NotificationTarget>().setName(NOTIFICATION_TARGET_KEY).setType(NotificationTarget.class).create();
     }
 
 }

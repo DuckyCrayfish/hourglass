@@ -134,14 +134,14 @@ public class ConfigurableNotificationFactory {
         /**
          * Sets the notification target {@code Supplier} to one that parses the {@code String}
          * provided by {@code keySupplier} into a registry key and returns the corresponding
-         * registry entry from the {@link HourglassRegistry#MESSAGE_TARGET} registry.
+         * registry entry from the {@link HourglassRegistry#NOTIFICATION_TARGET} registry.
          *
          * @param keySupplier  {@code Supplier} of the un-parsed registry key
          * @return this {@code Builder} object
          */
         public Builder stringTarget(Supplier<String> keySupplier) {
             this.targetSupplier = () -> {
-                return Utils.parseRegistryKey(HourglassRegistry.MESSAGE_TARGET, keySupplier.get());
+                return Utils.parseRegistryKey(HourglassRegistry.NOTIFICATION_TARGET, keySupplier.get());
             };
             return this;
         }

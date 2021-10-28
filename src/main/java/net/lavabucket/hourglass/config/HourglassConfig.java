@@ -253,7 +253,7 @@ public final class HourglassConfig {
                     morningMessageTarget = builder.comment(
                         "Sets to whom this message is sent.",
                         "A target of 'SLEEPING' will send the message to all players who just woke up.")
-                        .define("target", () -> "dimension", value -> Utils.isValidRegistryKey(HourglassRegistry.MESSAGE_TARGET, (String) value));
+                        .define("target", () -> "dimension", value -> Utils.isValidRegistryKey(HourglassRegistry.NOTIFICATION_TARGET, (String) value));
                 builder.pop(); // notifications.morning
 
                 // notifications.enterBed
@@ -272,7 +272,7 @@ public final class HourglassConfig {
                         .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
                     enterBedMessageTarget = builder.comment(
                         "Sets to whom this message is sent.")
-                        .define("target", () -> "dimension", value -> Utils.isValidRegistryKey(HourglassRegistry.MESSAGE_TARGET, (String) value));
+                        .define("target", () -> "dimension", value -> Utils.isValidRegistryKey(HourglassRegistry.NOTIFICATION_TARGET, (String) value));
                 builder.pop(); // notifications.enterBed
 
                 // notifications.leaveBed
@@ -291,7 +291,7 @@ public final class HourglassConfig {
                         .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
                     leaveBedMessageTarget = builder.comment(
                         "Sets to whom this message is sent.")
-                        .define("target", () -> "dimension", value -> Utils.isValidRegistryKey(HourglassRegistry.MESSAGE_TARGET, (String) value));
+                        .define("target", () -> "dimension", value -> Utils.isValidRegistryKey(HourglassRegistry.NOTIFICATION_TARGET, (String) value));
                 builder.pop(); // notifications.leaveBed
 
             builder.pop(); // notifications
