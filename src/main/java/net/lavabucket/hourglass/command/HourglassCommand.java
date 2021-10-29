@@ -19,6 +19,9 @@
 
 package net.lavabucket.hourglass.command;
 
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -26,7 +29,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 /**
  * This class is used to create and register all commands used in this mod with Forge.
  */
-public class HourglassCommand {
+public final class HourglassCommand {
 
     /**
      * Register all commands. Called by Forge during a RegisterCommandsEvent.
@@ -35,12 +38,18 @@ public class HourglassCommand {
      */
     @SubscribeEvent
     public static void onRegisterCommandEvent(RegisterCommandsEvent event) {
-        event.getDispatcher().register(
-                Commands.literal("hourglass")
-                    .requires(source -> source.hasPermission(2))
-                    .then(ConfigCommand.create())
-                    .then(QueryCommand.create())
-        );
+        LiteralArgumentBuilder<CommandSourceStack> hourglassCommand = create();
+        event.getDispatcher().register(hourglassCommand);
     }
+
+    public static LiteralArgumentBuilder<CommandSourceStack> create() {
+        return Commands.literal("hourglass")
+                .requires(source -> source.hasPermission(2))
+                .then(ConfigCommand.create())
+                .then(QueryCommand.create());
+    }
+
+    // Private constructor to prohibit instantiation.
+    private HourglassCommand() {}
 
 }
