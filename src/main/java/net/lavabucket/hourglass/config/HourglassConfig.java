@@ -231,6 +231,7 @@ public final class HourglassConfig {
                 "\tsleepingPlayers -> the number of players in the dimension who are sleeping (spectators are not counted).",
                 "\ttotalPlayers -> the total number of players in the dimension (spectators are not counted).",
                 "\tsleepingPercentage -> a 0-100 ratio of sleeping players to total players (100 * sleepingPlayers / totalPlayers).",
+                "\tself -> each player who receives the notification will have their own name inserted wherever this variable is used.",
                 "The type option controls where the notification appears:",
                 "\tSYSTEM: Appears as a message in the chat. (e.g., \"Respawn point set\")",
                 "\tGAME_INFO: Game information that appears above the hotbar (e.g., \"You may not rest now, the bed is too far away\").",
@@ -259,7 +260,7 @@ public final class HourglassConfig {
                     "Not sent if sleep feature is disabled.")
                     .push("morning");
                     morningNotificationContent = builder.comment(
-                        "Allowed Variables: sleepingPlayers, totalPlayers, sleepingPercentage")
+                        "Allowed Variables: sleepingPlayers, totalPlayers, sleepingPercentage, self")
                         .define("message", "\u00A7e\u00A7oTempus fugit!");
                     morningNotificationType = builder.comment("Sets where this notification appears.")
                         .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
@@ -275,7 +276,7 @@ public final class HourglassConfig {
                     "Not sent if sleep feature is disabled.")
                     .push("enterBed");
                     enterBedNotificationContent = builder.comment(
-                        "Allowed Variables: player, sleepingPlayers, totalPlayers, sleepingPercentage")
+                        "Allowed Variables: player, sleepingPlayers, totalPlayers, sleepingPercentage, self")
                         .define("message", "${player} is now sleeping. [${sleepingPlayers}/${totalPlayers}]");
                     enterBedNotificationType = builder.comment("Sets where this notification appears.")
                         .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
@@ -292,7 +293,7 @@ public final class HourglassConfig {
                     "Not sent if sleep feature is disabled.")
                     .push("leaveBed");
                     leaveBedNotificationContent = builder.comment(
-                        "Allowed Variables: player, sleepingPlayers, totalPlayers, sleepingPercentage")
+                        "Allowed Variables: player, sleepingPlayers, totalPlayers, sleepingPercentage, self")
                         .define("message", "${player} has left their bed. [${sleepingPlayers}/${totalPlayers}]");
                     leaveBedNotificationType = builder.comment("Sets where this notification appears.")
                         .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);

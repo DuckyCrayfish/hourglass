@@ -69,8 +69,9 @@ public class GenericNotification implements Notification {
      */
     @Override
     public void send() {
-        TextWrapper content = textBuilder.build();
         getTarget().findMatches(context).forEach(player -> {
+            textBuilder.setVariable("self", player.get().getDisplayName());
+            TextWrapper content = textBuilder.build();
             player.get().sendMessage(content.get(), type, Util.NIL_UUID);
         });
     }

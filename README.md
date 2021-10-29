@@ -238,6 +238,7 @@ Location relative to Minecraft folder:
 #	sleepingPlayers -> the number of players in the dimension who are sleeping (spectators are not counted).
 #	totalPlayers -> the total number of players in the dimension (spectators are not counted).
 #	sleepingPercentage -> a 0-100 ratio of sleeping players to total players (100 * sleepingPlayers / totalPlayers).
+#	self -> each player who receives the notification will have their own name inserted wherever this variable is used.
 #The type option controls where the notification appears:
 #	SYSTEM: Appears as a message in the chat. (e.g., "Respawn point set")
 #	GAME_INFO: Game information that appears above the hotbar (e.g., "You may not rest now, the bed is too far away").
@@ -261,7 +262,7 @@ Location relative to Minecraft folder:
 	#For example, a target of 'asleep' will target all players who were sleeping just before morning.
 	#Not sent if sleep feature is disabled.
 	[notifications.morning]
-		#Allowed Variables: sleepingPlayers, totalPlayers, sleepingPercentage
+		#Allowed Variables: sleepingPlayers, totalPlayers, sleepingPercentage, self
 		message = "§e§oTempus fugit!"
 		#Sets where this notification appears.
 		#Allowed Values: SYSTEM, GAME_INFO
@@ -273,7 +274,7 @@ Location relative to Minecraft folder:
 	#This notification is sent when a player enters their bed in a dimension controlled by Hourglass.
 	#Not sent if sleep feature is disabled.
 	[notifications.enterBed]
-		#Allowed Variables: player, sleepingPlayers, totalPlayers, sleepingPercentage
+		#Allowed Variables: player, sleepingPlayers, totalPlayers, sleepingPercentage, self
 		message = "${player} is now sleeping. [${sleepingPlayers}/${totalPlayers}]"
 		#Sets where this notification appears.
 		#Allowed Values: SYSTEM, GAME_INFO
@@ -286,7 +287,7 @@ Location relative to Minecraft folder:
 	#Not sent when woken up by morning.
 	#Not sent if sleep feature is disabled.
 	[notifications.leaveBed]
-		#Allowed Variables: player, sleepingPlayers, totalPlayers, sleepingPercentage
+		#Allowed Variables: player, sleepingPlayers, totalPlayers, sleepingPercentage, self
 		message = "${player} has left their bed. [${sleepingPlayers}/${totalPlayers}]"
 		#Sets where this notification appears.
 		#Allowed Values: SYSTEM, GAME_INFO
