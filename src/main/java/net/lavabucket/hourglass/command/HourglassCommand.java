@@ -21,7 +21,6 @@ package net.lavabucket.hourglass.command;
 
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
-import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -29,10 +28,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.lavabucket.hourglass.command.config.ConfigCommandBuilder;
 import net.lavabucket.hourglass.command.config.ConfigCommandEntry;
 import net.lavabucket.hourglass.config.ConfigSynchronizer;
-import net.lavabucket.hourglass.time.TimeService;
-import net.lavabucket.hourglass.time.TimeServiceManager;
 import net.lavabucket.hourglass.time.effects.EffectCondition;
-import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 import net.lavabucket.hourglass.wrappers.TextWrapper;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -77,17 +73,11 @@ public class HourglassCommand {
                 .register(SERVER_CONFIG.blockEntityEffect, EffectCondition.class);
 
         event.getDispatcher().register(
-                Commands.literal("hourglass").requires(source -> source.hasPermission(2))
-
+                Commands.literal("hourglass")
+                    .requires(source -> source.hasPermission(2))
                     .then(configCommand.build(Commands.literal("config")))
-
-                    .then(Commands.literal("query")
-                        .then(Commands.literal("timeSpeed")
-                            .executes(HourglassCommand::onTimeSpeedQuery))
-                        .then(Commands.literal("sleeperCount")
-                            .executes(HourglassCommand::onSleeperCountQuery))
-                    )
-                );
+                    .then(QueryCommand.create())
+        );
     }
 
     /**
@@ -138,54 +128,6 @@ public class HourglassCommand {
                 entry.getConfigValue().get());
 
         context.getSource().sendFailure(response.get());
-    }
-
-    /**
-     * Handles a time speed query command.
-     * @param context  the command context
-     * @return 1 for success, 0 for failure
-     */
-    public static int onTimeSpeedQuery(CommandContext<CommandSourceStack> context) {
-        ServerLevelWrapper wrapper = new ServerLevelWrapper(context.getSource().getLevel());
-        TimeService service = TimeServiceManager.service;
-
-        if (service == null || !service.managesLevel(wrapper)) {
-            TextWrapper response = TextWrapper.translation(
-                    "commands.hourglass.query.levelNotApplicable");
-            context.getSource().sendFailure(response.get());
-            return 0;
-        }
-
-        TextWrapper response = TextWrapper.translation(
-                "commands.hourglass.query.timeSpeed.success",
-                service.getTimeSpeed(service.getDayTime()));
-        context.getSource().sendSuccess(response.get(), false);
-        return Command.SINGLE_SUCCESS;
-    }
-
-    /**
-     * Handles a sleeper count query command.
-     * @param context  the command context
-     * @return 1 for success, 0 for failure
-     */
-    public static int onSleeperCountQuery(CommandContext<CommandSourceStack> context) {
-        ServerLevelWrapper wrapper = new ServerLevelWrapper(context.getSource().getLevel());
-        TimeService service = TimeServiceManager.service;
-
-        if (service == null || !service.managesLevel(wrapper)) {
-            TextWrapper response = TextWrapper.translation(
-                    "commands.hourglass.query.levelNotApplicable");
-            context.getSource().sendFailure(response.get());
-            return 0;
-        }
-
-        TextWrapper response = TextWrapper.translation(
-                "commands.hourglass.query.sleeperCount.success",
-                service.sleepStatus.percentage(),
-                service.sleepStatus.amountSleeping(),
-                service.sleepStatus.amountActive());
-        context.getSource().sendSuccess(response.get(), false);
-        return Command.SINGLE_SUCCESS;
     }
 
 }
