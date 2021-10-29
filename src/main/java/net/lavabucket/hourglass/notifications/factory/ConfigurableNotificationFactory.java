@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 import net.lavabucket.hourglass.notifications.GenericNotification;
 import net.lavabucket.hourglass.notifications.target.NotificationTarget;
@@ -97,6 +98,14 @@ public class ConfigurableNotificationFactory {
         return requiredParams.containsAll(target.getRequiredParams());
     }
 
+    /**
+     * {@return the set of required parameters not contained in {@code params}}
+     * @param context  the parameters to check
+     */
+    public Set<TargetParam<?>> getMissingParams(Set<TargetParam<?>> params) {
+        return Sets.difference(requiredParams, params);
+    }
+
     public GenericNotification create(TargetContext context) {
         TextBuilder builder = getContentBuilder(context);
         return create(context, builder);
@@ -109,6 +118,12 @@ public class ConfigurableNotificationFactory {
      * @return  the new notification
      */
     protected GenericNotification create(TargetContext context, TextBuilder builder) {
+        NotificationTarget target = targetSupplier.get();
+        if (!targetCompatible(target)) {
+            throw new IllegalArgumentException("Target " + target.getRegistryName().toString()
+                    + " is not compatible with this notification factory do to required "
+                    + "parameters.");
+        }
         return new GenericNotification(targetSupplier.get(), context, typeSupplier.get(), builder);
     }
 

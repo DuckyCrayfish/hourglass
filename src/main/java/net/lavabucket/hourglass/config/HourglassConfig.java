@@ -262,8 +262,8 @@ public final class HourglassConfig {
                     morningNotificationTarget = builder.comment(
                         "Sets to whom this notification is sent.",
                         "A target of 'SLEEPING' will send the notification to all players who just woke up.",
-                        "Allowed Values: " + generateAllowedTargets(HourglassRegistry.NOTIFICATION_TARGET, NotificationService.MORNING_MESSAGE))
-                        .define("target", () -> "dimension", value -> Utils.isValidRegistryKey(HourglassRegistry.NOTIFICATION_TARGET, (String) value));
+                        "Allowed Values: " + generateAllowedTargets(NotificationService.MORNING_MESSAGE))
+                        .define("target", () -> "dimension", value -> isValidTargetKey(NotificationService.MORNING_MESSAGE, value));
                 builder.pop(); // notifications.morning
 
                 // notifications.enterBed
@@ -282,8 +282,8 @@ public final class HourglassConfig {
                         .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
                     enterBedNotificationTarget = builder.comment(
                         "Sets to whom this notification is sent.",
-                        "Allowed Values: " + generateAllowedTargets(HourglassRegistry.NOTIFICATION_TARGET, NotificationService.ENTER_BED_MESSAGE))
-                        .define("target", () -> "dimension", value -> Utils.isValidRegistryKey(HourglassRegistry.NOTIFICATION_TARGET, (String) value));
+                        "Allowed Values: " + generateAllowedTargets(NotificationService.ENTER_BED_MESSAGE))
+                        .define("target", () -> "dimension", value -> isValidTargetKey(NotificationService.ENTER_BED_MESSAGE, value));
                 builder.pop(); // notifications.enterBed
 
                 // notifications.leaveBed
@@ -302,8 +302,8 @@ public final class HourglassConfig {
                         .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
                     leaveBedNotificationTarget = builder.comment(
                         "Sets to whom this notification is sent.",
-                        "Allowed Values: " + generateAllowedTargets(HourglassRegistry.NOTIFICATION_TARGET, NotificationService.LEAVE_BED_MESSAGE))
-                        .define("target", () -> "dimension", value -> Utils.isValidRegistryKey(HourglassRegistry.NOTIFICATION_TARGET, (String) value));
+                        "Allowed Values: " + generateAllowedTargets(NotificationService.LEAVE_BED_MESSAGE))
+                        .define("target", () -> "dimension", value -> isValidTargetKey(NotificationService.LEAVE_BED_MESSAGE, value));
                 builder.pop(); // notifications.leaveBed
 
             builder.pop(); // notifications
@@ -311,11 +311,30 @@ public final class HourglassConfig {
             spec = builder.build();
         }
 
-        private static String generateAllowedTargets(IForgeRegistry<NotificationTarget> registry, ConfigurableNotificationFactory notification) {
-            return registry.getValues().stream()
+        private static String generateAllowedTargets(ConfigurableNotificationFactory notification) {
+            return HourglassRegistry.NOTIFICATION_TARGET.getValues().stream()
                     .filter(notification::targetCompatible)
                     .map(target -> target.getRegistryName().toString())
                     .collect(Collectors.joining(", "));
+        }
+
+        private static boolean isValidTargetKey(ConfigurableNotificationFactory notification, Object value) {
+            if (!(value instanceof String)) {
+                return false;
+            }
+
+            IForgeRegistry<NotificationTarget> registry = HourglassRegistry.NOTIFICATION_TARGET;
+            String key = (String) value;
+            if (!Utils.isValidRegistryKey(registry, key)) {
+                return false;
+            }
+
+            NotificationTarget target = Utils.parseRegistryKey(registry, key);
+            if (!notification.targetCompatible(target)) {
+                return false;
+            }
+
+            return true;
         }
 
     }

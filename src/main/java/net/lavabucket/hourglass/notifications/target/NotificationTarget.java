@@ -19,6 +19,7 @@
 
 package net.lavabucket.hourglass.notifications.target;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
@@ -53,11 +54,11 @@ public class NotificationTarget extends ForgeRegistryEntry<NotificationTarget> {
     }
 
     /**
-     * {@return true if {@code context} contains all required parameters, false otherwise}
-     * @param context  the context whose parameters are checked
+     * {@return true if {@code params} contains all required parameters, false otherwise}
+     * @param params  the params to check
      */
-    public boolean hasRequiredParams(TargetContext context) {
-        return context.getParams().keySet().containsAll(requiredParams);
+    public boolean hasRequiredParams(Collection<TargetParam<?>> params) {
+        return params.containsAll(requiredParams);
     }
 
     /**
@@ -79,7 +80,7 @@ public class NotificationTarget extends ForgeRegistryEntry<NotificationTarget> {
      * @return a {@code Stream} of players that match this target type
      */
     public Stream<ServerPlayerWrapper> findMatches(TargetContext context) {
-        if (!hasRequiredParams(context)) {
+        if (!hasRequiredParams(context.getParams().keySet())) {
             Set<TargetParam<?>> missing = getMissingParams(context);
             throw new IllegalArgumentException("Notification target context is missing the following params: " + missing);
         }
