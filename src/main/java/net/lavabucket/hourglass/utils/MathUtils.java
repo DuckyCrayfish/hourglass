@@ -44,6 +44,10 @@ public final class MathUtils {
      * Maps a number {@code x} in the unit interval [0,1] to a number on a normalized sigmoid
      * function with a variable curvature defined by {@code c}.
      *
+     * The value of {@code c} must be in the range (0,1), where values closer to zero result in a
+     * curve that trends toward the x-axis, and values closer to 1 result in a curve that trends
+     * toward the y-axis.
+     *
      * @param x  the number to map
      * @param c  the curvature variable
      * @return the number corresponding to {@code x} in the sigmoid function
