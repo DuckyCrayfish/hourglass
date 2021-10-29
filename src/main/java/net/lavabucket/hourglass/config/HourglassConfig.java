@@ -19,7 +19,12 @@
 
 package net.lavabucket.hourglass.config;
 
+import java.util.stream.Collectors;
+
 import net.lavabucket.hourglass.client.gui.ScreenAlignment;
+import net.lavabucket.hourglass.notifications.NotificationService;
+import net.lavabucket.hourglass.notifications.factory.ConfigurableNotificationFactory;
+import net.lavabucket.hourglass.notifications.target.NotificationTarget;
 import net.lavabucket.hourglass.registry.HourglassRegistry;
 import net.lavabucket.hourglass.time.Time;
 import net.lavabucket.hourglass.time.effects.EffectCondition;
@@ -35,6 +40,7 @@ import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.fml.ModLoadingContext;
 
 /**
@@ -255,7 +261,8 @@ public final class HourglassConfig {
                         .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
                     morningNotificationTarget = builder.comment(
                         "Sets to whom this notification is sent.",
-                        "A target of 'SLEEPING' will send the notification to all players who just woke up.")
+                        "A target of 'SLEEPING' will send the notification to all players who just woke up.",
+                        "Allowed Values: " + generateAllowedTargets(HourglassRegistry.NOTIFICATION_TARGET, NotificationService.MORNING_MESSAGE))
                         .define("target", () -> "dimension", value -> Utils.isValidRegistryKey(HourglassRegistry.NOTIFICATION_TARGET, (String) value));
                 builder.pop(); // notifications.morning
 
@@ -274,7 +281,8 @@ public final class HourglassConfig {
                     enterBedNotificationType = builder.comment("Sets where this notification appears.")
                         .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
                     enterBedNotificationTarget = builder.comment(
-                        "Sets to whom this notification is sent.")
+                        "Sets to whom this notification is sent.",
+                        "Allowed Values: " + generateAllowedTargets(HourglassRegistry.NOTIFICATION_TARGET, NotificationService.ENTER_BED_MESSAGE))
                         .define("target", () -> "dimension", value -> Utils.isValidRegistryKey(HourglassRegistry.NOTIFICATION_TARGET, (String) value));
                 builder.pop(); // notifications.enterBed
 
@@ -293,13 +301,21 @@ public final class HourglassConfig {
                     leaveBedNotificationType = builder.comment("Sets where this notification appears.")
                         .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
                     leaveBedNotificationTarget = builder.comment(
-                        "Sets to whom this notification is sent.")
+                        "Sets to whom this notification is sent.",
+                        "Allowed Values: " + generateAllowedTargets(HourglassRegistry.NOTIFICATION_TARGET, NotificationService.LEAVE_BED_MESSAGE))
                         .define("target", () -> "dimension", value -> Utils.isValidRegistryKey(HourglassRegistry.NOTIFICATION_TARGET, (String) value));
                 builder.pop(); // notifications.leaveBed
 
             builder.pop(); // notifications
 
             spec = builder.build();
+        }
+
+        private static String generateAllowedTargets(IForgeRegistry<NotificationTarget> registry, ConfigurableNotificationFactory notification) {
+            return registry.getValues().stream()
+                    .filter(notification::targetCompatible)
+                    .map(target -> target.getRegistryName().toString())
+                    .collect(Collectors.joining(", "));
         }
 
     }

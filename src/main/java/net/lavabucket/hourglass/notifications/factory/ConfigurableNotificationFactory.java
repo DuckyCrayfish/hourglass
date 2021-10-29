@@ -19,11 +19,16 @@
 
 package net.lavabucket.hourglass.notifications.factory;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Supplier;
+
+import com.google.common.collect.ImmutableSet;
 
 import net.lavabucket.hourglass.notifications.GenericNotification;
 import net.lavabucket.hourglass.notifications.target.NotificationTarget;
 import net.lavabucket.hourglass.notifications.target.TargetContext;
+import net.lavabucket.hourglass.notifications.target.TargetParam;
 import net.lavabucket.hourglass.notifications.textbuilder.TemplateTextBuilder;
 import net.lavabucket.hourglass.notifications.textbuilder.TextBuilder;
 import net.lavabucket.hourglass.notifications.textbuilder.TranslatableTextBuilder;
@@ -58,6 +63,8 @@ public class ConfigurableNotificationFactory {
     protected final Supplier<ChatType> typeSupplier;
     /** The {@code Supplier} for the translation mode flag. */
     protected final Supplier<Boolean> translationModeSupplier;
+    /** The required {@code TargetParam} parameters of the notification. */
+    protected final ImmutableSet<TargetParam<?>> requiredParams;
 
     /**
      * Creates a new instance.
@@ -71,12 +78,23 @@ public class ConfigurableNotificationFactory {
             Supplier<String> translationKeySupplier,
             Supplier<String> templateSupplier,
             Supplier<ChatType> typeSupplier,
-            Supplier<Boolean> translationModeSupplier) {
+            Supplier<Boolean> translationModeSupplier,
+            Set<TargetParam<?>> requiredParams) {
         this.targetSupplier = targetSupplier;
         this.translationKeySupplier = translationKeySupplier;
         this.templateSupplier = templateSupplier;
         this.typeSupplier = typeSupplier;
         this.translationModeSupplier = translationModeSupplier;
+        this.requiredParams = ImmutableSet.copyOf(requiredParams);
+    }
+
+    /**
+     * Returns true if this notification factory is compatible with {@code target}, false otherwise.
+     * @param target  the target to check
+     * @return true if this notification factory is compatible with {@code target}, false otherwise
+     */
+    public boolean targetCompatible(NotificationTarget target) {
+        return requiredParams.containsAll(target.getRequiredParams());
     }
 
     public GenericNotification create(TargetContext context) {
@@ -120,6 +138,8 @@ public class ConfigurableNotificationFactory {
         protected Supplier<ChatType> typeSupplier;
         /** The {@code Supplier} for the translation mode flag. */
         protected Supplier<Boolean> translationModeSupplier;
+        /** The required {@code TargetParam} parameters of the notification. */
+        protected HashSet<TargetParam<?>> requiredParams = new HashSet<>();
 
         /**
          * Sets the {@code Supplier} for the notification's target.
@@ -187,6 +207,17 @@ public class ConfigurableNotificationFactory {
         }
 
         /**
+         * Adds {@code param} to the set of context parameters required by the factory.
+         *
+         * @param param  the {@code TargetParam} to add
+         * @return this {@code Builder} object
+         */
+        public Builder requires(TargetParam<?> param) {
+            requiredParams.add(param);
+            return this;
+        }
+
+        /**
          * Returns a newly-created {@code ConfigurableNotificationFactory} object using the provided
          * parameters.
          * @return a newly-created {@code ConfigurableNotificationFactory} object
@@ -196,7 +227,8 @@ public class ConfigurableNotificationFactory {
                     translationKeySupplier,
                     templateSupplier,
                     typeSupplier,
-                    translationModeSupplier);
+                    translationModeSupplier,
+                    requiredParams);
         }
 
     }

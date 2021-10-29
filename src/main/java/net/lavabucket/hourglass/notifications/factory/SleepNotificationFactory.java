@@ -19,6 +19,7 @@
 
 package net.lavabucket.hourglass.notifications.factory;
 
+import java.util.Set;
 import java.util.function.Supplier;
 
 import net.lavabucket.hourglass.notifications.target.NotificationTarget;
@@ -44,10 +45,20 @@ public class SleepNotificationFactory extends TimeServiceNotificationFactory {
             Supplier<String> translationKeySupplier,
             Supplier<String> templateSupplier,
             Supplier<ChatType> typeSupplier,
-            Supplier<Boolean> translationModeSupplier) {
+            Supplier<Boolean> translationModeSupplier,
+            Set<TargetParam<?>> requiredParams) {
 
-        super(targetSupplier, translationKeySupplier, templateSupplier, typeSupplier,
-                translationModeSupplier);
+        super(targetSupplier,
+                translationKeySupplier,
+                templateSupplier,
+                typeSupplier,
+                translationModeSupplier,
+                addRequiredParams(requiredParams));
+    }
+
+    private static Set<TargetParam<?>> addRequiredParams(Set<TargetParam<?>> requiredParams) {
+        requiredParams.add(TargetParam.PLAYER);
+        return requiredParams;
     }
 
     /**
@@ -73,11 +84,13 @@ public class SleepNotificationFactory extends TimeServiceNotificationFactory {
 
         /** {@return a new {@code SleepNotificationFactory} using the supplied parameters} */
         public ConfigurableNotificationFactory create() {
+            requires(TargetParam.PLAYER);
             return new SleepNotificationFactory(targetSupplier,
                     translationKeySupplier,
                     templateSupplier,
                     typeSupplier,
-                    translationModeSupplier);
+                    translationModeSupplier,
+                    requiredParams);
         }
 
     }
