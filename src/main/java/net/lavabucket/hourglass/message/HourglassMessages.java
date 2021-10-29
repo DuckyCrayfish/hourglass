@@ -56,13 +56,12 @@ public class HourglassMessages {
     public static void onSleepingCheckEvent(SleepingTimeCheckEvent event) {
         TimeService service = TimeServiceManager.service;
 
-        if (SERVER_CONFIG.enableSleepFeature.get() == true
-                && event.getPlayer().getSleepTimer() == 2
+        if (event.getPlayer().getSleepTimer() == 2
                 && event.getPlayer().getClass().equals(ServerPlayerWrapper.CLASS)
                 && service != null
+                && service.isHandlingSleep()
                 && service.level.get().equals(event.getPlayer().level)
-                && service.level.get().players().size() > 1
-                && service.level.daylightRuleEnabled()) {
+                && service.level.get().players().size() > 1) {
 
             ServerPlayerWrapper player = new ServerPlayerWrapper(event.getPlayer());
             sendEnterBedMessage(service, player);
@@ -77,13 +76,12 @@ public class HourglassMessages {
     public static void onPlayerWakeUpEvent(PlayerWakeUpEvent event) {
         TimeService service = TimeServiceManager.service;
 
-        if (SERVER_CONFIG.enableSleepFeature.get() == true
-                && event.updateWorld() == true
+        if (event.updateWorld() == true
                 && event.getPlayer().getClass().equals(ServerPlayerWrapper.CLASS)
                 && service != null
+                && service.isHandlingSleep()
                 && service.level.get().equals(event.getPlayer().level)
-                && service.level.get().players().size() > 1
-                && service.level.daylightRuleEnabled()) {
+                && service.level.get().players().size() > 1) {
 
             ServerPlayerWrapper player = new ServerPlayerWrapper(event.getPlayer());
             sendLeaveBedMessage(service, player);
@@ -98,10 +96,9 @@ public class HourglassMessages {
     public static void onSleepFinishedEvent(SleepFinishedTimeEvent event) {
         TimeService service = TimeServiceManager.service;
 
-        if (SERVER_CONFIG.enableSleepFeature.get() == true
-                && service != null
-                && service.level.get().equals(event.getWorld())
-                && service.level.daylightRuleEnabled()) {
+        if (service != null
+                && service.isHandlingSleep()
+                && service.level.get().equals(event.getWorld())) {
 
             sendMorningMessage(service);
         }

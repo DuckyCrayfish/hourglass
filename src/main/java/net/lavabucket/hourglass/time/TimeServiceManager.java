@@ -53,7 +53,7 @@ public class TimeServiceManager {
     public static void onDaySleepCheck(SleepingTimeCheckEvent event) {
         if (service != null
                 && service.level.get().equals(event.getPlayer().level)
-                && HourglassConfig.SERVER_CONFIG.enableSleepFeature.get()
+                && service.isHandlingSleep()
                 && HourglassConfig.SERVER_CONFIG.allowDaySleep.get()) {
 
             event.setResult(Result.ALLOW);
@@ -72,10 +72,12 @@ public class TimeServiceManager {
      */
     @SubscribeEvent
     public static void onSleepingCheckEvent(SleepingTimeCheckEvent event) {
-        if (service != null && service.level.get().equals(event.getPlayer().level)) {
+        if (service != null
+                && service.level.get().equals(event.getPlayer().level)
+                && service.isHandlingSleep()) {
+
             Time time = service.getDayTime().timeOfDay();
-            if (HourglassConfig.SERVER_CONFIG.enableSleepFeature.get()
-                    && time.compareTo(VANILLA_SLEEP_END) >= 0) {
+            if (time.compareTo(VANILLA_SLEEP_END) >= 0) {
                 event.setResult(Result.ALLOW);
             }
         }

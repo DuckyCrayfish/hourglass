@@ -78,7 +78,7 @@ public class TimeService {
      */
     public TimeService(ServerLevelWrapper level) {
         this.level = level;
-        this.sleepStatus = new SleepStatus(() -> SERVER_CONFIG.enableSleepFeature.get());
+        this.sleepStatus = new SleepStatus(this::isHandlingSleep);
         this.level.setSleepStatus(this.sleepStatus);
     }
 
@@ -86,7 +86,7 @@ public class TimeService {
      * Performs all time, sleep, and weather calculations. Should run once per tick.
      */
     public void tick() {
-        if (!level.daylightRuleEnabled()) {
+        if (!isActive()) {
             return;
         }
 
@@ -130,8 +130,8 @@ public class TimeService {
     private void handleMorning(TimeContext context) {
         Time oldTime = context.getOldTime();
         Time newTime = context.getNewTime();
-        boolean overrideSleep = SERVER_CONFIG.enableSleepFeature.get();
-        if (!overrideSleep || sleepStatus.allAwake() || !Time.crossedMorning(oldTime, newTime)) {
+        boolean handlingSleep = isHandlingSleep();
+        if (!handlingSleep || sleepStatus.allAwake() || !Time.crossedMorning(oldTime, newTime)) {
             return;
         }
 
@@ -195,7 +195,7 @@ public class TimeService {
      * @return the time-speed
      */
     public double getTimeSpeed(Time time) {
-        if (!SERVER_CONFIG.enableSleepFeature.get() || sleepStatus.allAwake()) {
+        if (!isHandlingSleep() || sleepStatus.allAwake()) {
             if (time.equals(DAY_START) || time.timeOfDay().betweenMod(DAY_START, NIGHT_START)) {
                 return SERVER_CONFIG.daySpeed.get();
             } else {
@@ -299,6 +299,22 @@ public class TimeService {
         } else {
             return false;
         }
+    }
+
+    /**
+     * {@return true if this service is actively controlling time in its level, false otherwise}
+     * <p>This method will return false if the daylight cycle gamerule is disabled.
+     */
+    public boolean isActive() {
+        return level.daylightRuleEnabled();
+    }
+
+    /**
+     * {@return true if this service is handling sleep functionality in its level, false otherwise}
+     * <p>This method will return false if this service is not active.
+     */
+    public boolean isHandlingSleep() {
+        return isActive() && SERVER_CONFIG.enableSleepFeature.get();
     }
 
     /** {@return all time effects currently active in this level} */
