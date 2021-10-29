@@ -312,9 +312,12 @@ public final class HourglassConfig {
         }
 
         private static String generateAllowedTargets(ConfigurableNotificationFactory notification) {
-            return HourglassRegistry.NOTIFICATION_TARGET.getValues().stream()
+            IForgeRegistry<NotificationTarget> registry = HourglassRegistry.NOTIFICATION_TARGET;
+            String namespace = registry.getRegistryName().getNamespace();
+            return registry.getValues().stream()
                     .filter(notification::targetCompatible)
-                    .map(target -> target.getRegistryName().toString())
+                    .map(NotificationTarget::getRegistryName)
+                    .map(rl -> Utils.resourceLocationToShortString(rl, namespace))
                     .collect(Collectors.joining(", "));
         }
 

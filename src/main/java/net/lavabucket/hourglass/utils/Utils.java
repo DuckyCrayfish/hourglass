@@ -47,6 +47,22 @@ public final class Utils {
     }
 
     /**
+     * Returns a {@code String} representation of {@code rl} that excludes the namespace if it
+     * equals {@code namespace}.
+     *
+     * @param rl the {@link ResourceLocation} to convert
+     * @param namespace the default namespace to be excluded
+     * @return a shortened {@code String} representation of {@code rl}
+     */
+    public static String resourceLocationToShortString(ResourceLocation rl, String namespace) {
+        if (rl.getNamespace().equals(namespace)) {
+            return rl.getPath();
+        } else {
+            return rl.getNamespace() + ":" + rl.getPath();
+        }
+    }
+
+    /**
      * Parses {@code key} into a {@code ResourceLocation} and uses it to return the corresponding
      * entry from {@code registry}.
      *
