@@ -46,6 +46,11 @@ public class Wrapper<T> {
         return result;
     }
 
+    /**
+     * Returns true if {@code obj} is an instance of the same class as this object and has a wrapped
+     * object that is equal to the object that this object wraps.
+     * <p>{@inheritDoc}
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
