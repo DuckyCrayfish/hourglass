@@ -165,7 +165,7 @@ Location relative to Minecraft folder:
 		baseRandomTickSpeed = 3
 
 		#When applied, this effect progresses potion effects to match the rate of the current time-speed.
-		#This effect does not apply if time-speed is 1.0 or less.
+		#This effect does not apply if time speed is 1.0 or less.
 		#THIS MAY HAVE A NEGATIVE IMPACT ON PERFORMANCE IN SERVERS WITH MANY PLAYERS.
 		#When set to ALWAYS, this effect applies to all players in the dimension, day or night.
 		#When set to SLEEPING, this effect only applies to players who are sleeping.
@@ -174,7 +174,7 @@ Location relative to Minecraft folder:
 
 		#When applied, this effect progresses player hunger effects to match the rate of the current time-speed.
 		#This results in faster healing when food level is full, and faster harm when food level is too low.
-		#This effect does not apply if time-speed is 1.0 or less.
+		#This effect does not apply if time speed is 1.0 or less.
 		#When set to ALWAYS, this effect applies to all players in the dimension, day or night. Not recommended on higher difficulty settings
 		#When set to SLEEPING, this effect only applies to players who are sleeping.
 		#Allowed Values: NEVER, ALWAYS, SLEEPING
@@ -196,7 +196,7 @@ Location relative to Minecraft folder:
 	#The maximum speed at which time passes when all players are sleeping.
 	#A value of 110 is nearly equal to the time it takes to sleep in vanilla.
 	#Range: 0.0 ~ 24000.0
-	sleepSpeedMax = 120.0
+	sleepSpeedMax = 110.0
 
 	#The minimum speed at which time passes when only 1 player is sleeping in a full server.
 	#Range: 0.0 ~ 24000.0
@@ -222,6 +222,10 @@ Location relative to Minecraft folder:
 	#Note: This setting is ignored if game rule doWeatherCycle is false.
 	clearWeatherOnWake = true
 
+	#When true, players are allowed to sleep at all times of day in dimensions controlled by Hourglass.
+	#Note: Other mods may override this ability.
+	allowDaySleep = false
+
 	#When true, a clock will appear in the bed interface.
 	#This clock may be disabled by players via hideBedClock config setting.
 	allowBedClock = true
@@ -229,17 +233,25 @@ Location relative to Minecraft folder:
 #This section defines settings for notification messages.
 #All notifications support Minecraft formatting codes (https://minecraft.fandom.com/wiki/Formatting_codes).
 #All notifications have variables that can be inserted using the following format: ${variableName}
-#The type option controls where the message appears:
+#The type option controls where the notification appears:
 #	SYSTEM: Appears as a message in the chat. (e.g., "Respawn point set")
 #	GAME_INFO: Game information that appears above the hotbar (e.g., "You may not rest now, the bed is too far away").
-#The target option controls to whom the message is sent:
-#	ALL: Sends the message to all players on the server.
-#	DIMENSION: Sends the message to all players in the current dimension.
-#	SLEEPING: Sends the message to all sleeping players in the current dimension.
-#	AWAKE: Sends the message to all awake players in the current dimension.
+#The target option controls to whom the notification is sent:
+#	none: Disables the notification.
+#	all: Send to all players on the server.
+#	operators: Send to all operators on the server.
+#	dimension: Send to all players in the current dimension.
+#	asleep: Send to all asleep players in the current dimension.
+#	awake: Send to all awake players in the current dimension.
+#	self: Send only to the player who is the subject of the notification.
 [notifications]
+	#When true, sleep notifications are sent using language files instead of the text content defined in this config file.
+	#This allows for the ability to support multiple languages at a time.
+	#When true, resource packs are required for notification text customization.
+	#Enabling this setting is recommended for modpacks.
+	internationalMode = false
 
-	#This message is sent after a sleep cycle has completed.
+	#This notification is sent after a sleep cycle has completed.
 	#Not sent if sleep feature is disabled.
 	[notifications.morning]
 		#Available variables:
@@ -247,15 +259,17 @@ Location relative to Minecraft folder:
 		#totalPlayers -> the number of players in the current dimension (spectators are not counted).
 		#sleepingPercentage -> the percentage of players in the current dimension who were sleeping (does not include % symbol).
 		message = "§e§oTempus fugit!"
-		#Sets where this message appears.
+
+		#Sets where this notification appears.
 		#Allowed Values: SYSTEM, GAME_INFO
 		type = "GAME_INFO"
-		#Sets to whom this message is sent.
-		#A target of 'SLEEPING' will send the message to all players who just woke up.
-		#Allowed Values: ALL, DIMENSION, SLEEPING, AWAKE
-		target = "DIMENSION"
 
-	#This message is sent when a player enters their bed.
+		#Sets to whom this notification is sent.
+		#A target of 'SLEEPING' will send the notification to all players who just woke up.
+		#Allowed Values: none, all, operators, dimension, asleep, awake
+		target = "dimension"
+
+	#This notification is sent when a player enters their bed.
 	#Not sent if sleep feature is disabled.
 	[notifications.enterBed]
 		#Available variables:
@@ -264,14 +278,16 @@ Location relative to Minecraft folder:
 		#totalPlayers -> the number of players in the current dimension (spectators are not counted).
 		#sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).
 		message = "${player} is now sleeping. [${sleepingPlayers}/${totalPlayers}]"
-		#Sets where this message appears.
+
+		#Sets where this notification appears.
 		#Allowed Values: SYSTEM, GAME_INFO
 		type = "GAME_INFO"
-		#Sets to whom this message is sent.
-		#Allowed Values: ALL, DIMENSION, SLEEPING, AWAKE
-		target = "DIMENSION"
 
-	#This message is sent when a player leaves their bed (without being woken up naturally by morning).
+		#Sets to whom this notification is sent.
+		#Allowed Values: none, all, operators, dimension, asleep, awake, self
+		target = "dimension"
+
+	#This notification is sent when a player leaves their bed (without being woken up naturally by morning).
 	#Not sent if sleep feature is disabled.
 	[notifications.leaveBed]
 		#Available variables:
@@ -280,12 +296,16 @@ Location relative to Minecraft folder:
 		#totalPlayers -> the number of players in the current dimension (spectators are not counted).
 		#sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).
 		message = "${player} has left their bed. [${sleepingPlayers}/${totalPlayers}]"
-		#Sets where this message appears.
+
+		#Sets where this notification appears.
 		#Allowed Values: SYSTEM, GAME_INFO
 		type = "GAME_INFO"
-		#Sets to whom this message is sent.
-		#Allowed Values: ALL, DIMENSION, SLEEPING, AWAKE
-		target = "DIMENSION"
+
+		#Sets to whom this notification is sent.
+		#Allowed Values: none, all, operators, dimension, asleep, awake, self
+		target = "dimension"
+
+
 ```
 
 ### Default Client Config
