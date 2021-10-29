@@ -21,6 +21,7 @@ package net.lavabucket.hourglass.notifications.factory;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.google.common.collect.ImmutableSet;
@@ -117,18 +118,26 @@ public class ConfigurableNotificationFactory {
      */
     public DynamicChatNotification create(TargetContext context) {
         NotificationTarget target = targetSupplier.get();
+        validateTarget(target);
+        ChatType type = typeSupplier.get();
+
+        TextBuilder builder = getContentBuilder(context);
+        Function<ServerPlayerWrapper, TextWrapper> contentProvider =
+                player -> buildMessage(player, builder);
+
+        return new DynamicChatNotification(target, context, type, contentProvider);
+    }
+
+    /**
+     * Validates that {@code target} is a compatible {@code NotificationTarget}.
+     * @param target  the {@code NotificationTarget} to validate
+     */
+    protected void validateTarget(NotificationTarget target) {
         if (!targetCompatible(target)) {
             throw new IllegalArgumentException("Target " + target.getRegistryName().toString()
                     + " is not compatible with this notification factory do to required "
                     + "parameters.");
         }
-
-        TextBuilder builder = getContentBuilder(context);
-
-        return new DynamicChatNotification(targetSupplier.get(),
-                context,
-                typeSupplier.get(),
-                player -> buildMessage(player, builder));
     }
 
     /**
