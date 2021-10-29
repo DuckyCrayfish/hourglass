@@ -231,8 +231,13 @@ Location relative to Minecraft folder:
 	allowBedClock = true
 
 #This section defines settings for notification messages.
-#All notifications support Minecraft formatting codes (https://minecraft.fandom.com/wiki/Formatting_codes).
+#Minecraft formatting codes are supported (https://minecraft.fandom.com/wiki/Formatting_codes).
 #All notifications have variables that can be inserted using the following format: ${variableName}
+#Not all notifications support the same variables. The list of variables includes:
+#	player -> the name of the subject player of the notification.
+#	sleepingPlayers -> the number of players in the dimension who are sleeping (spectators are not counted).
+#	totalPlayers -> the total number of players in the dimension (spectators are not counted).
+#	sleepingPercentage -> a 0-100 ratio of sleeping players to total players (100 * sleepingPlayers / totalPlayers).
 #The type option controls where the notification appears:
 #	SYSTEM: Appears as a message in the chat. (e.g., "Respawn point set")
 #	GAME_INFO: Game information that appears above the hotbar (e.g., "You may not rest now, the bed is too far away").
@@ -251,60 +256,44 @@ Location relative to Minecraft folder:
 	#Enabling this setting is recommended for modpacks.
 	internationalMode = false
 
-	#This notification is sent after a sleep cycle has completed.
+	#This notification is sent as an Hourglass-assisted sleep cycle completes.
+	#The target and variables of this notification are calculated prior to players waking up.
+	#For example, a target of 'asleep' will target all players who were sleeping just before morning.
 	#Not sent if sleep feature is disabled.
 	[notifications.morning]
-		#Available variables:
-		#sleepingPlayers -> the number of players in the current dimension who were sleeping.
-		#totalPlayers -> the number of players in the current dimension (spectators are not counted).
-		#sleepingPercentage -> the percentage of players in the current dimension who were sleeping (does not include % symbol).
+		#Allowed Variables: sleepingPlayers, totalPlayers, sleepingPercentage
 		message = "§e§oTempus fugit!"
-
 		#Sets where this notification appears.
 		#Allowed Values: SYSTEM, GAME_INFO
 		type = "GAME_INFO"
-
 		#Sets to whom this notification is sent.
-		#A target of 'SLEEPING' will send the notification to all players who just woke up.
 		#Allowed Values: none, all, operators, dimension, asleep, awake
 		target = "dimension"
 
-	#This notification is sent when a player enters their bed.
+	#This notification is sent when a player enters their bed in a dimension controlled by Hourglass.
 	#Not sent if sleep feature is disabled.
 	[notifications.enterBed]
-		#Available variables:
-		#player -> the player who started sleeping.
-		#sleepingPlayers -> the number of players in the current dimension who are sleeping.
-		#totalPlayers -> the number of players in the current dimension (spectators are not counted).
-		#sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).
+		#Allowed Variables: player, sleepingPlayers, totalPlayers, sleepingPercentage
 		message = "${player} is now sleeping. [${sleepingPlayers}/${totalPlayers}]"
-
 		#Sets where this notification appears.
 		#Allowed Values: SYSTEM, GAME_INFO
 		type = "GAME_INFO"
-
 		#Sets to whom this notification is sent.
 		#Allowed Values: none, all, operators, dimension, asleep, awake, self
 		target = "dimension"
 
-	#This notification is sent when a player leaves their bed (without being woken up naturally by morning).
+	#This notification is sent when a player leaves their bed in a dimension controlled by Hourglass.
+	#Not sent when woken up by morning.
 	#Not sent if sleep feature is disabled.
 	[notifications.leaveBed]
-		#Available variables:
-		#player -> the player who left their bed.
-		#sleepingPlayers -> the number of players in the current dimension who are sleeping.
-		#totalPlayers -> the number of players in the current dimension (spectators are not counted).
-		#sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).
+		#Allowed Variables: player, sleepingPlayers, totalPlayers, sleepingPercentage
 		message = "${player} has left their bed. [${sleepingPlayers}/${totalPlayers}]"
-
 		#Sets where this notification appears.
 		#Allowed Values: SYSTEM, GAME_INFO
 		type = "GAME_INFO"
-
 		#Sets to whom this notification is sent.
 		#Allowed Values: none, all, operators, dimension, asleep, awake, self
 		target = "dimension"
-
 
 ```
 

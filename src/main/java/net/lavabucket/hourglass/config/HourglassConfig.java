@@ -224,8 +224,13 @@ public final class HourglassConfig {
             // notifications
             builder.comment(
                 "This section defines settings for notification messages.",
-                "All notifications support Minecraft formatting codes (https://minecraft.fandom.com/wiki/Formatting_codes).",
+                "Minecraft formatting codes are supported (https://minecraft.fandom.com/wiki/Formatting_codes).",
                 "All notifications have variables that can be inserted using the following format: ${variableName}",
+                "Not all notifications support the same variables. The list of variables includes:",
+                "\tplayer -> the name of the subject player of the notification.",
+                "\tsleepingPlayers -> the number of players in the dimension who are sleeping (spectators are not counted).",
+                "\ttotalPlayers -> the total number of players in the dimension (spectators are not counted).",
+                "\tsleepingPercentage -> a 0-100 ratio of sleeping players to total players (100 * sleepingPlayers / totalPlayers).",
                 "The type option controls where the notification appears:",
                 "\tSYSTEM: Appears as a message in the chat. (e.g., \"Respawn point set\")",
                 "\tGAME_INFO: Game information that appears above the hotbar (e.g., \"You may not rest now, the bed is too far away\").",
@@ -248,35 +253,29 @@ public final class HourglassConfig {
 
                 // notifications.morning
                 builder.comment(
-                    "This notification is sent after a sleep cycle has completed.",
+                    "This notification is sent as an Hourglass-assisted sleep cycle completes.",
+                    "The target and variables of this notification are calculated prior to players waking up.",
+                    "For example, a target of 'asleep' will target all players who were sleeping just before morning.",
                     "Not sent if sleep feature is disabled.")
                     .push("morning");
                     morningNotificationContent = builder.comment(
-                        "Available variables:",
-                        "sleepingPlayers -> the number of players in the current dimension who were sleeping.",
-                        "totalPlayers -> the number of players in the current dimension (spectators are not counted).",
-                        "sleepingPercentage -> the percentage of players in the current dimension who were sleeping (does not include % symbol).")
+                        "Allowed Variables: sleepingPlayers, totalPlayers, sleepingPercentage")
                         .define("message", "\u00A7e\u00A7oTempus fugit!");
                     morningNotificationType = builder.comment("Sets where this notification appears.")
                         .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
                     morningNotificationTarget = builder.comment(
                         "Sets to whom this notification is sent.",
-                        "A target of 'SLEEPING' will send the notification to all players who just woke up.",
                         "Allowed Values: " + generateAllowedTargets(NotificationService.MORNING_MESSAGE))
                         .define("target", () -> "dimension", value -> isValidTargetKey(NotificationService.MORNING_MESSAGE, value));
                 builder.pop(); // notifications.morning
 
                 // notifications.enterBed
                 builder.comment(
-                    "This notification is sent when a player enters their bed.",
+                    "This notification is sent when a player enters their bed in a dimension controlled by Hourglass.",
                     "Not sent if sleep feature is disabled.")
                     .push("enterBed");
                     enterBedNotificationContent = builder.comment(
-                        "Available variables:",
-                        "player -> the player who started sleeping.",
-                        "sleepingPlayers -> the number of players in the current dimension who are sleeping.",
-                        "totalPlayers -> the number of players in the current dimension (spectators are not counted).",
-                        "sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).")
+                        "Allowed Variables: player, sleepingPlayers, totalPlayers, sleepingPercentage")
                         .define("message", "${player} is now sleeping. [${sleepingPlayers}/${totalPlayers}]");
                     enterBedNotificationType = builder.comment("Sets where this notification appears.")
                         .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
@@ -288,15 +287,12 @@ public final class HourglassConfig {
 
                 // notifications.leaveBed
                 builder.comment(
-                    "This notification is sent when a player leaves their bed (without being woken up naturally by morning).",
+                    "This notification is sent when a player leaves their bed in a dimension controlled by Hourglass.",
+                    "Not sent when woken up by morning.",
                     "Not sent if sleep feature is disabled.")
                     .push("leaveBed");
                     leaveBedNotificationContent = builder.comment(
-                        "Available variables:",
-                        "player -> the player who left their bed.",
-                        "sleepingPlayers -> the number of players in the current dimension who are sleeping.",
-                        "totalPlayers -> the number of players in the current dimension (spectators are not counted).",
-                        "sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).")
+                        "Allowed Variables: player, sleepingPlayers, totalPlayers, sleepingPercentage")
                         .define("message", "${player} has left their bed. [${sleepingPlayers}/${totalPlayers}]");
                     leaveBedNotificationType = builder.comment("Sets where this notification appears.")
                         .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
