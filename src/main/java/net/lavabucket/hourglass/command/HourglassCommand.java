@@ -26,7 +26,7 @@ import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 
-import net.lavabucket.hourglass.command.config.ConfigCommand;
+import net.lavabucket.hourglass.command.config.ConfigCommandBuilder;
 import net.lavabucket.hourglass.command.config.ConfigCommandEntry;
 import net.lavabucket.hourglass.config.ConfigSynchronizer;
 import net.lavabucket.hourglass.time.TimeService;
@@ -55,7 +55,7 @@ public class HourglassCommand {
      */
     @SubscribeEvent
     public static void onRegisterCommandEvent(RegisterCommandsEvent event) {
-        ConfigCommand configCommand = new ConfigCommand()
+        ConfigCommandBuilder configCommand = new ConfigCommandBuilder()
                 .setQuerySuccessHandler(HourglassCommand::onQuerySuccess)
                 .setModifySuccessHandler(HourglassCommand::onModifySuccess)
                 .setModifyFailureHandler(HourglassCommand::onModifyFailure)

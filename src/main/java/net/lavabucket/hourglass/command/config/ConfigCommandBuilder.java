@@ -49,7 +49,7 @@ import net.minecraftforge.server.command.EnumArgument;
  *
  * <p>This package may eventually be released as a standalone library.
  */
-public class ConfigCommand {
+public class ConfigCommandBuilder {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -63,7 +63,7 @@ public class ConfigCommand {
     protected BiConsumer<CommandContext<CommandSourceStack>, ConfigCommandEntry<?>> modifyFailureHandler;
 
     /** Creates a new instance. */
-    public ConfigCommand() {
+    public ConfigCommandBuilder() {
         entries = new HashMap<>();
     }
 
@@ -77,7 +77,7 @@ public class ConfigCommand {
      * @param configValue the {@code IntValue} to register
      * @return this, for chaining
      */
-    public ConfigCommand register(IntValue configValue) {
+    public ConfigCommandBuilder register(IntValue configValue) {
         return register(configValue, IntegerArgumentType.integer(), Integer.class);
     }
 
@@ -92,7 +92,7 @@ public class ConfigCommand {
      * @param argumentType  the {@code ArgumentType} used to parse the value in the 'modify' command
      * @return this, for chaining
      */
-    public ConfigCommand register(IntValue configValue, ArgumentType<Integer> argumentType) {
+    public ConfigCommandBuilder register(IntValue configValue, ArgumentType<Integer> argumentType) {
         return register(configValue, argumentType, Integer.class);
     }
 
@@ -106,7 +106,7 @@ public class ConfigCommand {
      * @param configValue the {@code DoubleValue} to register
      * @return this, for chaining
      */
-    public ConfigCommand register(DoubleValue configValue) {
+    public ConfigCommandBuilder register(DoubleValue configValue) {
         return register(configValue, DoubleArgumentType.doubleArg(), Double.class);
     }
 
@@ -121,7 +121,7 @@ public class ConfigCommand {
      * @param argumentType  the {@code ArgumentType} used to parse the value in the 'modify' command
      * @return this, for chaining
      */
-    public ConfigCommand register(DoubleValue configValue, ArgumentType<Double> argumentType) {
+    public ConfigCommandBuilder register(DoubleValue configValue, ArgumentType<Double> argumentType) {
         return register(configValue, argumentType, Double.class);
     }
 
@@ -135,7 +135,7 @@ public class ConfigCommand {
      * @param configValue  the {@code BooleanValue} to register
      * @return this, for chaining
      */
-    public ConfigCommand register(BooleanValue configValue) {
+    public ConfigCommandBuilder register(BooleanValue configValue) {
         return register(configValue, BoolArgumentType.bool(), Boolean.class);
     }
 
@@ -151,7 +151,7 @@ public class ConfigCommand {
      * @param valueClass  the underlying enum class of the {@code EnumValue}
      * @return this, for chaining
      */
-    public <T extends Enum<T>> ConfigCommand register(EnumValue<T> configValue, Class<T> valueClass) {
+    public <T extends Enum<T>> ConfigCommandBuilder register(EnumValue<T> configValue, Class<T> valueClass) {
         return register(configValue, EnumArgument.enumArgument(valueClass), valueClass);
     }
 
@@ -167,7 +167,7 @@ public class ConfigCommand {
      * @param valueClass  the underlying data class of the config value and argument type
      * @return this, for chaining
      */
-    public <T> ConfigCommand register(ConfigValue<T> configValue, ArgumentType<T> argumentType, Class<T> valueClass) {
+    public <T> ConfigCommandBuilder register(ConfigValue<T> configValue, ArgumentType<T> argumentType, Class<T> valueClass) {
         return register(new ConfigCommandEntry<>(configValue, argumentType, valueClass));
     }
 
@@ -178,7 +178,7 @@ public class ConfigCommand {
      * @param entry  the command entry to register
      * @return this, for chaining
      */
-    public <T> ConfigCommand register(ConfigCommandEntry<T> entry) {
+    public <T> ConfigCommandBuilder register(ConfigCommandEntry<T> entry) {
         entries.put(entry.getIdentifier(), entry);
         return this;
     }
@@ -190,7 +190,7 @@ public class ConfigCommand {
      * @param listener  this handler to set
      * @return this, for chaining
      */
-    public ConfigCommand setQuerySuccessHandler(
+    public ConfigCommandBuilder setQuerySuccessHandler(
             BiConsumer<CommandContext<CommandSourceStack>, ConfigCommandEntry<?>> listener) {
         this.querySuccessHandler = listener;
         return this;
@@ -203,7 +203,7 @@ public class ConfigCommand {
      * @param listener  this handler to set
      * @return this, for chaining
      */
-    public ConfigCommand setModifySuccessHandler(
+    public ConfigCommandBuilder setModifySuccessHandler(
             BiConsumer<CommandContext<CommandSourceStack>, ConfigCommandEntry<?>> listener) {
         this.modifySuccessHandler = listener;
         return this;
@@ -216,7 +216,7 @@ public class ConfigCommand {
      * @param listener  this handler to set
      * @return this, for chaining
      */
-    public ConfigCommand setModifyFailureHandler(
+    public ConfigCommandBuilder setModifyFailureHandler(
             BiConsumer<CommandContext<CommandSourceStack>, ConfigCommandEntry<?>> listener) {
         this.modifyFailureHandler = listener;
         return this;
