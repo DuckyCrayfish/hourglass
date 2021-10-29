@@ -40,10 +40,15 @@ public final class TimeEffects {
 
     private final static DeferredRegister<TimeEffect> TIME_EFFECTS = DeferredRegister.create(TimeEffect.class, Hourglass.MOD_ID);
 
+    /** @see WeatherSleepEffect */
     public final static RegistryObject<TimeEffect> WEATHER_EFFECT = TIME_EFFECTS.register("weather", () -> new WeatherSleepEffect());
+    /** @see RandomTickSleepEffect */
     public final static RegistryObject<TimeEffect> RANDOM_TICK_EFFECT = TIME_EFFECTS.register("random_tick", () -> new RandomTickSleepEffect());
+    /** @see PotionTimeEffect */
     public final static RegistryObject<TimeEffect> POTION_EFFECT = TIME_EFFECTS.register("potion", () -> new PotionTimeEffect());
+    /** @see HungerTimeEffect */
     public final static RegistryObject<TimeEffect> HUNGER_EFFECT = TIME_EFFECTS.register("hunger", () -> new HungerTimeEffect());
+    /** @see BlockEntityTimeEffect */
     public final static RegistryObject<TimeEffect> BLOCK_ENTITY_EFFECT = TIME_EFFECTS.register("block_entity", () -> new BlockEntityTimeEffect());
 
     /**
