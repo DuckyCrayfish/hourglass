@@ -98,7 +98,7 @@ public final class NotificationTargets {
                 .create());
 
     /** Targets only the player that triggered this notification. */
-    public static final RegistryObject<NotificationTarget> SELF = NOTIFICATION_TARGETS.register("self", () ->
+    public static final RegistryObject<NotificationTarget> PLAYER = NOTIFICATION_TARGETS.register("player", () ->
             new NotificationTarget.Builder()
                 .requires(TargetParam.PLAYER)
                 .function(context -> Stream.of(context.getParam(TargetParam.PLAYER)))

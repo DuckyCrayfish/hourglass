@@ -241,7 +241,7 @@ public final class HourglassConfig {
                 "\tdimension: Send to all players in the current dimension.",
                 "\tasleep: Send to all asleep players in the current dimension.",
                 "\tawake: Send to all awake players in the current dimension.",
-                "\tself: Send only to the player who is the subject of the notification.")
+                "\tplayer: Send only to the player who is the subject of the notification.")
                 .push("notifications");
 
                 internationalMode = builder.comment(
