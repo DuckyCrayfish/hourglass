@@ -30,7 +30,7 @@ import net.lavabucket.hourglass.wrappers.TextWrapper;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 
-public class QueryCommand {
+public final class QueryCommand {
 
     public static ArgumentBuilder<CommandSourceStack, ?> create() {
         return Commands.literal("query")
@@ -85,5 +85,8 @@ public class QueryCommand {
         context.getSource().sendSuccess(response.get(), false);
         return Command.SINGLE_SUCCESS;
     }
+
+    // Private constructor to prohibit instantiation.
+    private QueryCommand() {}
 
 }
