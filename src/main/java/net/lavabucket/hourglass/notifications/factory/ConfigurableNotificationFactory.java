@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import net.lavabucket.hourglass.notifications.GenericNotification;
+import net.lavabucket.hourglass.notifications.DynamicChatNotification;
 import net.lavabucket.hourglass.notifications.target.NotificationTarget;
 import net.lavabucket.hourglass.notifications.target.TargetContext;
 import net.lavabucket.hourglass.notifications.target.TargetParam;
@@ -35,10 +35,12 @@ import net.lavabucket.hourglass.notifications.textbuilder.TextBuilder;
 import net.lavabucket.hourglass.notifications.textbuilder.TranslatableTextBuilder;
 import net.lavabucket.hourglass.registry.HourglassRegistry;
 import net.lavabucket.hourglass.utils.Utils;
+import net.lavabucket.hourglass.wrappers.ServerPlayerWrapper;
+import net.lavabucket.hourglass.wrappers.TextWrapper;
 import net.minecraft.network.chat.ChatType;
 
 /**
- * A factory class for {@link GenericNotification} objects that fetches the required arguments using
+ * A factory class for {@link DynamicChatNotification} objects that fetches the required arguments using
  * {@code Supplier}s at notification creation time.
  *
  * <p>The method in which the notification's content is generated depends on whether or not translation
@@ -106,25 +108,27 @@ public class ConfigurableNotificationFactory {
         return Sets.difference(requiredParams, params);
     }
 
-    public GenericNotification create(TargetContext context) {
-        TextBuilder builder = getContentBuilder(context);
-        return create(context, builder);
-    }
-
     /**
-     * Creates a new notification using the provided {@code TextBuilder}.
-     * @param context  the {@code TargetContext} for the notification
-     * @param builder  the {@code TextBuilder} for the notification message content
-     * @return  the new notification
+     * Creates a new {@link DynamicChatNotification} notification using the {@code TargetContext}
+     * provided, and the target and type supplied by the factory's {@code Supplier}s.
+     *
+     * @param context  the {@code TargetContext} of the notification
+     * @return a new {@link DynamicChatNotification} notification
      */
-    protected GenericNotification create(TargetContext context, TextBuilder builder) {
+    public DynamicChatNotification create(TargetContext context) {
         NotificationTarget target = targetSupplier.get();
         if (!targetCompatible(target)) {
             throw new IllegalArgumentException("Target " + target.getRegistryName().toString()
                     + " is not compatible with this notification factory do to required "
                     + "parameters.");
         }
-        return new GenericNotification(targetSupplier.get(), context, typeSupplier.get(), builder);
+
+        TextBuilder builder = getContentBuilder(context);
+
+        return new DynamicChatNotification(targetSupplier.get(),
+                context,
+                typeSupplier.get(),
+                player -> buildMessage(player, builder));
     }
 
     /**
@@ -138,6 +142,19 @@ public class ConfigurableNotificationFactory {
         } else {
             return new TemplateTextBuilder(templateSupplier.get());
         }
+    }
+
+    /**
+     * Builds the message content for each recipient of the notification using {code builder}.
+     * Adds the player's name to the {@code TextBuilder} using the variable name "self".
+     *
+     * @param player  the recipient of the notification
+     * @param builder  the {@code TextBuilder} to use
+     * @return the notification content to send to {@code player}
+     */
+    protected TextWrapper buildMessage(ServerPlayerWrapper player, TextBuilder builder) {
+        builder.setVariable("self", player.get().getDisplayName());
+        return builder.build();
     }
 
     /** Builder class for {@code ConfigurableNotificationFactory} objects. */
