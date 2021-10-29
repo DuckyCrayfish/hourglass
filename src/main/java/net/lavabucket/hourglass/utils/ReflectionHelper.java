@@ -30,17 +30,29 @@ import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 /**
  * This class contains all reflection methods and fields used in Hourglass.
  *
- * <p>Encapsulating all reflected members in a single class ensures they can all be accounted for
- * simultaneously when porting to different Minecraft versions.
+ * <p>Encapsulating all reflected references in a single class ensures they are all accounted for
+ * when porting to different Minecraft versions.
  */
 public final class ReflectionHelper {
 
-    /** Reflection reference to {@code ServerLevel#sleepStatus} field. */
-    public static final Field FIELD_SLEEP_STATUS = ObfuscationReflectionHelper.findField(ServerLevel.class, "f_143245_");
-    /** Reflection reference to {@code ServerLevel#tickBlockEntities()} method. */
-    public static final Method METHOD_TICK_BLOCK_ENTITIES = ObfuscationReflectionHelper.findMethod(Level.class, "m_46463_");
-    /** Reflection reference to {@code LivingEntity#tickEffects()} method. */
-    public static final Method METHOD_TICK_EFFECTS = ObfuscationReflectionHelper.findMethod(LivingEntity.class, "m_21217_");
+    /** An accessible reflected reference to the {@code ServerLevel#sleepStatus} field. */
+    public static final Field FIELD_SLEEP_STATUS = findField(ServerLevel.class, "f_143245_");
+    /** An accessible reflected reference to the {@code ServerLevel#tickBlockEntities()} method. */
+    public static final Method METHOD_TICK_BLOCK_ENTITIES = findMethod(Level.class, "m_46463_");
+    /** An accessible reflected reference to the {@code LivingEntity#tickEffects()} method. */
+    public static final Method METHOD_TICK_EFFECTS = findMethod(LivingEntity.class, "m_21217_");
+
+    private static Field findField(Class<?> clazz, String name) {
+        Field field = ObfuscationReflectionHelper.findField(clazz, name);
+        field.setAccessible(true);
+        return field;
+    }
+
+    private static Method findMethod(Class<?> clazz, String name) {
+        Method method = ObfuscationReflectionHelper.findMethod(clazz, name);
+        method.setAccessible(true);
+        return method;
+    }
 
     // Private constructor to prohibit instantiation.
     private ReflectionHelper() {}

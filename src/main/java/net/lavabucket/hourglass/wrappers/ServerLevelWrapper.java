@@ -111,7 +111,6 @@ public class ServerLevelWrapper extends Wrapper<ServerLevel> {
      */
     public void setSleepStatus(SleepStatus newStatus) {
         try {
-            ReflectionHelper.FIELD_SLEEP_STATUS.setAccessible(true);
             ReflectionHelper.FIELD_SLEEP_STATUS.set(this.get(), newStatus);
         } catch (IllegalArgumentException | IllegalAccessException | SecurityException | UnableToAccessFieldException e) {
             LOGGER.warn(Hourglass.MARKER, "Error setting sleep status.", e);
@@ -132,7 +131,6 @@ public class ServerLevelWrapper extends Wrapper<ServerLevel> {
     /** Ticks all loaded block entities in this level. */
     public void tickBlockEntities() {
         try {
-            ReflectionHelper.METHOD_TICK_BLOCK_ENTITIES.setAccessible(true);
             ReflectionHelper.METHOD_TICK_BLOCK_ENTITIES.invoke(get());
         } catch (IllegalArgumentException | SecurityException | UnableToFindMethodException | IllegalAccessException | InvocationTargetException e) {
             LOGGER.warn(Hourglass.MARKER, "Error ticking block entities.", e);

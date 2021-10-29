@@ -79,7 +79,6 @@ public class ServerPlayerWrapper extends Wrapper<ServerPlayer> {
     /** Ticks all MobEffects applied to this player. */
     public void tickEffects() {
         try {
-            ReflectionHelper.METHOD_TICK_EFFECTS.setAccessible(true);
             ReflectionHelper.METHOD_TICK_EFFECTS.invoke(get());
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             return;
