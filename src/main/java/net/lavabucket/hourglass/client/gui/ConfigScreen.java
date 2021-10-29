@@ -61,12 +61,12 @@ public final class ConfigScreen extends Screen {
     private static final String KEY_DONE = "gui.done";
     private static final String KEY_GENERIC_OPTION = "options.generic_value";
 
-    /** The screen that was active prior to this screen opening. */
-    protected Screen lastScreen;
-    /** The options list used for the settings in this screen. */
-    protected OptionsList optionsList;
-    /** This screen's "done" button. */
-    protected Button doneButton;
+    // The screen that was active prior to this screen opening.
+    private Screen lastScreen;
+    // The options list used for the settings in this screen.
+    private OptionsList optionsList;
+    // This screen's "done" button.
+    private Button doneButton;
 
     private boolean showBedClock;
     private ScreenAlignment clockAlignment;
