@@ -34,12 +34,17 @@ import net.lavabucket.hourglass.wrappers.TextWrapper;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 
+/** A "config" command used to modify and query values of the Hourglass configuration. */
 public final class ConfigCommand {
 
     // A default ArgumentType used for time speed arguments.
     private static final DoubleArgumentType TIME_SPEED_ARGUMENT =
             DoubleArgumentType.doubleArg(0, 24000);
 
+    /**
+     * Creates and returns a command tree builder for the Hourglass "config" command.
+     * @return a command tree builder for the Hourglass "config" command
+     */
     public static ArgumentBuilder<CommandSourceStack, ?> create() {
         return new ConfigCommandBuilder()
                 .setQuerySuccessHandler(ConfigCommand::onQuerySuccess)

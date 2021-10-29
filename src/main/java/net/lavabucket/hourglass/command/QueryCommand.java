@@ -30,8 +30,13 @@ import net.lavabucket.hourglass.wrappers.TextWrapper;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 
+/** A "query" command used to query the current state of Hourglass-related properties. */
 public final class QueryCommand {
 
+    /**
+     * Creates and returns a command tree builder for the Hourglass "query" command.
+     * @return a command tree builder for the Hourglass "query" command
+     */
     public static ArgumentBuilder<CommandSourceStack, ?> create() {
         return Commands.literal("query")
                 .then(Commands.literal("timeSpeed").executes(QueryCommand::onTimeSpeedQuery))

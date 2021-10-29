@@ -26,15 +26,12 @@ import net.minecraft.commands.Commands;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-/**
- * This class is used to create and register all commands used in this mod with Forge.
- */
+/** This class is responsible for creating and registering all of the Hourglass commands. */
 public final class HourglassCommand {
 
     /**
-     * Register all commands. Called by Forge during a RegisterCommandsEvent.
-     *
-     * @param event  the RegisterCommandsEvent supplied by the event bus.
+     * Registers the main "hourglass" command to the root command tree.
+     * @param event  the event supplied by the event bus.
      */
     @SubscribeEvent
     public static void onRegisterCommandEvent(RegisterCommandsEvent event) {
@@ -42,6 +39,10 @@ public final class HourglassCommand {
         event.getDispatcher().register(hourglassCommand);
     }
 
+    /**
+     * Creates and returns a command tree builder for the main "hourglass" command.
+     * @return a command tree builder for the "hourglass" command
+     */
     public static LiteralArgumentBuilder<CommandSourceStack> create() {
         return Commands.literal("hourglass")
                 .requires(source -> source.hasPermission(2))
