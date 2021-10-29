@@ -37,10 +37,10 @@ public final class Utils {
     public static ResourceLocation defaultNamespaceResourceLocation(String namespace, String path) {
         int i = path.indexOf(':');
         if (i >= 0) {
-            path = path.substring(i + 1, path.length());
             if (i >= 1) {
                 namespace = path.substring(0, i);
             }
+            path = path.substring(i + 1, path.length());
         }
 
         return new ResourceLocation(namespace, path);
