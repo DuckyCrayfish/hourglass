@@ -25,6 +25,7 @@ import java.lang.reflect.Method;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 /**
@@ -36,22 +37,35 @@ import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 public final class ReflectionHelper {
 
     /** An accessible reflected reference to the {@code ServerLevel#sleepStatus} field. */
-    public static final Field FIELD_SLEEP_STATUS = findField(ServerLevel.class, "f_143245_");
+    public static final Field FIELD_SLEEP_STATUS = findObfField(ServerLevel.class, "f_143245_");
     /** An accessible reflected reference to the {@code ServerLevel#tickBlockEntities()} method. */
-    public static final Method METHOD_TICK_BLOCK_ENTITIES = findMethod(Level.class, "m_46463_");
+    public static final Method METHOD_TICK_BLOCK_ENTITIES = findObfMethod(Level.class, "m_46463_");
     /** An accessible reflected reference to the {@code LivingEntity#tickEffects()} method. */
-    public static final Method METHOD_TICK_EFFECTS = findMethod(LivingEntity.class, "m_21217_");
+    public static final Method METHOD_TICK_EFFECTS = findObfMethod(LivingEntity.class, "m_21217_");
+    /** An accessible reflected reference to the {@code ConfigTracker#configsByMod} field. */
+    public static final Field CONFIGS_BY_MOD_FIELD = findField(ConfigTracker.class, "configsByMod");
 
-    private static Field findField(Class<?> clazz, String name) {
+    private static Field findObfField(Class<?> clazz, String name) {
         Field field = ObfuscationReflectionHelper.findField(clazz, name);
         field.setAccessible(true);
         return field;
     }
 
-    private static Method findMethod(Class<?> clazz, String name) {
+    private static Method findObfMethod(Class<?> clazz, String name) {
         Method method = ObfuscationReflectionHelper.findMethod(clazz, name);
         method.setAccessible(true);
         return method;
+    }
+
+    private static Field findField(Class<?> clazz, String name) {
+        Field field;
+        try {
+            field = clazz.getDeclaredField(name);
+            field.setAccessible(true);
+            return field;
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to get field " + clazz.getName() + "#" + name, e);
+        }
     }
 
     // Private constructor to prohibit instantiation.

@@ -26,9 +26,10 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 
+import net.lavabucket.hourglass.Hourglass;
 import net.lavabucket.hourglass.command.config.ConfigCommandBuilder;
 import net.lavabucket.hourglass.command.config.ConfigCommandEntry;
-import net.lavabucket.hourglass.config.ConfigSynchronizer;
+import net.lavabucket.hourglass.config.HourglassConfig;
 import net.lavabucket.hourglass.time.effects.EffectCondition;
 import net.lavabucket.hourglass.wrappers.TextWrapper;
 import net.minecraft.commands.CommandSourceStack;
@@ -95,7 +96,7 @@ public final class ConfigCommand {
     public static <T> void onModifySuccess(CommandContext<CommandSourceStack> context, ConfigCommandEntry<T> entry) {
         // Force a config sync, as the file watcher does not always catch the change. This may
         // cause the config update to send twice.
-        ConfigSynchronizer.syncConfigWithClients();
+        HourglassConfig.SYNCHRONIZER.sync(Hourglass.MOD_ID);
 
         TextWrapper response = TextWrapper.translation("commands.hourglass.config.set",
                 entry.getIdentifier(),

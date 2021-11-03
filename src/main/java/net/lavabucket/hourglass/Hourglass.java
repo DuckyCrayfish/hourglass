@@ -23,10 +23,8 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import net.lavabucket.hourglass.command.HourglassCommand;
-import net.lavabucket.hourglass.config.ConfigSynchronizer;
 import net.lavabucket.hourglass.config.HourglassConfig;
 import net.lavabucket.hourglass.message.HourglassMessages;
-import net.lavabucket.hourglass.network.NetworkHandler;
 import net.lavabucket.hourglass.registry.HourglassRegistry;
 import net.lavabucket.hourglass.registry.TimeEffects;
 import net.lavabucket.hourglass.time.TimeServiceManager;
@@ -52,9 +50,7 @@ public final class Hourglass {
         final IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 
         modBus.register(HourglassRegistry.class);
-        modBus.register(NetworkHandler.class);
         modBus.register(HourglassConfig.class);
-        modBus.register(ConfigSynchronizer.class);
         modBus.register(TimeEffects.class);
 
         forgeBus.register(TimeServiceManager.class);

@@ -19,6 +19,7 @@
 
 package net.lavabucket.hourglass.config;
 
+import net.lavabucket.hourglass.Hourglass;
 import net.lavabucket.hourglass.client.gui.ScreenAlignment;
 import net.lavabucket.hourglass.message.MessageTargetType;
 import net.lavabucket.hourglass.time.Time;
@@ -34,6 +35,7 @@ import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.ModLoadingContext;
 
 /**
@@ -44,6 +46,9 @@ public final class HourglassConfig {
     public static final ServerConfig SERVER_CONFIG = new ServerConfig(new Builder());
     public static final ClientConfig CLIENT_CONFIG = new ClientConfig(new Builder());
 
+    /** Server config synchronizer to keep clients up-to-date. */
+    public static final ConfigSynchronizer SYNCHRONIZER = new ConfigSynchronizer(FMLJavaModLoadingContext.get().getModEventBus());
+
     /**
      * Register this class's configs with the mod loading context.
      * @param event  the event, provided by the mod event bus
@@ -53,6 +58,7 @@ public final class HourglassConfig {
         final ModLoadingContext context = ModLoadingContext.get();
         context.registerConfig(ModConfig.Type.SERVER, SERVER_CONFIG.spec);
         context.registerConfig(ModConfig.Type.CLIENT, CLIENT_CONFIG.spec);
+        SYNCHRONIZER.registerMod(Hourglass.MOD_ID);
     }
 
     /** Server-specific configuration file. */
