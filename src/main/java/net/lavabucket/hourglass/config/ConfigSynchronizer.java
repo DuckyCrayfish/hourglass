@@ -35,11 +35,11 @@ import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.config.ModConfig.Type;
 import net.minecraftforge.fml.event.config.ModConfigEvent.Reloading;
-import net.minecraftforge.fmllegacy.network.ConfigSync;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
-import net.minecraftforge.fmllegacy.network.FMLHandshakeMessages.S2CConfigData;
-import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
-import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
+import net.minecraftforge.network.ConfigSync;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.HandshakeMessages.S2CConfigData;
+import net.minecraftforge.network.NetworkEvent.Context;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 /**
  * A very quick and very dirty method of synchronizing server configuration with clients.
