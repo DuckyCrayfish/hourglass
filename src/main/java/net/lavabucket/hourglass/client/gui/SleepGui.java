@@ -31,7 +31,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.client.event.GuiScreenEvent.DrawScreenEvent;
+import net.minecraftforge.client.event.ScreenEvent.DrawScreenEvent;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -71,9 +71,9 @@ public class SleepGui {
      */
     @SubscribeEvent
     public static void onGuiEvent(DrawScreenEvent.Post event) {
-        if (event.getGui() instanceof InBedChatScreen && clockEnabled()) {
+        if (event.getScreen() instanceof InBedChatScreen && clockEnabled()) {
 
-            renderSleepInterface(event.getGui().getMinecraft());
+            renderSleepInterface(event.getScreen().getMinecraft());
         }
     }
 

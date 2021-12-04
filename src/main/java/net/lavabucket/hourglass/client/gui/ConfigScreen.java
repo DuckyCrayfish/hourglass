@@ -32,11 +32,11 @@ import net.minecraft.client.ProgressOption;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraftforge.client.ConfigGuiHandler;
+import net.minecraftforge.client.ConfigGuiHandler.ConfigGuiFactory;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
-import net.minecraftforge.fmlclient.ConfigGuiHandler;
-import net.minecraftforge.fmlclient.ConfigGuiHandler.ConfigGuiFactory;
 
 /**
  * Mod configuration screen, accessed from the mod list in the main menu.

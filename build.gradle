@@ -3,8 +3,12 @@ def modId = 'hourglass'
 def vendor = 'lavabucket.net'
 def groupId = 'net.lavabucket.forge.hourglass'
 def modVersion = '1.3.0.0'
-def minecraftVersion = '1.17.1'
-def forgeVersion = '37.0.84'
+def minecraftVersion = '1.18'
+def forgeVersion = '38.0.14'
+// <1.17: 8
+// 1.17 - 1.18: 16
+// >1.18: 16
+def javaVersion = 17
 
 buildscript {
     repositories {
@@ -24,25 +28,6 @@ apply plugin: 'maven-publish'
 version = "${minecraftVersion}-${modVersion}"
 archivesBaseName = modId
 group = groupId // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-
-class Version {
-    public final int major, minor, patch
-    Version(String version) {
-        def parts = version.tokenize('.')
-        this.major = parts[0].toInteger()
-        this.minor = parts[1].toInteger()
-        this.patch = parts[2].toInteger()
-    }
-    boolean greaterThan(Version other) {
-        if (this.major != other.major) return this.major > other.major
-        if (this.minor != other.minor) return this.minor > other.minor
-        if (this.patch != other.patch) return this.patch > other.patch
-        return false
-    }
-}
-
-// Mojang ships Java 16 to end users in 1.17+ and Java 8 in 1.16 or lower.
-def javaVersion = new Version(minecraftVersion).greaterThan(new Version('1.17.0')) ? 16 : 8;
 java.toolchain.languageVersion = JavaLanguageVersion.of(javaVersion)
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
