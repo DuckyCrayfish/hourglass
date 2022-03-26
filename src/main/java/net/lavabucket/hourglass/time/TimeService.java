@@ -27,7 +27,7 @@ import java.util.Collection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.lavabucket.hourglass.registry.HourglassRegistry;
+import net.lavabucket.hourglass.registry.TimeEffects;
 import net.lavabucket.hourglass.time.effects.TimeEffect;
 import net.lavabucket.hourglass.utils.MathUtils;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
@@ -275,7 +275,7 @@ public class TimeService {
     }
 
     private Collection<TimeEffect> getActiveTimeEffects() {
-        return HourglassRegistry.TIME_EFFECT.getValues();
+        return TimeEffects.REGISTRY.get().getValues();
     }
 
 }
