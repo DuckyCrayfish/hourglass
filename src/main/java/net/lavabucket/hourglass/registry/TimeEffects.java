@@ -19,6 +19,8 @@
 
 package net.lavabucket.hourglass.registry;
 
+import java.util.function.Supplier;
+
 import net.lavabucket.hourglass.Hourglass;
 import net.lavabucket.hourglass.time.effects.BlockEntityTimeEffect;
 import net.lavabucket.hourglass.time.effects.HungerTimeEffect;
@@ -26,11 +28,14 @@ import net.lavabucket.hourglass.time.effects.PotionTimeEffect;
 import net.lavabucket.hourglass.time.effects.RandomTickSleepEffect;
 import net.lavabucket.hourglass.time.effects.TimeEffect;
 import net.lavabucket.hourglass.time.effects.WeatherSleepEffect;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegistryBuilder;
 import net.minecraftforge.registries.RegistryObject;
 
 /**
@@ -38,21 +43,27 @@ import net.minecraftforge.registries.RegistryObject;
  */
 public final class TimeEffects {
 
-    private final static DeferredRegister<TimeEffect> TIME_EFFECTS = DeferredRegister.create(TimeEffect.class, Hourglass.MOD_ID);
+    /** The resource key for the {@link #TIME_EFFECT} registry. */
+    public static final ResourceLocation KEY = new ResourceLocation(Hourglass.MOD_ID, "time_effect");
+
+    private static final DeferredRegister<TimeEffect> TIME_EFFECTS = DeferredRegister.create(KEY, Hourglass.MOD_ID);
+
+    /** Registry for time effects. See {@link TimeEffect} for details on time effects. */
+    public static final Supplier<IForgeRegistry<TimeEffect>> REGISTRY = TIME_EFFECTS.makeRegistry(TimeEffect.class, RegistryBuilder::new);
 
     /** @see WeatherSleepEffect */
-    public final static RegistryObject<TimeEffect> WEATHER_EFFECT = TIME_EFFECTS.register("weather", () -> new WeatherSleepEffect());
+    public static final RegistryObject<TimeEffect> WEATHER_EFFECT = TIME_EFFECTS.register("weather", WeatherSleepEffect::new);
     /** @see RandomTickSleepEffect */
-    public final static RegistryObject<TimeEffect> RANDOM_TICK_EFFECT = TIME_EFFECTS.register("random_tick", () -> new RandomTickSleepEffect());
+    public static final RegistryObject<TimeEffect> RANDOM_TICK_EFFECT = TIME_EFFECTS.register("random_tick", RandomTickSleepEffect::new);
     /** @see PotionTimeEffect */
-    public final static RegistryObject<TimeEffect> POTION_EFFECT = TIME_EFFECTS.register("potion", () -> new PotionTimeEffect());
+    public static final RegistryObject<TimeEffect> POTION_EFFECT = TIME_EFFECTS.register("potion", PotionTimeEffect::new);
     /** @see HungerTimeEffect */
-    public final static RegistryObject<TimeEffect> HUNGER_EFFECT = TIME_EFFECTS.register("hunger", () -> new HungerTimeEffect());
+    public static final RegistryObject<TimeEffect> HUNGER_EFFECT = TIME_EFFECTS.register("hunger", HungerTimeEffect::new);
     /** @see BlockEntityTimeEffect */
-    public final static RegistryObject<TimeEffect> BLOCK_ENTITY_EFFECT = TIME_EFFECTS.register("block_entity", () -> new BlockEntityTimeEffect());
+    public static final RegistryObject<TimeEffect> BLOCK_ENTITY_EFFECT = TIME_EFFECTS.register("block_entity", BlockEntityTimeEffect::new);
 
     /**
-     * Registers all {@code TimeEffect} objects created in this class to the registry.
+     * Prepares the creation of the {@link TimeEffect} registry.
      * @param event  the event, provided by the mod event bus
      */
     @SubscribeEvent
