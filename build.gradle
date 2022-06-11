@@ -1,31 +1,19 @@
-buildscript {
-    repositories {
-        // These repositories are only for Gradle plugins, put any other repositories in the repository block further below
-        maven { url = 'https://maven.minecraftforge.net' }
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-    }
-}
-
 plugins {
     id 'eclipse'
     id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '5.+'
 }
-apply plugin: 'net.minecraftforge.gradle'
-
 
 // Project details
 def modId = 'hourglass'
 def vendor = 'lavabucket.net'
 def groupId = 'net.lavabucket.forge.hourglass'
 def modVersion = '1.2.1.0'
-def minecraftVersion = '1.18.2'
-def forgeVersion = '40.0.32'
+def minecraftVersion = '1.19'
+def forgeVersion = '41.0.16'
 // <1.17: 8
 // 1.17 - 1.18: 16
-// >1.18: 16
+// >1.18: 17
 def javaVersion = 17
 
 version = "${minecraftVersion}-${modVersion}"
@@ -33,7 +21,7 @@ archivesBaseName = modId
 group = groupId // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 java.toolchain.languageVersion = JavaLanguageVersion.of(javaVersion)
 
-println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
+println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
     // The mappings can be changed at any time and must be in the following format.
     // Channel:   Version:

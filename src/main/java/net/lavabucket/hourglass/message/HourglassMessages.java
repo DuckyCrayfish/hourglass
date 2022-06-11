@@ -113,7 +113,7 @@ public class HourglassMessages {
         SleepStatus sleepStatus = timeService.sleepStatus;
 
         new TemplateMessage().setTemplate(templateMessage)
-                .setType(SERVER_CONFIG.enterBedMessageType.get())
+                .setType(SERVER_CONFIG.enterBedMessageType.get().getType())
                 .setVariable("player", player.get().getGameProfile().getName())
                 .setVariable("totalPlayers", Integer.toString(sleepStatus.amountActive()))
                 .setVariable("sleepingPlayers", Integer.toString(sleepStatus.amountSleeping()))
@@ -141,7 +141,7 @@ public class HourglassMessages {
         SleepStatus sleepStatus = timeService.sleepStatus;
 
         new TemplateMessage().setTemplate(templateMessage)
-                .setType(SERVER_CONFIG.leaveBedMessageType.get())
+                .setType(SERVER_CONFIG.leaveBedMessageType.get().getType())
                 .setVariable("player", player.get().getGameProfile().getName())
                 .setVariable("totalPlayers", Integer.toString(sleepStatus.amountActive()))
                 .setVariable("sleepingPlayers", Integer.toString(sleepStatus.amountSleeping() - 1))
@@ -170,7 +170,7 @@ public class HourglassMessages {
         SleepStatus sleepStatus = timeService.sleepStatus;
 
         new TemplateMessage().setTemplate(templateMessage)
-                .setType(SERVER_CONFIG.morningMessageType.get())
+                .setType(SERVER_CONFIG.morningMessageType.get().getType())
                 .setVariable("totalPlayers", Integer.toString(sleepStatus.amountActive()))
                 .setVariable("sleepingPlayers", Integer.toString(sleepStatus.amountSleeping()))
                 .setVariable("sleepingPercentage", Integer.toString(sleepStatus.percentage()))
