@@ -25,10 +25,10 @@ import static net.lavabucket.hourglass.wrappers.TextWrapper.translation;
 import java.util.Arrays;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.serialization.Codec;
 
 import net.lavabucket.hourglass.wrappers.TextWrapper;
-import net.minecraft.client.CycleOption;
-import net.minecraft.client.ProgressOption;
+import net.minecraft.client.OptionInstance;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.Screen;
@@ -99,26 +99,36 @@ public final class ConfigScreen extends Screen {
         optionsList = new OptionsList(minecraft, width, height, OPTIONS_LIST_MARGIN,
                 height - OPTIONS_LIST_BOTTOM_MARGIN, OPTION_HEIGHT);
 
-        optionsList.addBig(CycleOption.create(KEY_CLOCK_ALIGNMENT,
-                Arrays.asList(ScreenAlignment.values()),
-                value -> translation(value.getKey()).get(),
-                options -> clockAlignment,
-                (options, option, value) -> clockAlignment = value));
+        optionsList.addBig(new OptionInstance<>(
+                KEY_CLOCK_ALIGNMENT,
+                OptionInstance.noTooltip(),
+                (i, value) -> translation(value.getKey()).get(),
+                new OptionInstance.Enum<>(Arrays.asList(ScreenAlignment.values()), Codec.STRING.xmap(ScreenAlignment::valueOf, Enum::name)),
+                clockAlignment,
+                value -> clockAlignment = value));
 
-        optionsList.addBig(new ProgressOption(KEY_CLOCK_SCALE, 0.0, 128, 4.0F,
-                settings -> (double) clockScale,
-                (settings, value) -> clockScale = value.intValue(),
-                (settings, option) -> pixelOptionText(KEY_CLOCK_SCALE, option.get(settings)).get()));
+        optionsList.addBig(new OptionInstance<Double>(
+                KEY_CLOCK_SCALE,
+                OptionInstance.noTooltip(),
+                (i, value) -> pixelOptionText(KEY_CLOCK_SCALE, value).get(),
+                (new OptionInstance.IntRange(0, 128)).xmap((value) -> (double) value, (value) -> value.intValue()),
+                Codec.doubleRange(0.0D, 128.0D),
+                Double.valueOf(clockScale),
+                value -> clockScale = value.intValue()));
 
-        optionsList.addBig(new ProgressOption(KEY_CLOCK_MARGIN, 0.0, 128, 4.0F,
-                settings -> (double) clockMargin,
-                (settings, value) -> clockMargin = value.intValue(),
-                (settings, option) -> pixelOptionText(KEY_CLOCK_MARGIN, option.get(settings)).get()));
+        optionsList.addBig(new OptionInstance<Double>(
+                KEY_CLOCK_MARGIN,
+                OptionInstance.noTooltip(),
+                (i, value) -> pixelOptionText(KEY_CLOCK_MARGIN, value).get(),
+                (new OptionInstance.IntRange(0, 128)).xmap((value) -> (double) value, (value) -> value.intValue()),
+                Codec.doubleRange(0.0D, 128.0D),
+                Double.valueOf(clockMargin),
+                value -> clockMargin = value.intValue()));
 
-        optionsList.addBig(CycleOption.createOnOff(
+        optionsList.addBig(OptionInstance.createBoolean(
                 KEY_PREVENT_CLOCK_WOBBLE,
-                settings -> preventClockWobble,
-                (options, option, value) -> preventClockWobble = value));
+                preventClockWobble,
+                value -> preventClockWobble = value));
 
         addWidget(optionsList);
 

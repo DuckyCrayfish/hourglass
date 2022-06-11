@@ -30,8 +30,8 @@ import org.apache.logging.log4j.core.lookup.StrSubstitutor;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 import net.lavabucket.hourglass.wrappers.ServerPlayerWrapper;
 import net.lavabucket.hourglass.wrappers.TextWrapper;
-import net.minecraft.Util;
 import net.minecraft.network.chat.ChatType;
+import net.minecraft.resources.ResourceKey;
 
 /**
  * Message builder for Hourglass notifications, which allow for customizable targets and variable
@@ -44,7 +44,7 @@ public class TemplateMessage {
     /** The {@code StrSubstitutor} object used to perform variable string substitution. */
     public StrSubstitutor substitutor;
 
-    private ChatType type = ChatType.SYSTEM;
+    private ResourceKey<ChatType> type = ChatType.SYSTEM;
     private TextWrapper message;
     private String template;
 
@@ -56,7 +56,7 @@ public class TemplateMessage {
     }
 
     /** {@return the {@code ChatType} of this message} */
-    public ChatType getType() {
+    public ResourceKey<ChatType> getType() {
         return type;
     }
 
@@ -66,7 +66,7 @@ public class TemplateMessage {
      * @param type  this message type
      * @return this, for chaining
      */
-    public TemplateMessage setType(ChatType type) {
+    public TemplateMessage setType(ResourceKey<ChatType> type) {
         this.type = type;
         return this;
     }
@@ -137,7 +137,7 @@ public class TemplateMessage {
         }
 
         if (target == MessageTarget.ALL) {
-            level.get().getServer().getPlayerList().broadcastMessage(this.message.get(), type, Util.NIL_UUID);
+            level.get().getServer().getPlayerList().broadcastSystemMessage(this.message.get(), type);
         } else {
             Stream<ServerPlayerWrapper> playerStream = level.get().players().stream()
                     .map(player -> new ServerPlayerWrapper(player));
@@ -146,7 +146,7 @@ public class TemplateMessage {
                 playerStream = playerStream.filter(ServerPlayerWrapper::isSleeping);
             }
 
-            playerStream.forEach(player -> player.get().sendMessage(this.message.get(), type, Util.NIL_UUID));
+            playerStream.forEach(player -> player.get().sendSystemMessage(this.message.get(), type));
         }
     }
 

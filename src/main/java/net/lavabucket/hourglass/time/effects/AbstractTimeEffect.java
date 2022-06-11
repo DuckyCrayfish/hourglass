@@ -20,13 +20,12 @@
 package net.lavabucket.hourglass.time.effects;
 
 import net.lavabucket.hourglass.time.TimeContext;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
 /**
  * {@link TimeEffect} class with empty implementations to allow for TimeEffect implementations that
  * only override the classes that are needed.
  */
-public abstract class AbstractTimeEffect extends ForgeRegistryEntry<TimeEffect> implements TimeEffect {
+public abstract class AbstractTimeEffect implements TimeEffect {
 
     @Override
     public void onTimeTick(TimeContext context) {}

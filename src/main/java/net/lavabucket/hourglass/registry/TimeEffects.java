@@ -49,7 +49,7 @@ public class TimeEffects {
     private static final DeferredRegister<TimeEffect> DEFERRED_REGISTRY = DeferredRegister.create(KEY, Hourglass.MOD_ID);
 
     /** Registry for time effects. See {@link TimeEffect} for details on time effects. */
-    public static final Supplier<IForgeRegistry<TimeEffect>> REGISTRY = DEFERRED_REGISTRY.makeRegistry(TimeEffect.class, RegistryBuilder::new);
+    public static final Supplier<IForgeRegistry<TimeEffect>> REGISTRY = DEFERRED_REGISTRY.makeRegistry(RegistryBuilder::new);
 
     public static final RegistryObject<TimeEffect> WEATHER_EFFECT = DEFERRED_REGISTRY.register("weather", WeatherSleepEffect::new);
     public static final RegistryObject<TimeEffect> RANDOM_TICK_EFFECT = DEFERRED_REGISTRY.register("random_tick", RandomTickSleepEffect::new);

@@ -20,8 +20,6 @@
 package net.lavabucket.hourglass.wrappers;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 
 /**
  * This class acts as a wrapper for {@link Component} to increase consistency between Minecraft
@@ -48,7 +46,7 @@ public class TextWrapper extends Wrapper<Component> {
      * @return a wrapped translatable text component for the provided key
      */
     public static TextWrapper translation(String key) {
-        return new TextWrapper(new TranslatableComponent(key));
+        return new TextWrapper(Component.translatable(key));
     }
 
     /**
@@ -58,7 +56,7 @@ public class TextWrapper extends Wrapper<Component> {
      * @return a wrapped translatable text component for the provided key
      */
     public static TextWrapper translation(String key, Object... args) {
-        return new TextWrapper(new TranslatableComponent(key, args));
+        return new TextWrapper(Component.translatable(key, args));
     }
 
     /**
@@ -67,7 +65,7 @@ public class TextWrapper extends Wrapper<Component> {
      * @return a wrapped text component with the provided message
      */
     public static TextWrapper literal(String message) {
-        return new TextWrapper(new TextComponent(message));
+        return new TextWrapper(Component.literal(message));
     }
 
 }
