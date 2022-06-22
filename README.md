@@ -65,6 +65,9 @@ Hourglass is compatible with the following mods:
   * The sleep feature of Hourglass will need to be disabled to use it alongside Morpheus.
     [See note below.](#sleep-vote-mods)
 * [Good Night's Sleep](https://www.curseforge.com/minecraft/mc-mods/good-nights-sleep)
+* [Nomadic Tents](https://www.curseforge.com/minecraft/mc-mods/nomadic-tents)
+  * Hourglass is compatible with this mod. However, sleep causes an extra full day cycle to pass
+    after waking.
 
 #### Sleep Vote Mods
 
