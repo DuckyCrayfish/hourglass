@@ -196,7 +196,7 @@ Location relative to Minecraft folder:
 	#The maximum speed at which time passes when all players are sleeping.
 	#A value of 110 is nearly equal to the time it takes to sleep in vanilla.
 	#Range: 0.0 ~ 24000.0
-	sleepSpeedMax = 120.0
+	sleepSpeedMax = 110.0
 
 	#The minimum speed at which time passes when only 1 player is sleeping in a full server.
 	#Range: 0.0 ~ 24000.0
