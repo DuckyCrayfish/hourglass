@@ -1,0 +1,22 @@
+{
+  "commands.hourglass.config.query": "配置项 %s 的值为: %s",
+  "commands.hourglass.config.set": "已设置配置项 %s 的值为: %s",
+  "commands.hourglass.config.failure": "无法设置配置项: %s",
+  "commands.hourglass.query.levelNotApplicable": "Hourglass 无法控制当前维度.",
+  "commands.hourglass.query.timeSpeed.success": "目前时刻的速度为 %s",
+  "commands.hourglass.query.sleeperCount.success": "有 %s%% 的玩家正在睡觉. [%s/%s]",
+  "hourglass.configgui.title": "Hourglass 设置",
+  "hourglass.configgui.preventClockWobble": "防止时钟摆动",
+  "hourglass.configgui.clockAlignment": "时钟对齐方式",
+  "hourglass.configgui.clockScale": "时钟缩放比例",
+  "hourglass.configgui.clockMargin": "时钟边距",
+  "hourglass.configgui.screenAlignment.topLeft": "左上方",
+  "hourglass.configgui.screenAlignment.topCenter": "正上方",
+  "hourglass.configgui.screenAlignment.topRight": "右上方",
+  "hourglass.configgui.screenAlignment.centerRight": "中间偏右",
+  "hourglass.configgui.screenAlignment.bottomRight": "右下方",
+  "hourglass.configgui.screenAlignment.bottomCenter": "正下方",
+  "hourglass.configgui.screenAlignment.bottomLeft": "左下方",
+  "hourglass.configgui.screenAlignment.centerLeft": "中间偏左",
+  "hourglass.configgui.screenAlignment.centerCenter": "正中央"
+}
