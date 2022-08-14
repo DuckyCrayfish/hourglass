@@ -23,7 +23,7 @@ import net.lavabucket.hourglass.config.HourglassConfig;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
-import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -52,7 +52,7 @@ public class TimeServiceManager {
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onDaySleepCheck(SleepingTimeCheckEvent event) {
         if (service != null
-                && service.level.get().equals(event.getPlayer().level)
+                && service.level.get().equals(event.getEntity().level)
                 && HourglassConfig.SERVER_CONFIG.enableSleepFeature.get()
                 && HourglassConfig.SERVER_CONFIG.allowDaySleep.get()) {
 
@@ -72,7 +72,7 @@ public class TimeServiceManager {
      */
     @SubscribeEvent
     public static void onSleepingCheckEvent(SleepingTimeCheckEvent event) {
-        if (service != null && service.level.get().equals(event.getPlayer().level)) {
+        if (service != null && service.level.get().equals(event.getEntity().level)) {
             Time time = service.getDayTime().timeOfDay();
             if (HourglassConfig.SERVER_CONFIG.enableSleepFeature.get()
                     && time.compareTo(VANILLA_SLEEP_END) >= 0) {
@@ -87,9 +87,9 @@ public class TimeServiceManager {
      * @param event  the event provided by the Forge event bus
      */
     @SubscribeEvent
-    public static void onWorldLoad(WorldEvent.Load event) {
-        if (ServerLevelWrapper.isServerLevel(event.getWorld())) {
-            ServerLevelWrapper level = new ServerLevelWrapper(event.getWorld());
+    public static void onWorldLoad(LevelEvent.Load event) {
+        if (ServerLevelWrapper.isServerLevel(event.getLevel())) {
+            ServerLevelWrapper level = new ServerLevelWrapper(event.getLevel());
             if (level.get().equals(level.get().getServer().overworld())) {
                 service = new TimeService(level);
             }
@@ -102,8 +102,8 @@ public class TimeServiceManager {
      * @param event  the event provided by the Forge event bus
      */
     @SubscribeEvent
-    public static void onWorldUnload(WorldEvent.Unload event) {
-        if (service != null && service.level.get() == event.getWorld()) {
+    public static void onWorldUnload(LevelEvent.Unload event) {
+        if (service != null && service.level.get() == event.getLevel()) {
             service = null;
         }
     }
@@ -114,9 +114,9 @@ public class TimeServiceManager {
      * @param event  the event provided by the Forge event bus
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onWorldTick(TickEvent.WorldTickEvent event) {
+    public static void onWorldTick(TickEvent.LevelTickEvent event) {
         if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.START
-                && service != null && service.level.get() == event.world) {
+                && service != null && service.level.get() == event.level) {
             service.tick();
         }
     }

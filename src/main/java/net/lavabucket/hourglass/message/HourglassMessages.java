@@ -29,7 +29,7 @@ import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 import net.lavabucket.hourglass.wrappers.ServerPlayerWrapper;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
-import net.minecraftforge.event.world.SleepFinishedTimeEvent;
+import net.minecraftforge.event.level.SleepFinishedTimeEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /** This class listens for events and sends out Hourglass chat notifications. */
@@ -44,14 +44,14 @@ public class HourglassMessages {
         TimeService service = TimeServiceManager.service;
 
         if (SERVER_CONFIG.enableSleepFeature.get() == true
-                && event.getPlayer().getSleepTimer() == 2
-                && event.getPlayer().getClass() == ServerPlayerWrapper.playerClass
+                && event.getEntity().getSleepTimer() == 2
+                && event.getEntity().getClass() == ServerPlayerWrapper.playerClass
                 && service != null
-                && service.level.get().equals(event.getPlayer().level)
+                && service.level.get().equals(event.getEntity().level)
                 && service.level.get().players().size() > 1
                 && service.level.daylightRuleEnabled()) {
 
-            sendEnterBedMessage(new ServerPlayerWrapper(event.getPlayer()));
+            sendEnterBedMessage(new ServerPlayerWrapper(event.getEntity()));
         }
     }
 
@@ -64,14 +64,14 @@ public class HourglassMessages {
         TimeService service = TimeServiceManager.service;
 
         if (SERVER_CONFIG.enableSleepFeature.get() == true
-                && event.updateWorld() == true
-                && event.getPlayer().getClass() == ServerPlayerWrapper.playerClass
+                && event.updateLevel() == true
+                && event.getEntity().getClass() == ServerPlayerWrapper.playerClass
                 && service != null
-                && service.level.get().equals(event.getPlayer().level)
+                && service.level.get().equals(event.getEntity().level)
                 && service.level.get().players().size() > 1
                 && service.level.daylightRuleEnabled()) {
 
-            sendLeaveBedMessage(new ServerPlayerWrapper(event.getPlayer()));
+            sendLeaveBedMessage(new ServerPlayerWrapper(event.getEntity()));
         }
     }
 
@@ -85,10 +85,10 @@ public class HourglassMessages {
 
         if (SERVER_CONFIG.enableSleepFeature.get() == true
                 && service != null
-                && service.level.get().equals(event.getWorld())
+                && service.level.get().equals(event.getLevel())
                 && service.level.daylightRuleEnabled()) {
 
-            ServerLevelWrapper level = new ServerLevelWrapper(event.getWorld());
+            ServerLevelWrapper level = new ServerLevelWrapper(event.getLevel());
             sendMorningMessage(level);
         }
     }

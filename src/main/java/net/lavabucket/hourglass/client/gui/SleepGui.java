@@ -31,7 +31,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.client.event.ScreenEvent.DrawScreenEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -55,9 +55,9 @@ public class SleepGui {
 
         if (event.phase == Phase.START
                 && CLIENT_CONFIG.preventClockWobble.get()
-                && clockEnabled()
                 && minecraft.level != null
-                && !minecraft.isPaused()) {
+                && !minecraft.isPaused()
+                && clockEnabled()) {
 
             // Render a clock every tick to prevent clock wobble after getting in bed.
             minecraft.getItemRenderer().getModel(clock, minecraft.level, minecraft.player, 0);
@@ -70,7 +70,7 @@ public class SleepGui {
      * @param event  the event provided by the Forge event bus
      */
     @SubscribeEvent
-    public static void onGuiEvent(DrawScreenEvent.Post event) {
+    public static void onGuiEvent(ScreenEvent.Render.Post event) {
         if (event.getScreen() instanceof InBedChatScreen && clockEnabled()) {
 
             renderSleepInterface(event.getScreen().getMinecraft());
