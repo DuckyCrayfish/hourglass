@@ -32,8 +32,7 @@ import net.minecraft.client.OptionInstance;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraftforge.client.ConfigGuiHandler;
-import net.minecraftforge.client.ConfigGuiHandler.ConfigGuiFactory;
+import net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
@@ -79,8 +78,7 @@ public final class ConfigScreen extends Screen {
     @SubscribeEvent
     public static void onConstructModEvent(FMLConstructModEvent event) {
         final ModLoadingContext context = ModLoadingContext.get();
-        context.registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class,
-                () -> new ConfigGuiFactory((mc, screen) -> new ConfigScreen(screen)));
+        context.registerExtensionPoint(ConfigScreenFactory.class, () -> new ConfigScreenFactory((mc, screen) -> new ConfigScreen(screen)));
     }
 
     /**
