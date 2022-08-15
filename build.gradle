@@ -164,7 +164,7 @@ jar {
             "Specification-Vendor"    : vendor,
             "Specification-Version"   : modVersion,
             "Implementation-Title"    : project.name,
-            "Implementation-Version"  : project.jar.archiveVersion,
+            "Implementation-Version"  : modVersion,
             "Implementation-Vendor"   : vendor,
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
