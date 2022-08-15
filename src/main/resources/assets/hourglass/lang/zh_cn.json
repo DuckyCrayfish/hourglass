@@ -6,6 +6,7 @@
   "commands.hourglass.query.timeSpeed.success": "目前时刻的速度为 %s",
   "commands.hourglass.query.sleeperCount.success": "有 %s%% 的玩家正在睡觉. [%s/%s]",
   "hourglass.configgui.title": "Hourglass 设置",
+  "hourglass.configgui.showBedClock": "显示时钟",
   "hourglass.configgui.preventClockWobble": "防止时钟摆动",
   "hourglass.configgui.clockAlignment": "时钟对齐方式",
   "hourglass.configgui.clockScale": "时钟缩放比例",
@@ -18,5 +19,8 @@
   "hourglass.configgui.screenAlignment.bottomCenter": "正下方",
   "hourglass.configgui.screenAlignment.bottomLeft": "左下方",
   "hourglass.configgui.screenAlignment.centerLeft": "中间偏左",
-  "hourglass.configgui.screenAlignment.centerCenter": "正中央"
+  "hourglass.configgui.screenAlignment.centerCenter": "正中央",
+  "hourglass.messages.morning": "\u00A7e\u00A7o时光飞逝!",
+  "hourglass.messages.enterBed": "{0} 现在正在睡觉. [{1}/{2}]",
+  "hourglass.messages.leaveBed": "{0} 离开了他们的床. [{1}/{2}]"
 }
