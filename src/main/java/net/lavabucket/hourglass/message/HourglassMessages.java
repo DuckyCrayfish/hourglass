@@ -31,11 +31,11 @@ import net.lavabucket.hourglass.time.TimeServiceManager;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 import net.lavabucket.hourglass.wrappers.ServerPlayerWrapper;
 import net.lavabucket.hourglass.wrappers.TextWrapper;
-import net.minecraft.Util;
 import net.minecraft.network.chat.ChatType;
+import net.minecraft.resources.ResourceKey;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
-import net.minecraftforge.event.world.SleepFinishedTimeEvent;
+import net.minecraftforge.event.level.SleepFinishedTimeEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /** This class listens for events and sends out Hourglass chat notifications. */
@@ -56,14 +56,14 @@ public class HourglassMessages {
     public static void onSleepingCheckEvent(SleepingTimeCheckEvent event) {
         TimeService service = TimeServiceManager.service;
 
-        if (event.getPlayer().getSleepTimer() == 2
-                && event.getPlayer().getClass().equals(ServerPlayerWrapper.CLASS)
+        if (event.getEntity().getSleepTimer() == 2
+                && event.getEntity().getClass().equals(ServerPlayerWrapper.CLASS)
                 && service != null
                 && service.isHandlingSleep()
-                && service.level.get().equals(event.getPlayer().level)
+                && service.level.get().equals(event.getEntity().level)
                 && service.level.get().players().size() > 1) {
 
-            ServerPlayerWrapper player = new ServerPlayerWrapper(event.getPlayer());
+            ServerPlayerWrapper player = new ServerPlayerWrapper(event.getEntity());
             sendEnterBedMessage(service, player);
         }
     }
@@ -76,14 +76,14 @@ public class HourglassMessages {
     public static void onPlayerWakeUpEvent(PlayerWakeUpEvent event) {
         TimeService service = TimeServiceManager.service;
 
-        if (event.updateWorld() == true
-                && event.getPlayer().getClass().equals(ServerPlayerWrapper.CLASS)
+        if (event.updateLevel() == true
+                && event.getEntity().getClass().equals(ServerPlayerWrapper.CLASS)
                 && service != null
                 && service.isHandlingSleep()
-                && service.level.get().equals(event.getPlayer().level)
+                && service.level.get().equals(event.getEntity().level)
                 && service.level.get().players().size() > 1) {
 
-            ServerPlayerWrapper player = new ServerPlayerWrapper(event.getPlayer());
+            ServerPlayerWrapper player = new ServerPlayerWrapper(event.getEntity());
             sendLeaveBedMessage(service, player);
         }
     }
@@ -98,7 +98,7 @@ public class HourglassMessages {
 
         if (service != null
                 && service.isHandlingSleep()
-                && service.level.get().equals(event.getWorld())) {
+                && service.level.get().equals(event.getLevel())) {
 
             sendMorningMessage(service);
         }
@@ -136,7 +136,7 @@ public class HourglassMessages {
             message = builder.buildFromTemplate(template);
         }
 
-        ChatType type = SERVER_CONFIG.enterBedMessageType.get();
+        ResourceKey<ChatType> type = SERVER_CONFIG.enterBedMessageType.get().getType();
         MessageTargetType target = SERVER_CONFIG.enterBedMessageTarget.get();
         send(message, type, target, timeService.level);
     }
@@ -173,7 +173,7 @@ public class HourglassMessages {
             message = builder.buildFromTemplate(template);
         }
 
-        ChatType type = SERVER_CONFIG.leaveBedMessageType.get();
+        ResourceKey<ChatType> type = SERVER_CONFIG.leaveBedMessageType.get().getType();
         MessageTargetType target = SERVER_CONFIG.leaveBedMessageTarget.get();
         send(message, type, target, timeService.level);
     }
@@ -209,7 +209,7 @@ public class HourglassMessages {
             message = builder.buildFromTemplate(template);
         }
 
-        ChatType type = SERVER_CONFIG.morningMessageType.get();
+        ResourceKey<ChatType> type = SERVER_CONFIG.morningMessageType.get().getType();
         MessageTargetType target = SERVER_CONFIG.morningMessageTarget.get();
         send(message, type, target, timeService.level);
     }
@@ -223,11 +223,11 @@ public class HourglassMessages {
      * @param type  the {@code ChatType} of the message
      * @param level  the level that generated the message
      */
-    public static void send(TextWrapper message, ChatType type, MessageTargetType target,
+    public static void send(TextWrapper message, ResourceKey<ChatType> type, MessageTargetType target,
             ServerLevelWrapper level) {
 
         Stream<ServerPlayerWrapper> players = getTargetPlayers(target, level);
-        players.forEach(player -> player.get().sendMessage(message.get(), type, Util.NIL_UUID));
+        players.forEach(player -> player.get().sendSystemMessage(message.get(), type));
     }
 
     private static Stream<ServerPlayerWrapper> getTargetPlayers(MessageTargetType target,

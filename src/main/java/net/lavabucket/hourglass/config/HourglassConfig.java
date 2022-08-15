@@ -25,6 +25,7 @@ import net.lavabucket.hourglass.message.MessageTargetType;
 import net.lavabucket.hourglass.time.Time;
 import net.lavabucket.hourglass.time.effects.EffectCondition;
 import net.minecraft.network.chat.ChatType;
+import net.minecraft.resources.ResourceKey;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.Builder;
@@ -87,15 +88,15 @@ public final class HourglassConfig {
 
         public final BooleanValue internationalMode;
         public final ConfigValue<String> morningMessage;
-        public final EnumValue<ChatType> morningMessageType;
+        public final EnumValue<ChatTypeOptions> morningMessageType;
         public final EnumValue<MessageTargetType> morningMessageTarget;
 
         public final ConfigValue<String> enterBedMessage;
-        public final EnumValue<ChatType> enterBedMessageType;
+        public final EnumValue<ChatTypeOptions> enterBedMessageType;
         public final EnumValue<MessageTargetType> enterBedMessageTarget;
 
         public final ConfigValue<String> leaveBedMessage;
-        public final EnumValue<ChatType> leaveBedMessageType;
+        public final EnumValue<ChatTypeOptions> leaveBedMessageType;
         public final EnumValue<MessageTargetType> leaveBedMessageTarget;
 
         /**
@@ -245,7 +246,7 @@ public final class HourglassConfig {
                             "sleepingPercentage -> the percentage of players in the current dimension who were sleeping (does not include % symbol).")
                             .define("message", "\u00A7e\u00A7oTempus fugit!");
                         morningMessageType = builder.comment("Sets where this message appears.")
-                            .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
+                            .defineEnum("type", ChatTypeOptions.GAME_INFO, ChatTypeOptions.SYSTEM, ChatTypeOptions.GAME_INFO);
                         morningMessageTarget = builder.comment(
                             "Sets to whom this message is sent.",
                             "A target of 'SLEEPING' will send the message to all players who just woke up.")
@@ -262,7 +263,7 @@ public final class HourglassConfig {
                             "sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).")
                             .define("message", "${player} is now sleeping. [${sleepingPlayers}/${totalPlayers}]");
                         enterBedMessageType = builder.comment("Sets where this message appears.")
-                            .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
+                            .defineEnum("type", ChatTypeOptions.GAME_INFO, ChatTypeOptions.SYSTEM, ChatTypeOptions.GAME_INFO);
                         enterBedMessageTarget = builder.comment("Sets to whom this message is sent.")
                             .defineEnum("target", MessageTargetType.DIMENSION);
                     builder.pop(); // sleep.messages.enterBed
@@ -277,7 +278,7 @@ public final class HourglassConfig {
                             "sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).")
                             .define("message", "${player} has left their bed. [${sleepingPlayers}/${totalPlayers}]");
                         leaveBedMessageType = builder.comment("Sets where this message appears.")
-                            .defineEnum("type", ChatType.GAME_INFO, ChatType.SYSTEM, ChatType.GAME_INFO);
+                            .defineEnum("type", ChatTypeOptions.GAME_INFO, ChatTypeOptions.SYSTEM, ChatTypeOptions.GAME_INFO);
                         leaveBedMessageTarget = builder.comment("Sets to whom this message is sent.")
                             .defineEnum("target", MessageTargetType.DIMENSION);
                     builder.pop(); // sleep.messages.leaveBed
@@ -336,6 +337,21 @@ public final class HourglassConfig {
             spec = builder.build();
         }
 
+    }
+
+    public enum ChatTypeOptions {
+        SYSTEM(ChatType.SYSTEM),
+        GAME_INFO(ChatType.GAME_INFO);
+
+        private final ResourceKey<ChatType> chatType;
+
+        ChatTypeOptions(ResourceKey<ChatType> chatType) {
+            this.chatType = chatType;
+        }
+
+        public ResourceKey<ChatType> getType() {
+            return chatType;
+        }
     }
 
 }

@@ -25,7 +25,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.RenderTickEvent;
-import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /**
@@ -54,9 +54,9 @@ public class TimeInterpolator {
      * @param event  the event provided by the Forge event bus
      */
     @SubscribeEvent
-    public static void onWorldLoad(WorldEvent.Load event) {
-        if (ClientLevelWrapper.isClientLevel(event.getWorld())) {
-            ClientLevelWrapper level = new ClientLevelWrapper(event.getWorld());
+    public static void onWorldLoad(LevelEvent.Load event) {
+        if (ClientLevelWrapper.isClientLevel(event.getLevel())) {
+            ClientLevelWrapper level = new ClientLevelWrapper(event.getLevel());
             instance = new TimeInterpolator(level);
         }
     }
@@ -70,8 +70,8 @@ public class TimeInterpolator {
      * @param event  the event provided by the Forge event bus
      */
     @SubscribeEvent
-    public static void onWorldUnload(WorldEvent.Unload event) {
-        if (instance != null && instance.level.get().equals(event.getWorld())) {
+    public static void onWorldUnload(LevelEvent.Unload event) {
+        if (instance != null && instance.level.get().equals(event.getLevel())) {
             instance = null;
         }
     }

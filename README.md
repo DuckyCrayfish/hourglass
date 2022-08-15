@@ -65,6 +65,9 @@ Hourglass is compatible with the following mods:
   * The sleep feature of Hourglass will need to be disabled to use it alongside Morpheus.
     [See note below.](#sleep-vote-mods)
 * [Good Night's Sleep](https://www.curseforge.com/minecraft/mc-mods/good-nights-sleep)
+* [Nomadic Tents](https://www.curseforge.com/minecraft/mc-mods/nomadic-tents)
+  * Hourglass is compatible with this mod. However, sleep causes an extra full day cycle to pass
+    after waking.
 
 #### Sleep Vote Mods
 
@@ -196,7 +199,7 @@ Location relative to Minecraft folder:
 	#The maximum speed at which time passes when all players are sleeping.
 	#A value of 110 is nearly equal to the time it takes to sleep in vanilla.
 	#Range: 0.0 ~ 24000.0
-	sleepSpeedMax = 120.0
+	sleepSpeedMax = 110.0
 
 	#The minimum speed at which time passes when only 1 player is sleeping in a full server.
 	#Range: 0.0 ~ 24000.0

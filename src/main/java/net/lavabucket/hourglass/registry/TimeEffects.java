@@ -46,30 +46,30 @@ public final class TimeEffects {
     /** The resource key for the {@link #TIME_EFFECT} registry. */
     public static final ResourceLocation KEY = new ResourceLocation(Hourglass.MOD_ID, "time_effect");
 
-    private static final DeferredRegister<TimeEffect> TIME_EFFECTS = DeferredRegister.create(KEY, Hourglass.MOD_ID);
+    private static final DeferredRegister<TimeEffect> DEFERRED_REGISTRY = DeferredRegister.create(KEY, Hourglass.MOD_ID);
 
     /** Registry for time effects. See {@link TimeEffect} for details on time effects. */
-    public static final Supplier<IForgeRegistry<TimeEffect>> REGISTRY = TIME_EFFECTS.makeRegistry(TimeEffect.class, RegistryBuilder::new);
+    public static final Supplier<IForgeRegistry<TimeEffect>> REGISTRY = DEFERRED_REGISTRY.makeRegistry(RegistryBuilder::new);
 
     /** @see WeatherSleepEffect */
-    public static final RegistryObject<TimeEffect> WEATHER_EFFECT = TIME_EFFECTS.register("weather", WeatherSleepEffect::new);
+    public static final RegistryObject<TimeEffect> WEATHER_EFFECT = DEFERRED_REGISTRY.register("weather", WeatherSleepEffect::new);
     /** @see RandomTickSleepEffect */
-    public static final RegistryObject<TimeEffect> RANDOM_TICK_EFFECT = TIME_EFFECTS.register("random_tick", RandomTickSleepEffect::new);
+    public static final RegistryObject<TimeEffect> RANDOM_TICK_EFFECT = DEFERRED_REGISTRY.register("random_tick", RandomTickSleepEffect::new);
     /** @see PotionTimeEffect */
-    public static final RegistryObject<TimeEffect> POTION_EFFECT = TIME_EFFECTS.register("potion", PotionTimeEffect::new);
+    public static final RegistryObject<TimeEffect> POTION_EFFECT = DEFERRED_REGISTRY.register("potion", PotionTimeEffect::new);
     /** @see HungerTimeEffect */
-    public static final RegistryObject<TimeEffect> HUNGER_EFFECT = TIME_EFFECTS.register("hunger", HungerTimeEffect::new);
+    public static final RegistryObject<TimeEffect> HUNGER_EFFECT = DEFERRED_REGISTRY.register("hunger", HungerTimeEffect::new);
     /** @see BlockEntityTimeEffect */
-    public static final RegistryObject<TimeEffect> BLOCK_ENTITY_EFFECT = TIME_EFFECTS.register("block_entity", BlockEntityTimeEffect::new);
+    public static final RegistryObject<TimeEffect> BLOCK_ENTITY_EFFECT = DEFERRED_REGISTRY.register("block_entity", BlockEntityTimeEffect::new);
 
     /**
-     * Prepares the creation of the {@link TimeEffect} registry.
+     * Registers {@link #DEFERRED_REGISTRY} to the mod bus for creation and entry registration.
      * @param event  the event, provided by the mod event bus
      */
     @SubscribeEvent
     public static void onConstructModEvent(FMLConstructModEvent event) {
         final IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
-        TIME_EFFECTS.register(modBus);
+        DEFERRED_REGISTRY.register(modBus);
     }
 
     // Private constructor to prohibit instantiation.
