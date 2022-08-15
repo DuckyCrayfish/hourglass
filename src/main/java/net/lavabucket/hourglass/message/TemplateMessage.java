@@ -30,8 +30,6 @@ import org.apache.logging.log4j.core.lookup.StrSubstitutor;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 import net.lavabucket.hourglass.wrappers.ServerPlayerWrapper;
 import net.lavabucket.hourglass.wrappers.TextWrapper;
-import net.minecraft.network.chat.ChatType;
-import net.minecraft.resources.ResourceKey;
 
 /**
  * Message builder for Hourglass notifications, which allow for customizable targets and variable
@@ -44,7 +42,7 @@ public class TemplateMessage {
     /** The {@code StrSubstitutor} object used to perform variable string substitution. */
     public StrSubstitutor substitutor;
 
-    private ResourceKey<ChatType> type = ChatType.SYSTEM;
+    private boolean overlay;
     private TextWrapper message;
     private String template;
 
@@ -55,19 +53,19 @@ public class TemplateMessage {
         template = "";
     }
 
-    /** {@return the {@code ChatType} of this message} */
-    public ResourceKey<ChatType> getType() {
-        return type;
+    /** {@return true if this message is an overlay message, false otherwise} */
+    public boolean isOverlay() {
+        return overlay;
     }
 
     /**
-     * Sets the {@code ChatType} of this message
+     * Sets whether or not the message is displayed as an overlay message.
      *
-     * @param type  this message type
+     * @param overlay  true if this message should be displayed as an overlay, false otherwise
      * @return this, for chaining
      */
-    public TemplateMessage setType(ResourceKey<ChatType> type) {
-        this.type = type;
+    public TemplateMessage setOverlay(boolean overlay) {
+        this.overlay = overlay;
         return this;
     }
 
@@ -137,7 +135,7 @@ public class TemplateMessage {
         }
 
         if (target == MessageTarget.ALL) {
-            level.get().getServer().getPlayerList().broadcastSystemMessage(this.message.get(), type);
+            level.get().getServer().getPlayerList().broadcastSystemMessage(this.message.get(), overlay);
         } else {
             Stream<ServerPlayerWrapper> playerStream = level.get().players().stream()
                     .map(player -> new ServerPlayerWrapper(player));
@@ -146,7 +144,7 @@ public class TemplateMessage {
                 playerStream = playerStream.filter(ServerPlayerWrapper::isSleeping);
             }
 
-            playerStream.forEach(player -> player.get().sendSystemMessage(this.message.get(), type));
+            playerStream.forEach(player -> player.get().sendSystemMessage(this.message.get(), overlay));
         }
     }
 
