@@ -39,7 +39,7 @@ import net.minecraftforge.event.level.SleepFinishedTimeEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /** This class listens for events and sends out Hourglass chat notifications. */
-public class HourglassMessages {
+public final class HourglassMessages {
 
     /** Translation key for the message that is sent at morning. */
     public static final String MORNING_KEY = "hourglass.messages.morning";
@@ -249,5 +249,8 @@ public class HourglassMessages {
         }
         return players;
     }
+
+    // Private constructor to prohibit instantiation.
+    private HourglassMessages() {}
 
 }

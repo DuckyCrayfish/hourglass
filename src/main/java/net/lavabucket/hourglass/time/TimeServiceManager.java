@@ -32,7 +32,7 @@ import net.minecraftforge.fml.LogicalSide;
 /**
  * Creates {@link TimeService} objects and passes events to them.
  */
-public class TimeServiceManager {
+public final class TimeServiceManager {
 
     /** The Overworld {@code TimeService} object. null if Overworld not loaded. */
     public static TimeService service;
@@ -119,5 +119,8 @@ public class TimeServiceManager {
             service.tick();
         }
     }
+
+    // Private constructor to prohibit instantiation.
+    private TimeServiceManager() {}
 
 }
