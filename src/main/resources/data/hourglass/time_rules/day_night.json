@@ -1,0 +1,22 @@
+{
+  "rules": [
+    {
+      "type": "hourglass:speed",
+      "speed": 1,
+      "conditions": [
+        {
+          "condition": "minecraft:time_check",
+          "value": {
+            "min": 12500,
+            "max": 23500
+          },
+          "period": 24000
+        }
+      ]
+    },
+    {
+      "type": "hourglass:speed",
+      "speed": 1
+    }
+  ]
+}

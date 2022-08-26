@@ -22,6 +22,8 @@ package net.lavabucket.hourglass;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import net.lavabucket.hourglass.codec.TimeRuleTables;
+import net.lavabucket.hourglass.codec.TimeRuleTypes;
 import net.lavabucket.hourglass.command.HourglassCommand;
 import net.lavabucket.hourglass.config.HourglassConfig;
 import net.lavabucket.hourglass.message.HourglassMessages;
@@ -50,10 +52,12 @@ public final class Hourglass {
 
         modBus.register(HourglassConfig.class);
         modBus.register(TimeEffects.class);
+        modBus.register(TimeRuleTypes.class);
 
         forgeBus.register(TimeServiceManager.class);
         forgeBus.register(HourglassMessages.class);
         forgeBus.register(HourglassCommand.class);
+        forgeBus.register(TimeRuleTables.class);
 
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> HourglassClient::new);
     }

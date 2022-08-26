@@ -27,11 +27,16 @@ import java.util.Collection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.lavabucket.hourglass.codec.TimeRuleTable;
+import net.lavabucket.hourglass.codec.TimeRuleTables;
+import net.lavabucket.hourglass.config.HourglassConfig;
 import net.lavabucket.hourglass.registry.TimeEffects;
 import net.lavabucket.hourglass.time.effects.TimeEffect;
-import net.lavabucket.hourglass.utils.MathUtils;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 import net.lavabucket.hourglass.wrappers.TimePacketWrapper;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraftforge.event.ForgeEventFactory;
 
 /**
@@ -68,6 +73,10 @@ public class TimeService {
     /** The {@code SleepStatus} object for this level. */
     public final SleepStatus sleepStatus;
 
+    private final LootContext lootContext;
+
+    protected TimeContext timeContext;
+
     /** The fractional portion of the current time. */
     protected double timeFraction = 0;
 
@@ -80,6 +89,7 @@ public class TimeService {
         this.level = level;
         this.sleepStatus = new SleepStatus(this::isHandlingSleep);
         this.level.setSleepStatus(this.sleepStatus);
+        lootContext = new LootContext.Builder(level.get()).create(LootContextParamSets.EMPTY);
     }
 
     /**
@@ -90,9 +100,9 @@ public class TimeService {
             return;
         }
 
-        TimeContext context = tickTime();
-        executeTimeEffects(context);
-        handleMorning(context);
+        this.timeContext = tickTime();
+        executeTimeEffects(this.timeContext);
+        handleMorning(this.timeContext);
         preventTimeOverflow();
         broadcastTime();
         vanillaTimeCompensation();
@@ -106,13 +116,13 @@ public class TimeService {
      */
     private TimeContext tickTime() {
         Time oldTime = getDayTime();
-        double timeSpeed = getTimeSpeed(oldTime);
-        Time timeDelta = new Time(timeSpeed);
-        timeDelta = correctForOvershoot(oldTime, timeDelta);
-        Time newTime = oldTime.add(timeDelta);
-        setDayTime(newTime);
-        TimeContext context = new TimeContext(this, oldTime, newTime);
-        return context;
+        ResourceLocation ruleKey = ResourceLocation.tryParse(HourglassConfig.SERVER_CONFIG.timeRule.get());
+        TimeRuleTable timeRule = TimeRuleTables.INSTANCE.get(ruleKey);
+        Time time = timeRule.updateTime(oldTime, lootContext);
+        setDayTime(time);
+        Time deltaTime = time.subtract(oldTime);
+
+        return new TimeContext(this, time, deltaTime);
     }
 
     /**
@@ -183,87 +193,6 @@ public class TimeService {
     }
 
     /**
-     * Calculates the current time-speed multiplier based on the time of day and number of sleeping
-     * players.
-     *
-     * A return value of 1 is equivalent to vanilla time speed.
-     *
-     * <p>Accepts time as a parameter to allow for prediction of other times. Prediction of times
-     * other than the current time may not be accurate due to sleeping player changes.
-     *
-     * @param time  the time at which to calculate the time-speed
-     * @return the time-speed
-     */
-    public double getTimeSpeed(Time time) {
-        if (!isHandlingSleep() || sleepStatus.allAwake()) {
-            if (time.equals(DAY_START) || time.timeOfDay().betweenMod(DAY_START, NIGHT_START)) {
-                return SERVER_CONFIG.daySpeed.get();
-            } else {
-                return SERVER_CONFIG.nightSpeed.get();
-            }
-        }
-
-        if (sleepStatus.allAsleep() && SERVER_CONFIG.sleepSpeedAll.get() >= 0) {
-            return SERVER_CONFIG.sleepSpeedAll.get();
-        }
-
-        double sleepRatio = sleepStatus.ratio();
-        double curve = SERVER_CONFIG.sleepSpeedCurve.get();
-        double speedRatio = MathUtils.normalizedTunableSigmoid(sleepRatio, curve);
-
-        double sleepSpeedMin = SERVER_CONFIG.sleepSpeedMin.get();
-        double sleepSpeedMax = SERVER_CONFIG.sleepSpeedMax.get();
-        double multiplier = MathUtils.lerp(speedRatio, sleepSpeedMin, sleepSpeedMax);
-
-        return multiplier;
-    }
-
-    /**
-     * Checks to see if the time-speed will change after elapsing time by {@code timeDelta}, and
-     * correct for any overshooting (or undershooting) based on the new speed.
-     *
-     * @param time  the current time
-     * @param timeDelta  the proposed amount of time to elapse
-     * @return the adjusted amount of time to elapse
-     */
-    private Time correctForOvershoot(Time time, Time timeDelta) {
-        Time nextTime = time.add(timeDelta);
-        Time timeOfDay = time.timeOfDay();
-        Time nextTimeOfDay = nextTime.timeOfDay();
-
-        if (sleepStatus.allAwake()) {
-            // day to night transition
-            if (NIGHT_START.betweenMod(timeOfDay, nextTimeOfDay)) {
-                double nextTimeSpeed = getTimeSpeed(nextTime);
-                Time timeUntilBreakpoint = NIGHT_START.subtract(timeOfDay);
-                double breakpointRatio = 1 - timeUntilBreakpoint.divide(timeDelta);
-
-                return timeUntilBreakpoint.add(nextTimeSpeed * breakpointRatio);
-            }
-
-            // day to night transition
-            if (DAY_START.betweenMod(timeOfDay, nextTimeOfDay)) {
-                double nextTimeSpeed = getTimeSpeed(nextTime);
-                Time timeUntilBreakpoint = DAY_START.subtract(timeOfDay);
-                double breakpointRatio = 1 - timeUntilBreakpoint.divide(timeDelta);
-
-                return timeUntilBreakpoint.add(nextTimeSpeed * breakpointRatio);
-            }
-        } else {
-            // morning transition
-            Time timeUntilMorning = Time.DAY_LENGTH.subtract(timeOfDay);
-            if (timeUntilMorning.compareTo(timeDelta) < 0) {
-                double nextTimeSpeed = SERVER_CONFIG.daySpeed.get();
-                double breakpointRatio = 1 - timeUntilMorning.divide(timeDelta);
-
-                return timeUntilMorning.add(nextTimeSpeed * breakpointRatio);
-            }
-        }
-
-        return timeDelta;
-    }
-
-    /**
      * {@return this level's time as an instance of a {@code Time} object}.
      * Includes the last time fraction set by {@link #setDayTime(Time)}.
      */
@@ -282,6 +211,10 @@ public class TimeService {
         timeFraction = time.fractionalValue();
         level.get().setDayTime(time.longValue());
         return time;
+    }
+
+    public Time getTimeDelta() {
+        return this.timeContext.getTimeDelta();
     }
 
     /**

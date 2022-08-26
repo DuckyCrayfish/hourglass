@@ -1,0 +1,35 @@
+{
+  "rules": [
+    {
+      "type": "hourglass:absolute",
+      "time": 12200,
+      "conditions": [
+        {
+          "condition": "minecraft:alternative",
+          "terms": [
+            { "condition": "minecraft:time_check", "value": {"max": 12199} },
+            { "condition": "minecraft:time_check", "value": {"min": 24000, "max": 204200} }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "hourglass:speed",
+      "speed": 5,
+      "conditions": [{"condition":"minecraft:time_check", "value": {"min": 12000, "max": 13000}}]
+    },
+    {
+      "type": "hourglass:absolute",
+      "time": 205000,
+      "conditions": [
+        { "condition": "minecraft:time_check", "value": {"min":13000, "max":24000} }
+
+      ]
+    },
+    {
+      "type": "hourglass:speed",
+      "speed": -5,
+      "conditions": [{"condition":"minecraft:time_check", "value": {"min": 204200, "max": 205000}}]
+    }
+  ]
+}

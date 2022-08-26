@@ -23,6 +23,7 @@ import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 
@@ -51,6 +52,7 @@ public final class ConfigCommand {
                 .setQuerySuccessHandler(ConfigCommand::onQuerySuccess)
                 .setModifySuccessHandler(ConfigCommand::onModifySuccess)
                 .setModifyFailureHandler(ConfigCommand::onModifyFailure)
+                .register(SERVER_CONFIG.timeRule, StringArgumentType.string(), String.class)
                 .register(SERVER_CONFIG.daySpeed, TIME_SPEED_ARGUMENT)
                 .register(SERVER_CONFIG.nightSpeed, TIME_SPEED_ARGUMENT)
                 .register(SERVER_CONFIG.enableSleepFeature)

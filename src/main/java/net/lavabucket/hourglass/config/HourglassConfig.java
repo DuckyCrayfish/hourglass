@@ -69,6 +69,7 @@ public final class HourglassConfig {
 
         public final DoubleValue daySpeed;
         public final DoubleValue nightSpeed;
+        public final ConfigValue<String> timeRule;
 
         public final EnumValue<EffectCondition> weatherEffect;
         public final EnumValue<EffectCondition> randomTickEffect;
@@ -106,6 +107,9 @@ public final class HourglassConfig {
         public ServerConfig(final ForgeConfigSpec.Builder builder) {
 
             builder.push("time"); // time
+
+                timeRule = builder.comment("")
+                .define("timeRule", "hourglass:vanilla");
 
                 daySpeed = builder.comment(
                     "The speed at which time passes during the day.",
