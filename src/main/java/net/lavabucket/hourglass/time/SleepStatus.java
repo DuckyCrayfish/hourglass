@@ -20,7 +20,7 @@
 package net.lavabucket.hourglass.time;
 
 import java.util.List;
-import java.util.function.Supplier;
+import java.util.function.BooleanSupplier;
 
 import net.lavabucket.hourglass.wrappers.ServerPlayerWrapper;
 import net.minecraft.server.level.ServerPlayer;
@@ -40,7 +40,7 @@ public class SleepStatus extends net.minecraft.server.players.SleepStatus {
     /** The number of sleeping players in this dimension. */
     protected int sleepingPlayerCount;
     /** A {@code Supplier} that determines whether or not vanilla sleep should be suppressed. */
-    protected Supplier<Boolean> preventSleepSupplier;
+    protected BooleanSupplier preventSleepSupplier;
 
     /**
      * Creates a new instance.
@@ -48,7 +48,7 @@ public class SleepStatus extends net.minecraft.server.players.SleepStatus {
      * @param preventSleepSupplier  a supplier that should return true when vanilla sleep
      * functionality should be blocked, false otherwise.
      */
-    public SleepStatus(Supplier<Boolean> preventSleepSupplier) {
+    public SleepStatus(BooleanSupplier preventSleepSupplier) {
         this.preventSleepSupplier = preventSleepSupplier;
     }
 
@@ -143,7 +143,7 @@ public class SleepStatus extends net.minecraft.server.players.SleepStatus {
      * @param percentageRequired  percentage on which to calculate required sleeping player count
      */
     public boolean areEnoughSleeping(int percentageRequired) {
-        if (preventSleepSupplier.get()) {
+        if (preventSleepSupplier.getAsBoolean()) {
             return false;
         } else {
             return sleepingPlayerCount >= sleepersNeeded(percentageRequired);
@@ -163,7 +163,7 @@ public class SleepStatus extends net.minecraft.server.players.SleepStatus {
      * @param percentageRequired  percentage on which to calculate required sleeping player count
      */
     public boolean areEnoughDeepSleeping(int percentageRequired, List<ServerPlayer> playerList) {
-        if (preventSleepSupplier.get()) {
+        if (preventSleepSupplier.getAsBoolean()) {
             return false;
         }
 
@@ -191,7 +191,7 @@ public class SleepStatus extends net.minecraft.server.players.SleepStatus {
 
         updatePlayerCounts(playerList);
 
-        if (preventSleepSupplier.get()) {
+        if (preventSleepSupplier.getAsBoolean()) {
             return false;
         } else {
             boolean noSleepers = oldSleepingCount == 0 && sleepingPlayerCount == 0;
