@@ -60,7 +60,7 @@ public class TimeService {
      * <p>This number was chosen somewhat arbitrarily as the largest multiple of the lunar cycle
      * duration that can fit inside of an int.
      */
-    public static final long OVERFLOW_THRESHOLD = 11184 * Time.LUNAR_CYCLE_TICKS;
+    public static final int OVERFLOW_THRESHOLD = 11184 * Time.LUNAR_CYCLE_TICKS;
 
     /** The level managed by this {@code TimeService}. */
     public final ServerLevelWrapper level;
