@@ -147,4 +147,7 @@ public class SleepGui {
                 && !CLIENT_CONFIG.hideBedClock.get();
     }
 
+    // Private constructor to prohibit instantiation.
+    private SleepGui() {}
+
 }
