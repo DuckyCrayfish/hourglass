@@ -64,8 +64,6 @@ public final class ConfigScreen extends Screen {
     private Screen lastScreen;
     // The options list used for the settings in this screen.
     private OptionsList optionsList;
-    // This screen's "done" button.
-    private Button doneButton;
 
     private boolean showBedClock;
     private ScreenAlignment clockAlignment;
@@ -112,20 +110,20 @@ public final class ConfigScreen extends Screen {
                 clockAlignment,
                 value -> clockAlignment = value));
 
-        optionsList.addBig(new OptionInstance<Double>(
+        optionsList.addBig(new OptionInstance<>(
                 KEY_CLOCK_SCALE,
                 OptionInstance.noTooltip(),
                 (i, value) -> pixelOptionText(KEY_CLOCK_SCALE, value).get(),
-                (new OptionInstance.IntRange(0, 128)).xmap((value) -> (double) value, (value) -> value.intValue()),
+                (new OptionInstance.IntRange(0, 128)).xmap(Double::valueOf, Double::intValue),
                 Codec.doubleRange(0.0D, 128.0D),
                 Double.valueOf(clockScale),
                 value -> clockScale = value.intValue()));
 
-        optionsList.addBig(new OptionInstance<Double>(
+        optionsList.addBig(new OptionInstance<>(
                 KEY_CLOCK_MARGIN,
                 OptionInstance.noTooltip(),
                 (i, value) -> pixelOptionText(KEY_CLOCK_MARGIN, value).get(),
-                (new OptionInstance.IntRange(0, 128)).xmap((value) -> (double) value, (value) -> value.intValue()),
+                (new OptionInstance.IntRange(0, 128)).xmap(Double::valueOf, Double::intValue),
                 Codec.doubleRange(0.0D, 128.0D),
                 Double.valueOf(clockMargin),
                 value -> clockMargin = value.intValue()));
@@ -140,7 +138,7 @@ public final class ConfigScreen extends Screen {
         int doneX = (width - BUTTON_WIDTH) / 2;
         int doneY = height - BUTTON_HEIGHT - DONE_BUTTON_BOTTOM_MARGIN;
         TextWrapper doneText = translation(KEY_DONE);
-        doneButton = new Button(doneX, doneY, BUTTON_WIDTH, BUTTON_HEIGHT, doneText.get(),
+        Button doneButton = new Button(doneX, doneY, BUTTON_WIDTH, BUTTON_HEIGHT, doneText.get(),
                 button -> onClose());
 
         addRenderableWidget(doneButton);

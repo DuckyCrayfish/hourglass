@@ -292,7 +292,7 @@ public class ConfigCommandBuilder {
             entry.getConfigValue().set(argument);
         } catch(Exception e) {
             if (this.modifyFailureHandler != null) {
-                LOGGER.error("Command failed to set config to value: " + argument, e);
+                LOGGER.error("Command failed to set config to value: {}", argument, e);
                 this.modifyFailureHandler.accept(context, entry);
                 return 0;
             }

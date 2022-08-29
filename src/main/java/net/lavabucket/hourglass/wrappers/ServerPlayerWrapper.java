@@ -38,8 +38,6 @@ import net.minecraft.world.entity.player.Player;
  */
 public class ServerPlayerWrapper extends Wrapper<ServerPlayer> {
 
-    static {  }
-
     /** The class that this {@code Wrapper} wraps. */
     public static final Class<ServerPlayer> CLASS = ServerPlayer.class;
 
@@ -81,7 +79,6 @@ public class ServerPlayerWrapper extends Wrapper<ServerPlayer> {
         try {
             ReflectionHelper.METHOD_TICK_EFFECTS.invoke(get());
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            return;
         }
     }
 

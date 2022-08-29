@@ -136,7 +136,7 @@ public class ConfigSynchronizer {
                 && isRegistered(modId)
                 && config.getType() == ModConfig.Type.SERVER) {
 
-            LOGGER.debug(MARKER, "Synchronizing " + modId + " server config with clients.");
+            LOGGER.debug(MARKER, "Synchronizing {} server config with clients.", modId);
             try {
                 sync(config);
             } catch (Exception e) {

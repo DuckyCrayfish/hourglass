@@ -111,10 +111,9 @@ public class ServerLevelWrapper extends Wrapper<ServerLevel> {
      */
     public void setSleepStatus(SleepStatus newStatus) {
         try {
-            ReflectionHelper.FIELD_SLEEP_STATUS.set(this.get(), newStatus);
+            ReflectionHelper.FIELD_SLEEP_STATUS.set(get(), newStatus);
         } catch (IllegalArgumentException | IllegalAccessException | SecurityException | UnableToAccessFieldException e) {
             LOGGER.warn(Hourglass.MARKER, "Error setting sleep status.", e);
-            return;
         }
     }
 
@@ -123,7 +122,7 @@ public class ServerLevelWrapper extends Wrapper<ServerLevel> {
      */
     public void wakeUpAllPlayers() {
         this.get().players().stream()
-                .map(player -> new ServerPlayerWrapper(player))
+                .map(ServerPlayerWrapper::new)
                 .filter(ServerPlayerWrapper::isSleeping)
                 .forEach(player -> player.get().stopSleepInBed(false, false));
     }
@@ -134,7 +133,6 @@ public class ServerLevelWrapper extends Wrapper<ServerLevel> {
             ReflectionHelper.METHOD_TICK_BLOCK_ENTITIES.invoke(get());
         } catch (IllegalArgumentException | SecurityException | UnableToFindMethodException | IllegalAccessException | InvocationTargetException e) {
             LOGGER.warn(Hourglass.MARKER, "Error ticking block entities.", e);
-            return;
         }
     }
 
