@@ -20,6 +20,7 @@
 package net.lavabucket.hourglass.message;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.lookup.AbstractLookup;
@@ -36,7 +37,7 @@ public class MessageBuilder {
     private final LinkedHashMap<String, Object> variables = new LinkedHashMap<>();
 
     /** {@return the substitution variable map} */
-    public LinkedHashMap<String, Object> getVariables() {
+    public Map<String, Object> getVariables() {
         return variables;
     }
 
