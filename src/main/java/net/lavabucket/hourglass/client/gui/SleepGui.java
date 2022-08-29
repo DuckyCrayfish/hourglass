@@ -88,7 +88,7 @@ public class SleepGui {
             return;
         }
 
-        float x, y;
+        int x, y;
         int scale = CLIENT_CONFIG.clockScale.get();
         int margin = CLIENT_CONFIG.clockMargin.get();
         ScreenAlignment alignment = CLIENT_CONFIG.clockAlignment.get();
