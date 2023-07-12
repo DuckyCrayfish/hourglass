@@ -103,7 +103,7 @@ public class HourglassCommand {
                 entry.getIdentifier(),
                 entry.getConfigValue().get().toString());
 
-        context.getSource().sendSuccess(response.get(), false);
+        context.getSource().sendSuccess(() -> response.get(), false);
     }
 
     /**
@@ -122,7 +122,7 @@ public class HourglassCommand {
                 entry.getIdentifier(),
                 entry.getConfigValue().get());
 
-        context.getSource().sendSuccess(response.get(), true);
+        context.getSource().sendSuccess(() -> response.get(), true);
     }
 
     /**
@@ -159,7 +159,7 @@ public class HourglassCommand {
         TextWrapper response = TextWrapper.translation(
                 "commands.hourglass.query.timeSpeed.success",
                 service.getTimeSpeed(service.getDayTime()));
-        context.getSource().sendSuccess(response.get(), false);
+        context.getSource().sendSuccess(() -> response.get(), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -184,7 +184,7 @@ public class HourglassCommand {
                 service.sleepStatus.percentage(),
                 service.sleepStatus.amountSleeping(),
                 service.sleepStatus.amountActive());
-        context.getSource().sendSuccess(response.get(), false);
+        context.getSource().sendSuccess(() -> response.get(), false);
         return Command.SINGLE_SUCCESS;
     }
 

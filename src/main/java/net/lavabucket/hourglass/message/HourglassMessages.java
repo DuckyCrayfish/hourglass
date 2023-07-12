@@ -47,7 +47,7 @@ public class HourglassMessages {
                 && event.getEntity().getSleepTimer() == 2
                 && event.getEntity().getClass() == ServerPlayerWrapper.playerClass
                 && service != null
-                && service.level.get().equals(event.getEntity().level)
+                && service.level.get().equals(event.getEntity().level())
                 && service.level.get().players().size() > 1
                 && service.level.daylightRuleEnabled()) {
 
@@ -67,7 +67,7 @@ public class HourglassMessages {
                 && event.updateLevel() == true
                 && event.getEntity().getClass() == ServerPlayerWrapper.playerClass
                 && service != null
-                && service.level.get().equals(event.getEntity().level)
+                && service.level.get().equals(event.getEntity().level())
                 && service.level.get().players().size() > 1
                 && service.level.daylightRuleEnabled()) {
 

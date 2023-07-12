@@ -29,6 +29,7 @@ import com.mojang.serialization.Codec;
 
 import net.lavabucket.hourglass.wrappers.TextWrapper;
 import net.minecraft.client.OptionInstance;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.Screen;
@@ -142,11 +143,11 @@ public final class ConfigScreen extends Screen {
     }
 
     @Override
-    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(stack);
-        optionsList.render(stack, mouseX, mouseY, partialTicks);
-        drawCenteredString(stack, font, title.getString(), width / 2, TITLE_MARGIN, 0xFFFFFF);
-        super.render(stack, mouseX, mouseY, partialTicks);
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        renderBackground(guiGraphics);
+        optionsList.render(guiGraphics, mouseX, mouseY, partialTicks);
+        guiGraphics.drawCenteredString(font, title.getString(), width / 2, TITLE_MARGIN, 0xFFFFFF);
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     public void onClose() {
