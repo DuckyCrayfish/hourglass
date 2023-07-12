@@ -72,21 +72,17 @@ public class SleepGui {
     @SubscribeEvent
     public static void onGuiEvent(ScreenEvent.Render.Post event) {
         if (event.getScreen() instanceof InBedChatScreen && clockEnabled()) {
-
-            renderSleepInterface(event.getScreen().getMinecraft());
+            renderSleepInterface(event.getScreen());
         }
     }
 
     /**
      * Renders the interface that displays extra information over the sleep screen.
      *
-     * @param minecraft  the current Minecraft instance
+     * @param screen  the current Screen instance
      */
-    public static void renderSleepInterface(Minecraft minecraft) {
-        Screen screen = minecraft.screen;
-        if (!(screen instanceof InBedChatScreen)) {
-            return;
-        }
+    public static void renderSleepInterface(Screen screen) {
+        Minecraft minecraft = screen.getMinecraft();
 
         float x, y;
         int scale = CLIENT_CONFIG.clockScale.get();
@@ -136,7 +132,7 @@ public class SleepGui {
         stack.pushPose();
         stack.translate(x, y, 0);
         stack.scale(scale, scale, 0);
-        itemRenderer.renderAndDecorateItem(clock, 0, 0);
+        itemRenderer.renderAndDecorateItem(stack, clock, 0, 0);
         stack.popPose();
     }
 

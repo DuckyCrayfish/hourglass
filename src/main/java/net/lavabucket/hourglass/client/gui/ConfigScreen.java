@@ -133,8 +133,10 @@ public final class ConfigScreen extends Screen {
         int doneX = (width - BUTTON_WIDTH) / 2;
         int doneY = height - BUTTON_HEIGHT - DONE_BUTTON_BOTTOM_MARGIN;
         TextWrapper doneText = translation(KEY_DONE);
-        doneButton = new Button(doneX, doneY, BUTTON_WIDTH, BUTTON_HEIGHT, doneText.get(),
-                button -> onClose());
+        doneButton = Button.builder(doneText.get(), button -> onClose())
+            .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+            .pos(doneX, doneY)
+            .build();
 
         addRenderableWidget(doneButton);
     }
@@ -147,7 +149,6 @@ public final class ConfigScreen extends Screen {
         super.render(stack, mouseX, mouseY, partialTicks);
     }
 
-    @Override
     public void onClose() {
         saveSettings();
         minecraft.setScreen(lastScreen);
