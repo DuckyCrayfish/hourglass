@@ -22,16 +22,12 @@ package net.lavabucket.hourglass.client.gui;
 import static net.lavabucket.hourglass.config.HourglassConfig.CLIENT_CONFIG;
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.InBedChatScreen;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.client.event.ScreenEvent;
@@ -122,23 +118,21 @@ public class SleepGui {
             y = screen.height - scale - margin;
         }
 
-        renderClock(guiGraphics, minecraft, x, y, scale);
+        renderClock(guiGraphics, x, y, scale);
     }
 
     /**
      * Renders a clock on the screen.
      *
      * @param guiGraphics
-     * @param minecraft   the current Minecraft instance
      * @param x           the x coordinate of the center of the clock
      * @param y           the y coordinate of the center of the clock
      * @param scale       the size of the clock
      */
-    public static void renderClock(final GuiGraphics guiGraphics, Minecraft minecraft, float x, float y, float scale) {
-        ItemRenderer itemRenderer = minecraft.getItemRenderer();
+    public static void renderClock(final GuiGraphics guiGraphics, float x, float y, float scale) {
         scale /= 16F;
 
-        PoseStack stack = RenderSystem.getModelViewStack();
+        PoseStack stack = guiGraphics.pose();
         stack.pushPose();
         stack.translate(x, y, 0);
         stack.scale(scale, scale, 0);
