@@ -166,7 +166,7 @@ public class TimeService {
     protected void broadcastTime() {
         TimePacketWrapper timePacket = TimePacketWrapper.create(level);
         level.get().getServer().getPlayerList().getPlayers().stream()
-                .filter(player -> managesLevel(new ServerLevelWrapper(player.level)))
+                .filter(player -> managesLevel(new ServerLevelWrapper(player.level())))
                 .forEach(player -> player.connection.send(timePacket.get()));
     }
 

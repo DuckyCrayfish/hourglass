@@ -26,9 +26,12 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.InBedChatScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.client.event.ScreenEvent;
@@ -73,16 +76,18 @@ public class SleepGui {
     public static void onGuiEvent(ScreenEvent.Render.Post event) {
         if (event.getScreen() instanceof InBedChatScreen && clockEnabled()) {
 
-            renderSleepInterface(event.getScreen().getMinecraft());
+
+            renderSleepInterface(event.getGuiGraphics(), event.getScreen().getMinecraft());
         }
     }
 
     /**
      * Renders the interface that displays extra information over the sleep screen.
      *
-     * @param minecraft  the current Minecraft instance
+     * @param guiGraphics
+     * @param minecraft   the current Minecraft instance
      */
-    public static void renderSleepInterface(Minecraft minecraft) {
+    public static void renderSleepInterface(final GuiGraphics guiGraphics, Minecraft minecraft) {
         Screen screen = minecraft.screen;
         if (!(screen instanceof InBedChatScreen)) {
             return;
@@ -117,18 +122,19 @@ public class SleepGui {
             y = screen.height - scale - margin;
         }
 
-        renderClock(minecraft, x, y, scale);
+        renderClock(guiGraphics, minecraft, x, y, scale);
     }
 
     /**
      * Renders a clock on the screen.
      *
-     * @param minecraft  the current Minecraft instance
-     * @param x  the x coordinate of the center of the clock
-     * @param y  the y coordinate of the center of the clock
-     * @param scale  the size of the clock
+     * @param guiGraphics
+     * @param minecraft   the current Minecraft instance
+     * @param x           the x coordinate of the center of the clock
+     * @param y           the y coordinate of the center of the clock
+     * @param scale       the size of the clock
      */
-    public static void renderClock(Minecraft minecraft, float x, float y, float scale) {
+    public static void renderClock(final GuiGraphics guiGraphics, Minecraft minecraft, float x, float y, float scale) {
         ItemRenderer itemRenderer = minecraft.getItemRenderer();
         scale /= 16F;
 
@@ -136,7 +142,7 @@ public class SleepGui {
         stack.pushPose();
         stack.translate(x, y, 0);
         stack.scale(scale, scale, 0);
-        itemRenderer.renderAndDecorateItem(clock, 0, 0);
+        guiGraphics.renderItem(clock, 0, 0);
         stack.popPose();
     }
 

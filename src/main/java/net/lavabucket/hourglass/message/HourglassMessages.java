@@ -60,7 +60,7 @@ public final class HourglassMessages {
                 && event.getEntity().getClass().equals(ServerPlayerWrapper.CLASS)
                 && service != null
                 && service.isHandlingSleep()
-                && service.level.get().equals(event.getEntity().level)
+                && service.level.get().equals(event.getEntity().level())
                 && service.level.get().players().size() > 1) {
 
             ServerPlayerWrapper player = new ServerPlayerWrapper(event.getEntity());
@@ -80,7 +80,7 @@ public final class HourglassMessages {
                 && event.getEntity().getClass().equals(ServerPlayerWrapper.CLASS)
                 && service != null
                 && service.isHandlingSleep()
-                && service.level.get().equals(event.getEntity().level)
+                && service.level.get().equals(event.getEntity().level())
                 && service.level.get().players().size() > 1) {
 
             ServerPlayerWrapper player = new ServerPlayerWrapper(event.getEntity());
@@ -109,7 +109,6 @@ public final class HourglassMessages {
      *
      * The message is set by {@link HourglassConfig.ServerConfig#enterBedMessage}.
      * The target is set by {@link HourglassConfig.ServerConfig#enterBedMessageTarget}.
-     * The message type is set by {@link HourglassConfig.ServerConfig#enterBedMessageType}.
      *
      * @param timeService  the {@code TimeService} managing the level the player is in
      * @param player  the player who started sleeping
@@ -136,9 +135,8 @@ public final class HourglassMessages {
             message = builder.buildFromTemplate(template);
         }
 
-        ResourceKey<ChatType> type = SERVER_CONFIG.enterBedMessageType.get().getType();
         MessageTargetType target = SERVER_CONFIG.enterBedMessageTarget.get();
-        send(message, type, target, timeService.level);
+        send(message, target, timeService.level);
     }
 
     /**
@@ -146,7 +144,6 @@ public final class HourglassMessages {
      *
      * The message is set by {@link HourglassConfig.ServerConfig#leaveBedMessage}.
      * The target is set by {@link HourglassConfig.ServerConfig#leaveBedMessageTarget}.
-     * The message type is set by {@link HourglassConfig.ServerConfig#leaveBedMessageType}.
      *
      * @param timeService  the {@code TimeService} managing the level the player is in
      * @param player  the player who left their bed
@@ -173,9 +170,8 @@ public final class HourglassMessages {
             message = builder.buildFromTemplate(template);
         }
 
-        ResourceKey<ChatType> type = SERVER_CONFIG.leaveBedMessageType.get().getType();
         MessageTargetType target = SERVER_CONFIG.leaveBedMessageTarget.get();
-        send(message, type, target, timeService.level);
+        send(message, target, timeService.level);
     }
 
     /**
@@ -184,7 +180,6 @@ public final class HourglassMessages {
      *
      * The message is set by {@link HourglassConfig.ServerConfig#morningMessage}.
      * The target is set by {@link HourglassConfig.ServerConfig#morningMessageTarget}.
-     * The message type is set by {@link HourglassConfig.ServerConfig#morningMessageType}.
      *
      * @param timeService  the {@code TimeService} managing the level
      */
@@ -209,9 +204,8 @@ public final class HourglassMessages {
             message = builder.buildFromTemplate(template);
         }
 
-        ResourceKey<ChatType> type = SERVER_CONFIG.morningMessageType.get().getType();
         MessageTargetType target = SERVER_CONFIG.morningMessageTarget.get();
-        send(message, type, target, timeService.level);
+        send(message, target, timeService.level);
     }
 
     /**
@@ -220,14 +214,13 @@ public final class HourglassMessages {
      *
      * @param message  the text component to send
      * @param target  the target of the message
-     * @param type  the {@code ChatType} of the message
      * @param level  the level that generated the message
      */
-    public static void send(TextWrapper message, ResourceKey<ChatType> type, MessageTargetType target,
+    public static void send(TextWrapper message, MessageTargetType target,
             ServerLevelWrapper level) {
 
         Stream<ServerPlayerWrapper> players = getTargetPlayers(target, level);
-        players.forEach(player -> player.get().sendSystemMessage(message.get(), type));
+        players.forEach(player -> player.get().sendSystemMessage(message.get()));
     }
 
     private static Stream<ServerPlayerWrapper> getTargetPlayers(MessageTargetType target,

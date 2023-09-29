@@ -62,7 +62,7 @@ public final class QueryCommand {
         TextWrapper response = TextWrapper.translation(
                 "commands.hourglass.query.timeSpeed.success",
                 service.getTimeSpeed(service.getDayTime()));
-        context.getSource().sendSuccess(response.get(), false);
+        context.getSource().sendSuccess(response::get, false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -87,7 +87,7 @@ public final class QueryCommand {
                 service.sleepStatus.percentage(),
                 service.sleepStatus.amountSleeping(),
                 service.sleepStatus.amountActive());
-        context.getSource().sendSuccess(response.get(), false);
+        context.getSource().sendSuccess(response::get, false);
         return Command.SINGLE_SUCCESS;
     }
 

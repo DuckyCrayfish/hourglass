@@ -28,10 +28,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.Codec;
 
 import net.lavabucket.hourglass.wrappers.TextWrapper;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.OptionInstance;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -138,17 +141,15 @@ public final class ConfigScreen extends Screen {
         int doneX = (width - BUTTON_WIDTH) / 2;
         int doneY = height - BUTTON_HEIGHT - DONE_BUTTON_BOTTOM_MARGIN;
         TextWrapper doneText = translation(KEY_DONE);
-        Button doneButton = new Button(doneX, doneY, BUTTON_WIDTH, BUTTON_HEIGHT, doneText.get(),
-                button -> onClose());
 
-        addRenderableWidget(doneButton);
+        this.addRenderableWidget(Button.builder(doneText.get(), button -> onClose()).pos(doneX, doneY).size(BUTTON_WIDTH, BUTTON_HEIGHT).build());
     }
 
     @Override
-    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphics stack, int mouseX, int mouseY, float partialTicks) {
         renderBackground(stack);
         optionsList.render(stack, mouseX, mouseY, partialTicks);
-        drawCenteredString(stack, font, title.getString(), width / 2, TITLE_MARGIN, 0xFFFFFF);
+        stack.drawString(font, title.getString(), width / 2, TITLE_MARGIN, 0xFFFFFF);
         super.render(stack, mouseX, mouseY, partialTicks);
     }
 

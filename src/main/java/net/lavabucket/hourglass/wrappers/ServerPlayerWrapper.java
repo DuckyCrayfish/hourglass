@@ -71,7 +71,7 @@ public class ServerPlayerWrapper extends Wrapper<ServerPlayer> {
 
     /** {@return the wrapped level this player is in} */
     public ServerLevelWrapper getLevel() {
-        return new ServerLevelWrapper(get().level);
+        return new ServerLevelWrapper(get().level());
     }
 
     /** Ticks all MobEffects applied to this player. */
