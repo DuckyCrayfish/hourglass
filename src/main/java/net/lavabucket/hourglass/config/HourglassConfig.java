@@ -23,8 +23,6 @@ import net.lavabucket.hourglass.client.gui.ScreenAlignment;
 import net.lavabucket.hourglass.message.TemplateMessage.MessageTarget;
 import net.lavabucket.hourglass.time.Time;
 import net.lavabucket.hourglass.time.effects.EffectCondition;
-import net.minecraft.network.chat.ChatType;
-import net.minecraft.resources.ResourceKey;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.Builder;
@@ -318,17 +316,17 @@ public class HourglassConfig {
     }
 
     public enum ChatTypeOptions {
-        SYSTEM(ChatType.SYSTEM),
-        GAME_INFO(ChatType.GAME_INFO);
+        SYSTEM(false),
+        GAME_INFO(true);
 
-        private final ResourceKey<ChatType> chatType;
+        private final boolean overlay;
 
-        ChatTypeOptions(ResourceKey<ChatType> chatType) {
-            this.chatType = chatType;
+        ChatTypeOptions(boolean overlay) {
+            this.overlay = overlay;
         }
 
-        public ResourceKey<ChatType> getType() {
-            return chatType;
+        public boolean isOverlay() {
+            return overlay;
         }
     }
 
