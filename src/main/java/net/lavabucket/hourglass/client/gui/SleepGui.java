@@ -25,9 +25,9 @@ import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.InBedChatScreen;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.client.event.ScreenEvent;
@@ -71,7 +71,7 @@ public class SleepGui {
     @SubscribeEvent
     public static void onGuiEvent(ScreenEvent.Render.Post event) {
         if (event.getScreen() instanceof InBedChatScreen && clockEnabled()) {
-            renderSleepInterface(event.getScreen(), event.getPoseStack());
+            renderSleepInterface(event.getScreen(), event.getGuiGraphics());
         }
     }
 
@@ -81,8 +81,7 @@ public class SleepGui {
      * @param screen  the active screen
      * @param poseStack  the pose stack used for rendering
      */
-    public static void renderSleepInterface(Screen screen, PoseStack poseStack) {
-        Minecraft minecraft = screen.getMinecraft();
+    public static void renderSleepInterface(Screen screen, GuiGraphics guiGraphics) {
         float x, y;
         int scale = CLIENT_CONFIG.clockScale.get();
         int margin = CLIENT_CONFIG.clockMargin.get();
@@ -112,26 +111,25 @@ public class SleepGui {
             y = screen.height - scale - margin;
         }
 
-        renderClock(minecraft, poseStack, x, y, scale);
+        renderClock(guiGraphics, x, y, scale);
     }
 
     /**
      * Renders a clock on the screen.
      *
-     * @param minecraft  the current Minecraft instance
      * @param poseStack  the pose stack used for rendering
      * @param x  the x coordinate of the center of the clock
      * @param y  the y coordinate of the center of the clock
      * @param scale  the size of the clock
      */
-    public static void renderClock(Minecraft minecraft, PoseStack poseStack, float x, float y, float scale) {
-        ItemRenderer itemRenderer = minecraft.getItemRenderer();
-        scale /= 16F;
+    public static void renderClock(GuiGraphics guiGraphics, float x, float y, float scale) {
+        scale /= 16F; // Adjust for default scale of 16.
 
+        PoseStack poseStack = guiGraphics.pose();
         poseStack.pushPose();
         poseStack.translate(x, y, 0);
         poseStack.scale(scale, scale, 0);
-        itemRenderer.renderAndDecorateItem(poseStack, clock, 0, 0);
+        guiGraphics.renderItem(clock, 0, 0);
         poseStack.popPose();
     }
 
