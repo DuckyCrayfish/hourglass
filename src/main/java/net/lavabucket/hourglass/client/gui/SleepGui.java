@@ -22,7 +22,6 @@ package net.lavabucket.hourglass.client.gui;
 import static net.lavabucket.hourglass.config.HourglassConfig.CLIENT_CONFIG;
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
@@ -72,22 +71,18 @@ public class SleepGui {
     @SubscribeEvent
     public static void onGuiEvent(ScreenEvent.Render.Post event) {
         if (event.getScreen() instanceof InBedChatScreen && clockEnabled()) {
-
-            renderSleepInterface(event.getScreen().getMinecraft());
+            renderSleepInterface(event.getScreen(), event.getPoseStack());
         }
     }
 
     /**
      * Renders the interface that displays extra information over the sleep screen.
      *
-     * @param minecraft  the current Minecraft instance
+     * @param screen  the active screen
+     * @param poseStack  the pose stack used for rendering
      */
-    public static void renderSleepInterface(Minecraft minecraft) {
-        Screen screen = minecraft.screen;
-        if (!(screen instanceof InBedChatScreen)) {
-            return;
-        }
-
+    public static void renderSleepInterface(Screen screen, PoseStack poseStack) {
+        Minecraft minecraft = screen.getMinecraft();
         float x, y;
         int scale = CLIENT_CONFIG.clockScale.get();
         int margin = CLIENT_CONFIG.clockMargin.get();
@@ -117,27 +112,27 @@ public class SleepGui {
             y = screen.height - scale - margin;
         }
 
-        renderClock(minecraft, x, y, scale);
+        renderClock(minecraft, poseStack, x, y, scale);
     }
 
     /**
      * Renders a clock on the screen.
      *
      * @param minecraft  the current Minecraft instance
+     * @param poseStack  the pose stack used for rendering
      * @param x  the x coordinate of the center of the clock
      * @param y  the y coordinate of the center of the clock
      * @param scale  the size of the clock
      */
-    public static void renderClock(Minecraft minecraft, float x, float y, float scale) {
+    public static void renderClock(Minecraft minecraft, PoseStack poseStack, float x, float y, float scale) {
         ItemRenderer itemRenderer = minecraft.getItemRenderer();
         scale /= 16F;
 
-        PoseStack stack = RenderSystem.getModelViewStack();
-        stack.pushPose();
-        stack.translate(x, y, 0);
-        stack.scale(scale, scale, 0);
-        itemRenderer.renderAndDecorateItem(clock, 0, 0);
-        stack.popPose();
+        poseStack.pushPose();
+        poseStack.translate(x, y, 0);
+        poseStack.scale(scale, scale, 0);
+        itemRenderer.renderAndDecorateItem(poseStack, clock, 0, 0);
+        poseStack.popPose();
     }
 
     /** {@return true if the bed clock is enabled.} */

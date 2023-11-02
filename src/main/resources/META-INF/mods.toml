@@ -1,30 +1,29 @@
 # TOML v0.5.0.
+# Some variables are substituted by Gradle during the build process. See the build files for more information.
 
 # The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
 modLoader="javafml" #mandatory
 
 # A version range to match for said mod loader - for regular FML @Mod it will be the forge version
-loaderVersion="[40,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
+loaderVersion="${loaderVersionRange}" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
 
 # The license for you mod. This is mandatory metadata and allows for easier comprehension of your redistributive properties.
 # Review your options at https://choosealicense.com/. All rights reserved is the default copyright stance, and is thus the default here.
-license="LGPL-3.0-or-later"
+license="${modLicense}"
 
 # A URL to refer people to when problems occur with this mod
 issueTrackerURL="https://github.com/DuckyCrayfish/hourglass/issues" #optional
 
 # A list of mods - how many allowed here is determined by the individual mod loader
 [[mods]] #mandatory
-# The modid of the mod
-modId="hourglass" #mandatory
+# The mod ID of the mod
+modId="${modId}" #mandatory
 
-# The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-# ${file.jarVersion} will substitute the value of the Implementation-Version as read from the mod's JAR file metadata
-# see the associated build.gradle script for how to populate this completely automatically during a build
-version="${file.jarVersion}" #mandatory
+# The version number of the mod
+version="${version}" #mandatory
 
  # A display name for the mod
-displayName="Hourglass" #mandatory
+displayName="${modName}" #mandatory
 
 # A URL to query for updates for this mod. See the JSON update specification https://mcforge.readthedocs.io/en/latest/gettingstarted/autoupdate/
 updateJSONURL="https://raw.githubusercontent.com/DuckyCrayfish/hourglass/main/res/versions.json" #optional
@@ -39,7 +38,7 @@ logoFile="logo-800x400.png" #optional
 # credits="Thanks for this example mod goes to Java" #optional
 
 # A text field displayed in the mod UI
-authors="DuckyCrayfish" #optional
+authors="${authors}" #optional
 
 # The description text for the mod (multi line!) (#mandatory)
 description='''
@@ -50,22 +49,22 @@ This mod (optionally) replaces the vanilla sleep functionality with a smooth and
 Hourglass allows for customization of the day-night cycle duration, and can control day and night speed independently. Rather than the vanilla duration of 20 minutes, you can slow down time to make a day in Minecraft last as long as a day in real life, or speed up the passage of nights for a more forgiving experience.
 '''
 
-[[dependencies.hourglass]] #optional
-    # the modid of the dependency
+[[dependencies."${modId}"]] #optional
+    # the mod ID of the dependency
     modId="forge" #mandatory
     # Does this dependency have to exist - if not, ordering below must be specified
     mandatory=true #mandatory
     # The version range of the dependency
-    versionRange="[41,)" #mandatory
+    versionRange="${forgeVersionRange}" #mandatory
     # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
     ordering="NONE"
     # Side this dependency is applied on - BOTH, CLIENT or SERVER
     side="BOTH"
 
-[[dependencies.hourglass]]
+[[dependencies."${modId}"]]
     modId="minecraft"
     mandatory=true
     # This version range declares a minimum of the current minecraft version up to but not including the next major version
-    versionRange="[1.19,1.20)"
+    versionRange="${minecraftVersionRange}"
     ordering="NONE"
     side="BOTH"

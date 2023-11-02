@@ -133,8 +133,10 @@ public final class ConfigScreen extends Screen {
         int doneX = (width - BUTTON_WIDTH) / 2;
         int doneY = height - BUTTON_HEIGHT - DONE_BUTTON_BOTTOM_MARGIN;
         TextWrapper doneText = translation(KEY_DONE);
-        doneButton = new Button(doneX, doneY, BUTTON_WIDTH, BUTTON_HEIGHT, doneText.get(),
-                button -> onClose());
+        doneButton = Button.builder(doneText.get(), button -> onClose())
+                .pos(doneX, doneY)
+                .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+                .build();
 
         addRenderableWidget(doneButton);
     }
