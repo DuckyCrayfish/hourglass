@@ -24,11 +24,11 @@ import static net.lavabucket.hourglass.wrappers.TextWrapper.translation;
 
 import java.util.Arrays;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.Codec;
 
 import net.lavabucket.hourglass.wrappers.TextWrapper;
 import net.minecraft.client.OptionInstance;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.Screen;
@@ -138,24 +138,28 @@ public final class ConfigScreen extends Screen {
         int doneX = (width - BUTTON_WIDTH) / 2;
         int doneY = height - BUTTON_HEIGHT - DONE_BUTTON_BOTTOM_MARGIN;
         TextWrapper doneText = translation(KEY_DONE);
-        Button doneButton = new Button(doneX, doneY, BUTTON_WIDTH, BUTTON_HEIGHT, doneText.get(),
-                button -> onClose());
+        Button doneButton = Button.builder(doneText.get(), button -> onClose())
+                .pos(doneX, doneY)
+                .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+                .build();
 
         addRenderableWidget(doneButton);
     }
 
     @Override
-    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(stack);
-        optionsList.render(stack, mouseX, mouseY, partialTicks);
-        drawCenteredString(stack, font, title.getString(), width / 2, TITLE_MARGIN, 0xFFFFFF);
-        super.render(stack, mouseX, mouseY, partialTicks);
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        renderBackground(graphics);
+        optionsList.render(graphics, mouseX, mouseY, partialTicks);
+        graphics.drawCenteredString(font, title.getString(), width / 2, TITLE_MARGIN, 0xFFFFFF);
+        super.render(graphics, mouseX, mouseY, partialTicks);
     }
 
     @Override
     public void onClose() {
         saveSettings();
-        minecraft.setScreen(lastScreen);
+        if (minecraft != null) {
+            minecraft.setScreen(lastScreen);
+        }
     }
 
     private void fetchSettings() {

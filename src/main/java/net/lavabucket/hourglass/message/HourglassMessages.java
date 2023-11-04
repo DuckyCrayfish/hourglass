@@ -31,8 +31,6 @@ import net.lavabucket.hourglass.time.TimeServiceManager;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 import net.lavabucket.hourglass.wrappers.ServerPlayerWrapper;
 import net.lavabucket.hourglass.wrappers.TextWrapper;
-import net.minecraft.network.chat.ChatType;
-import net.minecraft.resources.ResourceKey;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.level.SleepFinishedTimeEvent;
@@ -60,7 +58,7 @@ public final class HourglassMessages {
                 && event.getEntity().getClass().equals(ServerPlayerWrapper.CLASS)
                 && service != null
                 && service.isHandlingSleep()
-                && service.level.get().equals(event.getEntity().level)
+                && service.level.get().equals(event.getEntity().level())
                 && service.level.get().players().size() > 1) {
 
             ServerPlayerWrapper player = new ServerPlayerWrapper(event.getEntity());
@@ -80,7 +78,7 @@ public final class HourglassMessages {
                 && event.getEntity().getClass().equals(ServerPlayerWrapper.CLASS)
                 && service != null
                 && service.isHandlingSleep()
-                && service.level.get().equals(event.getEntity().level)
+                && service.level.get().equals(event.getEntity().level())
                 && service.level.get().players().size() > 1) {
 
             ServerPlayerWrapper player = new ServerPlayerWrapper(event.getEntity());
@@ -136,9 +134,9 @@ public final class HourglassMessages {
             message = builder.buildFromTemplate(template);
         }
 
-        ResourceKey<ChatType> type = SERVER_CONFIG.enterBedMessageType.get().getType();
+        boolean overlay = SERVER_CONFIG.enterBedMessageType.get().isOverlay();
         MessageTargetType target = SERVER_CONFIG.enterBedMessageTarget.get();
-        send(message, type, target, timeService.level);
+        send(message, overlay, target, timeService.level);
     }
 
     /**
@@ -173,9 +171,9 @@ public final class HourglassMessages {
             message = builder.buildFromTemplate(template);
         }
 
-        ResourceKey<ChatType> type = SERVER_CONFIG.leaveBedMessageType.get().getType();
+        boolean overlay = SERVER_CONFIG.leaveBedMessageType.get().isOverlay();
         MessageTargetType target = SERVER_CONFIG.leaveBedMessageTarget.get();
-        send(message, type, target, timeService.level);
+        send(message, overlay, target, timeService.level);
     }
 
     /**
@@ -209,9 +207,9 @@ public final class HourglassMessages {
             message = builder.buildFromTemplate(template);
         }
 
-        ResourceKey<ChatType> type = SERVER_CONFIG.morningMessageType.get().getType();
+        boolean overlay = SERVER_CONFIG.morningMessageType.get().isOverlay();
         MessageTargetType target = SERVER_CONFIG.morningMessageTarget.get();
-        send(message, type, target, timeService.level);
+        send(message, overlay, target, timeService.level);
     }
 
     /**
@@ -220,14 +218,14 @@ public final class HourglassMessages {
      *
      * @param message  the text component to send
      * @param target  the target of the message
-     * @param type  the {@code ChatType} of the message
+     * @param overlay  true if this message should be displayed as an overlay, false otherwise
      * @param level  the level that generated the message
      */
-    public static void send(TextWrapper message, ResourceKey<ChatType> type, MessageTargetType target,
+    public static void send(TextWrapper message, boolean overlay, MessageTargetType target,
             ServerLevelWrapper level) {
 
         Stream<ServerPlayerWrapper> players = getTargetPlayers(target, level);
-        players.forEach(player -> player.get().sendSystemMessage(message.get(), type));
+        players.forEach(player -> player.get().sendSystemMessage(message.get(), overlay));
     }
 
     private static Stream<ServerPlayerWrapper> getTargetPlayers(MessageTargetType target,

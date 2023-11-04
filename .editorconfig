@@ -18,7 +18,7 @@ indent_size = 2
 [*.{md,txt}]
 trim_trailing_whitespace = false
 
-[LICENSE,LICENSE.LESSER,COPYING,COPYING.LESSER]
+[{LICENSE,LICENSE.LESSER,COPYING,COPYING.LESSER}]
 charset = unset
 end_of_line = unset
 indent_style = unset

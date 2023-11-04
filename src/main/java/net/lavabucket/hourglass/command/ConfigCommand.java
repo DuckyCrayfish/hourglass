@@ -83,7 +83,7 @@ public final class ConfigCommand {
                 entry.getIdentifier(),
                 entry.getConfigValue().get().toString());
 
-        context.getSource().sendSuccess(response.get(), false);
+        context.getSource().sendSuccess(response, false);
     }
 
     /**
@@ -102,7 +102,7 @@ public final class ConfigCommand {
                 entry.getIdentifier(),
                 entry.getConfigValue().get());
 
-        context.getSource().sendSuccess(response.get(), true);
+        context.getSource().sendSuccess(response, true);
     }
 
     /**

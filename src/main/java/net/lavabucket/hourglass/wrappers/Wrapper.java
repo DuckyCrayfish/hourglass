@@ -19,8 +19,10 @@
 
 package net.lavabucket.hourglass.wrappers;
 
+import java.util.function.Supplier;
+
 /** A class wrapper used to reduce the number of references to external classes in this codebase. */
-public class Wrapper<T> {
+public class Wrapper<T> implements Supplier<T> {
 
     /** The wrapped object. */
     protected final T wrapped;
