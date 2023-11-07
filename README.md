@@ -264,7 +264,7 @@ Location relative to Minecraft folder:
 			#sleepingPlayers -> the number of players in the current dimension who are sleeping.
 			#totalPlayers -> the number of players in the current dimension (spectators are not counted).
 			#sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).
-			message = "${player} is now sleeping. [${sleepingPlayers}/${totalPlayers}]"
+			message = "${player} is now sleeping [${sleepingPlayers}/${totalPlayers}]"
 			#Sets where this message appears.
 			#Allowed Values: SYSTEM, GAME_INFO
 			type = "GAME_INFO"
@@ -279,7 +279,7 @@ Location relative to Minecraft folder:
 			#sleepingPlayers -> the number of players in the current dimension who are sleeping.
 			#totalPlayers -> the number of players in the current dimension (spectators are not counted).
 			#sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).
-			message = "${player} has left their bed. [${sleepingPlayers}/${totalPlayers}]"
+			message = "${player} has left their bed [${sleepingPlayers}/${totalPlayers}]"
 			#Sets where this message appears.
 			#Allowed Values: SYSTEM, GAME_INFO
 			type = "GAME_INFO"

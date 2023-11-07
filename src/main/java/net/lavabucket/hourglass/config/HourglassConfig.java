@@ -259,7 +259,7 @@ public final class HourglassConfig {
                             "sleepingPlayers -> the number of players in the current dimension who are sleeping.",
                             "totalPlayers -> the number of players in the current dimension (spectators are not counted).",
                             "sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).")
-                            .define("message", "${player} is now sleeping. [${sleepingPlayers}/${totalPlayers}]");
+                            .define("message", "${player} is now sleeping [${sleepingPlayers}/${totalPlayers}]");
                         enterBedMessageType = builder.comment("Sets where this message appears.")
                             .defineEnum("type", ChatTypeOptions.GAME_INFO, ChatTypeOptions.SYSTEM, ChatTypeOptions.GAME_INFO);
                         enterBedMessageTarget = builder.comment("Sets to whom this message is sent.")
@@ -274,7 +274,7 @@ public final class HourglassConfig {
                             "sleepingPlayers -> the number of players in the current dimension who are sleeping.",
                             "totalPlayers -> the number of players in the current dimension (spectators are not counted).",
                             "sleepingPercentage -> the percentage of players in the current dimension who are sleeping (does not include % symbol).")
-                            .define("message", "${player} has left their bed. [${sleepingPlayers}/${totalPlayers}]");
+                            .define("message", "${player} has left their bed [${sleepingPlayers}/${totalPlayers}]");
                         leaveBedMessageType = builder.comment("Sets where this message appears.")
                             .defineEnum("type", ChatTypeOptions.GAME_INFO, ChatTypeOptions.SYSTEM, ChatTypeOptions.GAME_INFO);
                         leaveBedMessageTarget = builder.comment("Sets to whom this message is sent.")
