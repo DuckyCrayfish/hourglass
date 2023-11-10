@@ -37,6 +37,9 @@ import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
  */
 public class ConfigCommandEntry<T> {
 
+    /** The default argument name assigned to command config value arguments. */
+    public static String DEFAULT_ARGUMENT_NAME = "value";
+
     /** The {@code ConfigValue} held by this entry. */
     protected ConfigValue<T> configValue;
     /** The {@code ArgumentType} used to parse the value of this entry during a modification command. */
@@ -140,6 +143,6 @@ public class ConfigCommandEntry<T> {
 
     /** {@return the argument name used to store the config value in the command} */
     public String getArgumentName() {
-        return "value";
+        return DEFAULT_ARGUMENT_NAME;
     }
 }
