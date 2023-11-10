@@ -54,18 +54,13 @@ public class ConfigCommandBuilder {
     private static final Logger LOGGER = LogManager.getLogger();
 
     /** The config entries registered to this command. */
-    protected final Map<String, ConfigCommandEntry<?>> entries;
+    protected final Map<String, ConfigCommandEntry<?>> entries = new HashMap<>();
     /** The function that is called after a successful query command execution. */
     protected BiConsumer<CommandContext<CommandSourceStack>, ConfigCommandEntry<?>> querySuccessHandler;
     /** The function that is called after a successful modification command execution. */
     protected BiConsumer<CommandContext<CommandSourceStack>, ConfigCommandEntry<?>> modifySuccessHandler;
     /** The function that is called after a failed modification command execution. */
     protected BiConsumer<CommandContext<CommandSourceStack>, ConfigCommandEntry<?>> modifyFailureHandler;
-
-    /** Creates a new instance. */
-    public ConfigCommandBuilder() {
-        entries = new HashMap<>();
-    }
 
     /**
      * Registers a new {@code ConfigCommandEntry} for {@code configValue} to this command using a
