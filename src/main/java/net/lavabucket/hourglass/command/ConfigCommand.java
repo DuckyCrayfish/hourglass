@@ -96,7 +96,9 @@ public final class ConfigCommand {
     public static <T> void onModifySuccess(CommandContext<CommandSourceStack> context, ConfigCommandEntry<T> entry) {
         // Force a config sync, as the file watcher does not always catch the change. This may
         // cause the config update to send twice.
-        HourglassConfig.SYNCHRONIZER.sync(Hourglass.MOD_ID);
+        try {
+            HourglassConfig.SYNCHRONIZER.sync(Hourglass.MOD_ID);
+        } catch (Exception e) {}
 
         TextWrapper response = TextWrapper.translation("commands.hourglass.config.set",
                 entry.getIdentifier(),
