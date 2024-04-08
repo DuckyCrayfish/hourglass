@@ -1,0 +1,23 @@
+{
+  "commands.hourglass.config.query": "Настройка %s сейчас установлена в: %s",
+  "commands.hourglass.config.set": "Настройка %s теперь установлена в: %s",
+  "commands.hourglass.config.failure": "Не удалось установить настройку: %s",
+  "commands.hourglass.query.levelNotApplicable": "Hourglass не управляет этим измерением.",
+  "commands.hourglass.query.timeSpeed.success": "Скорость времени равна %s",
+  "commands.hourglass.query.sleeperCount.success": "%s%% игроков спят. [%s/%s]",
+  "hourglass.configgui.title": "Настройки Hourglass",
+  "hourglass.configgui.preventClockWobble": "Предотвратить колебания часов",
+  "hourglass.configgui.clockAlignment": "Выравнивание часов",
+  "hourglass.configgui.clockScale": "Размер часов",
+  "hourglass.configgui.clockMargin": "Маржа часов",
+  "hourglass.configgui.pixels": "%s пкс",
+  "hourglass.configgui.screenAlignment.topLeft": "Вверху слева",
+  "hourglass.configgui.screenAlignment.topCenter": "Вверху по центру",
+  "hourglass.configgui.screenAlignment.topRight": "Вверху справа",
+  "hourglass.configgui.screenAlignment.centerRight": "Справа по центру",
+  "hourglass.configgui.screenAlignment.bottomRight": "Внизу справа",
+  "hourglass.configgui.screenAlignment.bottomCenter": "Внизу по центру",
+  "hourglass.configgui.screenAlignment.bottomLeft": "Внизу слева",
+  "hourglass.configgui.screenAlignment.centerLeft": "Слева по центру",
+  "hourglass.configgui.screenAlignment.centerCenter": "В центре"
+}
