@@ -136,7 +136,7 @@ public class SleepGui {
     /** {@return true if the bed clock is enabled} */
     public static boolean clockEnabled() {
         return SERVER_CONFIG.enableSleepFeature.get()
-                && SERVER_CONFIG.allowBedClock.get()
+                && SERVER_CONFIG.enableBedClock.get()
                 && !CLIENT_CONFIG.hideBedClock.get();
     }
 

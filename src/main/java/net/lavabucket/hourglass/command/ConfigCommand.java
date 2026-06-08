@@ -59,7 +59,7 @@ public final class ConfigCommand {
                 .register(SERVER_CONFIG.sleepSpeedAll, DoubleArgumentType.doubleArg(-1, 24000))
                 .register(SERVER_CONFIG.sleepSpeedCurve, DoubleArgumentType.doubleArg(0, 1))
                 .register(SERVER_CONFIG.clearWeatherOnWake)
-                .register(SERVER_CONFIG.allowBedClock)
+                .register(SERVER_CONFIG.enableBedClock)
                 .register(SERVER_CONFIG.allowDaySleep)
                 .register(SERVER_CONFIG.weatherEffect, EffectCondition.class)
                 .register(SERVER_CONFIG.randomTickEffect, EffectCondition.class)

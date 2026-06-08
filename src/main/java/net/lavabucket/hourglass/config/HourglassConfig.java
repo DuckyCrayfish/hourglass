@@ -81,7 +81,7 @@ public final class HourglassConfig {
         public final DoubleValue sleepSpeedAll;
         public final DoubleValue sleepSpeedCurve;
         public final BooleanValue clearWeatherOnWake;
-        public final BooleanValue allowBedClock;
+        public final BooleanValue enableBedClock;
         public final BooleanValue allowDaySleep;
 
         public final BooleanValue internationalMode;
@@ -208,10 +208,10 @@ public final class HourglassConfig {
                     "Note: Other mods may override this ability.")
                     .define("allowDaySleep", false);
 
-                allowBedClock = builder.comment(
+                enableBedClock = builder.comment(
                     "When true, a clock will appear in the bed interface.",
                     "This clock may be disabled by players via hideBedClock config setting.")
-                    .define("allowBedClock", true);
+                    .define("enableBedClock", true);
 
                 // sleep.messages
                 builder.comment(

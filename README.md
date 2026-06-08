@@ -226,8 +226,8 @@ Location relative to Minecraft folder:
 	clearWeatherOnWake = true
 
 	#When true, a clock will appear in the bed interface.
-	#This clock may be disabled by players via hideBedClock config setting.
-	allowBedClock = true
+	#This clock may be disabled by player clients via hideBedClock config setting.
+	enableBedClock = true
 
 	#This section defines settings for notification messages.
 	#All messages support Minecraft formatting codes (https://minecraft.fandom.com/wiki/Formatting_codes).
