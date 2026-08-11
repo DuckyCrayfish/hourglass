@@ -21,8 +21,6 @@ package net.lavabucket.hourglass.time;
 
 import java.util.List;
 import java.util.function.Supplier;
-
-import net.lavabucket.hourglass.wrappers.ServerPlayerWrapper;
 import net.minecraft.server.level.ServerPlayer;
 
 /**
@@ -167,12 +165,7 @@ public class SleepStatus extends net.minecraft.server.players.SleepStatus {
             return false;
         }
 
-        long deepSleepers = playerList.stream()
-                .map(ServerPlayerWrapper::new)
-                .filter(ServerPlayerWrapper::isSleepingLongEnough)
-                .count();
-
-        return deepSleepers >= sleepersNeeded(percentageRequired);
+        return super.areEnoughDeepSleeping(percentageRequired, playerList);
     }
 
     /**

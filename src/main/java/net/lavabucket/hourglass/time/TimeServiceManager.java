@@ -21,13 +21,13 @@ package net.lavabucket.hourglass.time;
 
 import net.lavabucket.hourglass.config.HourglassConfig;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
-import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.eventbus.api.Event.Result;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
+import net.minecraft.world.entity.player.Player.BedSleepingProblem;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.entity.player.CanContinueSleepingEvent;
+import net.neoforged.neoforge.event.entity.player.CanPlayerSleepEvent;
+import net.neoforged.neoforge.event.level.LevelEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 /**
  * Creates {@link TimeService} objects and passes events to them.
@@ -40,44 +40,67 @@ public class TimeServiceManager {
     public static final Time VANILLA_SLEEP_END = new Time(23460);
 
     /**
-     * Modifies permitted sleep times to allow players to sleep during the day. Only applies to
-     * players in levels controlled by Hourglass while sleep feature is enabled.
-     *
-     * <p>Called once per tick for every player who is currently sleeping. Event result determines
-     * if sleep is allowed at the current time.
+     * Modifies permitted sleep times. Only applies to players in levels controlled by Hourglass
+     * while sleep feature is enabled.
      *
      * @param event  the event provided by the Forge event bus
-     * @see SleepingTimeCheckEvent
      */
     @SubscribeEvent(priority = EventPriority.HIGH)
-    public static void onDaySleepCheck(SleepingTimeCheckEvent event) {
-        if (service != null
-                && service.level.get().equals(event.getEntity().level())
-                && HourglassConfig.SERVER_CONFIG.enableSleepFeature.get()
-                && HourglassConfig.SERVER_CONFIG.allowDaySleep.get()) {
+    public static void onCanPlayerSleepEvent(CanPlayerSleepEvent event) {
+        if (
+            service == null
+            || event.getVanillaProblem() != BedSleepingProblem.NOT_POSSIBLE_NOW
+            || event.getVanillaProblem() != event.getProblem()
+            || !service.level.get().equals(event.getEntity().level())
+            || HourglassConfig.SERVER_CONFIG.enableSleepFeature.get() == false
+        ) {
+            return;
+        }
 
-            event.setResult(Result.ALLOW);
+        // Allow players to sleep through dawn until daytime 0.
+        // In vanilla, players are not allowed to sleep during dawn, however, a sleep cycle ends
+        // at daytime 0 (after dawn).
+        if (service.getDayTime().timeOfDay().compareTo(VANILLA_SLEEP_END) >= 0) {
+            event.setProblem(null);
+        }
+
+        // Allow players to sleep during the day if allowDaySleep is enabled.
+        if (HourglassConfig.SERVER_CONFIG.allowDaySleep.get()) {
+            event.setProblem(null);
         }
     }
 
     /**
-     * Modifies permitted sleep times to allow players to sleep through dawn until day-time 0
-     * while the sleep feature is enabled.
+     * Modifies permitted sleep times. Only applies to players in levels controlled by Hourglass
+     * while sleep feature is enabled.
      *
      * <p>Called once per tick for every player who is currently sleeping. Event result determines
-     * if sleep is allowed at the current time.
+     * if sleep is allowed to continue at the current time.
      *
      * @param event  the event provided by the Forge event bus
-     * @see SleepingTimeCheckEvent
      */
-    @SubscribeEvent
-    public static void onSleepingCheckEvent(SleepingTimeCheckEvent event) {
-        if (service != null && service.level.get().equals(event.getEntity().level())) {
-            Time time = service.getDayTime().timeOfDay();
-            if (HourglassConfig.SERVER_CONFIG.enableSleepFeature.get()
-                    && time.compareTo(VANILLA_SLEEP_END) >= 0) {
-                event.setResult(Result.ALLOW);
-            }
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void onCanContinueSleepingEvent(CanContinueSleepingEvent event) {
+        if (
+            service == null
+            || event.getProblem() != BedSleepingProblem.NOT_POSSIBLE_NOW
+            || event.mayContinueSleeping() == true
+            || !service.level.get().equals(event.getEntity().level())
+            || HourglassConfig.SERVER_CONFIG.enableSleepFeature.get() == false
+        ) {
+            return;
+        }
+
+        // Allow players to sleep through dawn until daytime 0.
+        // In vanilla, players are not allowed to sleep during dawn, however, a sleep cycle ends
+        // at daytime 0 (after dawn).
+        if (service.getDayTime().timeOfDay().compareTo(VANILLA_SLEEP_END) >= 0) {
+            event.setContinueSleeping(true);
+        }
+
+        // Allow players to sleep during the day if allowDaySleep is enabled.
+        if (HourglassConfig.SERVER_CONFIG.allowDaySleep.get()) {
+            event.setContinueSleeping(true);
         }
     }
 
@@ -114,9 +137,10 @@ public class TimeServiceManager {
      * @param event  the event provided by the Forge event bus
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onWorldTick(TickEvent.LevelTickEvent event) {
-        if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.START
-                && service != null && service.level.get() == event.level) {
+    public static void onWorldTick(LevelTickEvent.Pre event) {
+        var level = event.getLevel();
+
+        if (!level.isClientSide() && service != null && service.level.get() == level) {
             service.tick();
         }
     }

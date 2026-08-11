@@ -1,5 +1,5 @@
 # Disable autocrlf on generated files, they always generate with LF
-src/generated/**/.cache/cache text eol=lf
+src/generated/**/.cache/* text eol=lf
 src/generated/**/*.json text eol=lf
 
 # Mod details are EOL sensitive and require LF to display correctly

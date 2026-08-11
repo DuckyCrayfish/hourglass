@@ -1,10 +1,14 @@
 # eclipse
-bin
-*.launch
-.settings
-.metadata
+.apt_generated
 .classpath
+.eclipse/
+.factorypath
 .project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/**/bin/
 
 # vscode
 .vscode
@@ -17,9 +21,17 @@ out
 .idea
 
 # gradle
-build
 .gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/**/build/
 
 # other
-eclipse
-run
+.DS_Store
+
+# mod development
+run/
+!**/src/**/run/
+**/src/generated/**/.cache/
+repo/
+!**/src/**/repo/

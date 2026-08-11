@@ -23,41 +23,25 @@ import net.lavabucket.hourglass.client.gui.ScreenAlignment;
 import net.lavabucket.hourglass.message.TemplateMessage.MessageTarget;
 import net.lavabucket.hourglass.time.Time;
 import net.lavabucket.hourglass.time.effects.EffectCondition;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.Builder;
-import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
-import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
-import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
-import net.minecraftforge.fml.ModLoadingContext;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec.BooleanValue;
+import net.neoforged.neoforge.common.ModConfigSpec.ConfigValue;
+import net.neoforged.neoforge.common.ModConfigSpec.DoubleValue;
+import net.neoforged.neoforge.common.ModConfigSpec.EnumValue;
+import net.neoforged.neoforge.common.ModConfigSpec.IntValue;
 
 /**
  * Configuration class for Hourglass.
  */
 public class HourglassConfig {
 
-    public static final ServerConfig SERVER_CONFIG = new ServerConfig(new Builder());
-    public static final ClientConfig CLIENT_CONFIG = new ClientConfig(new Builder());
-
-    /**
-     * Register this class's configs with the mod loading context.
-     * @param event  the event, provided by the mod event bus
-     */
-    @SubscribeEvent
-    public static void onConstructModEvent(FMLConstructModEvent event) {
-        final ModLoadingContext context = ModLoadingContext.get();
-        context.registerConfig(ModConfig.Type.SERVER, SERVER_CONFIG.spec);
-        context.registerConfig(ModConfig.Type.CLIENT, CLIENT_CONFIG.spec);
-    }
+    public static final ServerConfig SERVER_CONFIG = new ServerConfig(new ModConfigSpec.Builder());
+    public static final ClientConfig CLIENT_CONFIG = new ClientConfig(new ModConfigSpec.Builder());
 
     /** Server-specific configuration file. */
     public static class ServerConfig {
 
-        public final ForgeConfigSpec spec;
+        public final ModConfigSpec spec;
 
         public final DoubleValue daySpeed;
         public final DoubleValue nightSpeed;
@@ -94,7 +78,7 @@ public class HourglassConfig {
          * Constructs an instance of an Hourglass server config.
          * @param builder  a Forge config builder instance
          */
-        public ServerConfig(final ForgeConfigSpec.Builder builder) {
+        public ServerConfig(final ModConfigSpec.Builder builder) {
 
             builder.push("time"); // time
 
@@ -276,7 +260,7 @@ public class HourglassConfig {
     /** Client-specific configuration file. */
     public static class ClientConfig {
 
-        public final ForgeConfigSpec spec;
+        public final ModConfigSpec spec;
 
         public final EnumValue<ScreenAlignment> clockAlignment;
         public final IntValue clockScale;
@@ -287,7 +271,7 @@ public class HourglassConfig {
          * Constructs an instance of an Hourglass client config.
          * @param builder  a Forge config builder instance
          */
-        public ClientConfig(final ForgeConfigSpec.Builder builder) {
+        public ClientConfig(final ModConfigSpec.Builder builder) {
 
             builder.push("gui"); // gui
 

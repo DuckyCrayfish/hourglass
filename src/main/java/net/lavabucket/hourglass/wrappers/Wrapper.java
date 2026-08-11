@@ -19,6 +19,7 @@
 
 package net.lavabucket.hourglass.wrappers;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /** A class wrapper used to reduce the number of references to external classes in this codebase. */
@@ -38,6 +39,18 @@ public class Wrapper<T> implements Supplier<T> {
     /** {@return the wrapped object} */
     public T get() {
         return wrapped;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj == null || this.getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Wrapper<?> other = (Wrapper<?>) obj;
+        return Objects.equals(this.wrapped, other.wrapped);
     }
 
 }

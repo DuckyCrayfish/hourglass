@@ -19,27 +19,23 @@
 
 package net.lavabucket.hourglass.time;
 
-import static net.lavabucket.hourglass.Hourglass.MARKER;
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
-
 import java.util.Collection;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import org.slf4j.Logger;
+import com.mojang.logging.LogUtils;
 import net.lavabucket.hourglass.registry.TimeEffects;
 import net.lavabucket.hourglass.time.effects.TimeEffect;
 import net.lavabucket.hourglass.utils.MathUtils;
 import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 import net.lavabucket.hourglass.wrappers.TimePacketWrapper;
-import net.minecraftforge.event.ForgeEventFactory;
+import net.neoforged.neoforge.event.EventHooks;
 
 /**
  * Handles the Hourglass time and sleep functionality for a level.
  */
 public class TimeService {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     /** Time of day when the sun rises above the horizon. */
     public static final Time DAY_START = new Time(23500);
@@ -72,7 +68,7 @@ public class TimeService {
      * Performs all time, sleep, and weather calculations. Should run once per tick.
      */
     public void tick() {
-        if (!level.daylightRuleEnabled()) {
+        if (!level.daylightRuleEnabled() || level.get().getServer().tickRateManager().isFrozen()) {
             return;
         }
 
@@ -95,7 +91,7 @@ public class TimeService {
 
     private void handleMorning() {
         long time = level.get().getDayTime();
-        ForgeEventFactory.onSleepFinished(level.get(), time, time);
+        EventHooks.onSleepFinished(level.get(), time, time);
         sleepStatus.removeAllSleepers();
         level.wakeUpAllPlayers();
 
@@ -103,7 +99,7 @@ public class TimeService {
             level.stopWeather();
         }
 
-        LOGGER.debug(MARKER, "Sleep cycle complete on dimension: {}.",
+        LOGGER.debug("Sleep cycle complete on dimension: {}.",
                 level.get().dimension().location());
     }
 
@@ -275,7 +271,7 @@ public class TimeService {
     }
 
     private Collection<TimeEffect> getActiveTimeEffects() {
-        return TimeEffects.REGISTRY.get().getValues();
+        return TimeEffects.REGISTRY.stream().toList();
     }
 
 }

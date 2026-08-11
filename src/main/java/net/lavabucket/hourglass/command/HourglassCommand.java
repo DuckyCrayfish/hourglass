@@ -20,15 +20,12 @@
 package net.lavabucket.hourglass.command;
 
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
-
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-
 import net.lavabucket.hourglass.command.config.ConfigCommand;
 import net.lavabucket.hourglass.command.config.ConfigCommandEntry;
-import net.lavabucket.hourglass.config.ConfigSynchronizer;
 import net.lavabucket.hourglass.time.TimeService;
 import net.lavabucket.hourglass.time.TimeServiceManager;
 import net.lavabucket.hourglass.time.effects.EffectCondition;
@@ -36,8 +33,8 @@ import net.lavabucket.hourglass.wrappers.ServerLevelWrapper;
 import net.lavabucket.hourglass.wrappers.TextWrapper;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
 /**
  * This class is used to create and register all commands used in this mod with Forge.
@@ -114,10 +111,6 @@ public class HourglassCommand {
      * @param entry  the entry that was modified by the user
      */
     public static <T> void onModifySuccess(CommandContext<CommandSourceStack> context, ConfigCommandEntry<T> entry) {
-        // Force a config sync, as the file watcher does not always catch the change. This may
-        // cause the config update to send twice.
-        ConfigSynchronizer.syncConfigWithClients();
-
         TextWrapper response = TextWrapper.translation("commands.hourglass.config.set",
                 entry.getIdentifier(),
                 entry.getConfigValue().get());
