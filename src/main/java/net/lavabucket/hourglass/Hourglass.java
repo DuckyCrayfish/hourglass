@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Nick Iacullo
+ * Copyright (C) 2021-2026 Nick Iacullo
  *
  * This file is part of Hourglass.
  *
@@ -19,21 +19,16 @@
 
 package net.lavabucket.hourglass;
 
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
-
 import net.lavabucket.hourglass.command.HourglassCommand;
-import net.lavabucket.hourglass.config.ConfigSynchronizer;
 import net.lavabucket.hourglass.config.HourglassConfig;
 import net.lavabucket.hourglass.message.HourglassMessages;
 import net.lavabucket.hourglass.registry.TimeEffects;
 import net.lavabucket.hourglass.time.TimeServiceManager;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.NeoForge;
 
 /** This class contains the mod entry point, as well as some constants related to the mod itself. */
 @Mod(Hourglass.MOD_ID)
@@ -41,23 +36,19 @@ public class Hourglass {
 
     /** Mod identifier. The value here should match an entry in the META-INF/mods.toml file. */
     public static final String MOD_ID = "hourglass";
-    /** Log4j marker for Hourglass logs. */
-    public static final Marker MARKER = MarkerManager.getMarker(MOD_ID);
 
     /** Mod entry point. */
-    public Hourglass() {
-        final IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
-        final IEventBus forgeBus = MinecraftForge.EVENT_BUS;
+    public Hourglass(IEventBus modBus, ModContainer modContainer) {
+        final IEventBus gameBus = NeoForge.EVENT_BUS;
 
-        modBus.register(HourglassConfig.class);
-        modBus.register(ConfigSynchronizer.class);
-        modBus.register(TimeEffects.class);
+        modContainer.registerConfig(ModConfig.Type.SERVER, HourglassConfig.SERVER_CONFIG.spec);
+        modContainer.registerConfig(ModConfig.Type.CLIENT, HourglassConfig.CLIENT_CONFIG.spec);
 
-        forgeBus.register(TimeServiceManager.class);
-        forgeBus.register(HourglassMessages.class);
-        forgeBus.register(HourglassCommand.class);
+        TimeEffects.register(modBus);
 
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> HourglassClient::new);
+        gameBus.register(TimeServiceManager.class);
+        gameBus.register(HourglassMessages.class);
+        gameBus.register(HourglassCommand.class);
     }
 
 }

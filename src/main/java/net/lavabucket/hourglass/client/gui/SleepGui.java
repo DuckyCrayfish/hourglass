@@ -21,19 +21,16 @@ package net.lavabucket.hourglass.client.gui;
 
 import static net.lavabucket.hourglass.config.HourglassConfig.CLIENT_CONFIG;
 import static net.lavabucket.hourglass.config.HourglassConfig.SERVER_CONFIG;
-
 import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.InBedChatScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.event.TickEvent.ClientTickEvent;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.ScreenEvent;
 
 /**
  * This class handles modifications to the sleep interface.
@@ -49,11 +46,10 @@ public class SleepGui {
      * @param event  the event provided by the Forge event bus
      */
     @SubscribeEvent
-    public static void onClientTick(ClientTickEvent event) {
+    public static void onClientTick(ClientTickEvent.Pre event) {
         Minecraft minecraft = Minecraft.getInstance();
 
-        if (event.phase == Phase.START
-                && CLIENT_CONFIG.preventClockWobble.get()
+        if (CLIENT_CONFIG.preventClockWobble.get()
                 && minecraft.level != null
                 && !minecraft.isPaused()
                 && clockEnabled()) {

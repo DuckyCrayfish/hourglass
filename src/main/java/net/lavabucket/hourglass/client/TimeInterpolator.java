@@ -22,11 +22,10 @@ package net.lavabucket.hourglass.client;
 import net.lavabucket.hourglass.time.Time;
 import net.lavabucket.hourglass.wrappers.ClientLevelWrapper;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.event.TickEvent.ClientTickEvent;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.TickEvent.RenderTickEvent;
-import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RenderFrameEvent;
+import net.neoforged.neoforge.event.level.LevelEvent;
 
 /**
  * This class detects time updates from the server and interpolates the changes over time to smooth
@@ -86,14 +85,13 @@ public class TimeInterpolator {
      * @param event  the event provided by the Forge event bus
      */
     @SubscribeEvent
-    public static void onRenderTickEvent(RenderTickEvent event) {
+    public static void onRenderTickEvent(RenderFrameEvent.Pre event) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (event.phase == Phase.START
-                && !minecraft.isPaused()
+        if (!minecraft.isPaused()
                 && instance != null
                 && instance.level.get().equals(minecraft.level)) {
 
-            instance.partialTick(event.renderTickTime);
+            instance.partialTick(event.getPartialTick().getGameTimeDeltaPartialTick(false));
         }
     }
 
@@ -104,11 +102,10 @@ public class TimeInterpolator {
      * @param event  the event provided by the Forge event bus
      */
     @SubscribeEvent
-    public static void OnClientTickEvent(ClientTickEvent event) {
+    public static void OnClientTickEvent(ClientTickEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();
 
-        if (event.phase == Phase.END
-                && !minecraft.isPaused()
+        if (!minecraft.isPaused()
                 && instance != null
                 && instance.level.get().equals(minecraft.level)) {
 

@@ -1,0 +1,87 @@
+# TOML v0.5.0.
+# Variable substitution handled by Gradle during the build process.
+# See the build files for more information.
+
+# The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
+modLoader="javafml" #mandatory
+
+# A version range to match for said mod loader - for regular FML @Mod it will be the FML version. This is currently 2.
+loaderVersion="${loader_version_range}" #mandatory
+
+license="${mod_license}"
+issueTrackerURL="https://github.com/DuckyCrayfish/hourglass/issues" #optional
+
+
+# A list of mods - how many allowed here is determined by the individual mod loader
+[[mods]] #mandatory
+
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+authors="${mod_authors}" # The authors of the mod, displayed in the mod UI
+#credits="" # A text field displayed in the mod UI (optional)
+
+# A URL for the "homepage" for this mod, displayed in the mod UI
+displayURL="https://github.com/DuckyCrayfish/hourglass" #optional
+
+# A URL to query for updates for this mod. See the JSON update specification https://docs.neoforged.net/docs/misc/updatechecker/
+updateJSONURL="https://raw.githubusercontent.com/DuckyCrayfish/hourglass/main/res/updates/neoforge/update.json" #optional
+
+# A file name (in the root of the mod JAR) containing a logo for display
+logoFile="logo-800x400.png" #optional
+
+# The description text for the mod (multi line!) (#mandatory)
+description='''
+Hourglass is a Minecraft Forge mod that gives you control over the passage of time. It allows you to customize the length of the day-night cycle and alters the Minecraft sleep mechanic by accelerating the speed of time.
+
+This mod (optionally) replaces the vanilla sleep functionality with a smooth and natural transition to morning by accelerating the passage of time while you're in bed. In multiplayer, time will pass faster depending on the percentage of players who are currently sleeping. This removes the need for any sleep voting system or player threshold, as any number of players can have an impact on the duration of the night.
+
+Hourglass allows for customization of the day-night cycle duration, and can control day and night speed independently. Rather than the vanilla duration of 20 minutes, you can slow down time to make a day in Minecraft last as long as a day in real life, or speed up the passage of nights for a more forgiving experience.
+'''
+
+
+# The [[mixins]] block allows you to declare your mixin config to FML so that it gets loaded.
+#[[mixins]]
+#config="${mod_id}.mixins.json"
+
+
+# The [[accessTransformers]] block allows you to declare where your AT file is.
+# If this block is omitted, a fallback attempt will be made to load an AT from META-INF/accesstransformer.cfg
+#[[accessTransformers]]
+#file="META-INF/accesstransformer.cfg"
+
+# The coremods config file path is not configurable and is always loaded from META-INF/coremods.json
+
+
+[[dependencies."${mod_id}"]]
+    # the modid of the dependency
+    modId="neoforge" #mandatory
+    # The type of the dependency. Can be one of "required", "optional", "incompatible" or "discouraged" (case insensitive).
+    # 'required' requires the mod to exist, 'optional' does not
+    # 'incompatible' will prevent the game from loading when the mod exists, and 'discouraged' will show a warning
+    type="required" #mandatory
+    # Optional field describing why the dependency is required or why it is incompatible
+    # reason="..."
+    # The version range of the dependency
+    versionRange="[${neo_version},)" #mandatory
+    # An ordering relationship for the dependency.
+    # BEFORE - This mod is loaded BEFORE the dependency
+    # AFTER - This mod is loaded AFTER the dependency
+    ordering="NONE"
+    # Side this dependency is applied on - BOTH, CLIENT, or SERVER
+    side="BOTH"
+
+[[dependencies."${mod_id}"]]
+    modId="minecraft"
+    type="required"
+    # This version range declares a minimum of the current minecraft version up to but not including the next major version
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+
+# Features are specific properties of the game environment, that you may want to declare you require. This example declares
+# that your mod requires GL version 3.2 or higher. Other features will be added. They are side aware so declaring this won't
+# stop your mod loading on the server for example.
+#[features.${mod_id}]
+#openGLVersion="[3.2,)"

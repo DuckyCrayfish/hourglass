@@ -19,8 +19,6 @@
 
 package net.lavabucket.hourglass.registry;
 
-import java.util.function.Supplier;
-
 import net.lavabucket.hourglass.Hourglass;
 import net.lavabucket.hourglass.time.effects.BlockEntityTimeEffect;
 import net.lavabucket.hourglass.time.effects.HungerTimeEffect;
@@ -28,15 +26,11 @@ import net.lavabucket.hourglass.time.effects.PotionTimeEffect;
 import net.lavabucket.hourglass.time.effects.RandomTickSleepEffect;
 import net.lavabucket.hourglass.time.effects.TimeEffect;
 import net.lavabucket.hourglass.time.effects.WeatherSleepEffect;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegistryBuilder;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
  * This class registers all of the first-party time effects that come with Hourglass.
@@ -44,26 +38,24 @@ import net.minecraftforge.registries.RegistryObject;
 public class TimeEffects {
 
     /** The resource key for the {@link #TIME_EFFECT} registry. */
-    public static final ResourceLocation KEY = new ResourceLocation(Hourglass.MOD_ID, "time_effect");
+    public static final ResourceLocation KEY = ResourceLocation.fromNamespaceAndPath(Hourglass.MOD_ID, "time_effect");
 
     private static final DeferredRegister<TimeEffect> DEFERRED_REGISTRY = DeferredRegister.create(KEY, Hourglass.MOD_ID);
 
     /** Registry for time effects. See {@link TimeEffect} for details on time effects. */
-    public static final Supplier<IForgeRegistry<TimeEffect>> REGISTRY = DEFERRED_REGISTRY.makeRegistry(RegistryBuilder::new);
+    public static final Registry<TimeEffect> REGISTRY = DEFERRED_REGISTRY.makeRegistry(builder -> {});
 
-    public static final RegistryObject<TimeEffect> WEATHER_EFFECT = DEFERRED_REGISTRY.register("weather", WeatherSleepEffect::new);
-    public static final RegistryObject<TimeEffect> RANDOM_TICK_EFFECT = DEFERRED_REGISTRY.register("random_tick", RandomTickSleepEffect::new);
-    public static final RegistryObject<TimeEffect> POTION_EFFECT = DEFERRED_REGISTRY.register("potion", PotionTimeEffect::new);
-    public static final RegistryObject<TimeEffect> HUNGER_EFFECT = DEFERRED_REGISTRY.register("hunger", HungerTimeEffect::new);
-    public static final RegistryObject<TimeEffect> BLOCK_ENTITY_EFFECT = DEFERRED_REGISTRY.register("block_entity", BlockEntityTimeEffect::new);
+    public static final DeferredHolder<TimeEffect, WeatherSleepEffect> WEATHER_EFFECT = DEFERRED_REGISTRY.register("weather", WeatherSleepEffect::new);
+    public static final DeferredHolder<TimeEffect, RandomTickSleepEffect> RANDOM_TICK_EFFECT = DEFERRED_REGISTRY.register("random_tick", RandomTickSleepEffect::new);
+    public static final DeferredHolder<TimeEffect, PotionTimeEffect> POTION_EFFECT = DEFERRED_REGISTRY.register("potion", PotionTimeEffect::new);
+    public static final DeferredHolder<TimeEffect, HungerTimeEffect> HUNGER_EFFECT = DEFERRED_REGISTRY.register("hunger", HungerTimeEffect::new);
+    public static final DeferredHolder<TimeEffect, BlockEntityTimeEffect> BLOCK_ENTITY_EFFECT = DEFERRED_REGISTRY.register("block_entity", BlockEntityTimeEffect::new);
 
     /**
      * Registers {@link #DEFERRED_REGISTRY} to the mod bus for creation and entry registration.
-     * @param event  the event, provided by the mod event bus
+     * @param modBus  the mod event bus
      */
-    @SubscribeEvent
-    public static void onConstructModEvent(FMLConstructModEvent event) {
-        final IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+    public static void register(IEventBus modBus) {
         DEFERRED_REGISTRY.register(modBus);
     }
 

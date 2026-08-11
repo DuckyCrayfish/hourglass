@@ -22,11 +22,8 @@ package net.lavabucket.hourglass.wrappers;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import net.lavabucket.hourglass.Hourglass;
+import org.slf4j.Logger;
+import com.mojang.logging.LogUtils;
 import net.lavabucket.hourglass.time.SleepStatus;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.GameRules;
@@ -34,9 +31,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.storage.DerivedLevelData;
 import net.minecraft.world.level.storage.ServerLevelData;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper.UnableToAccessFieldException;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper.UnableToFindMethodException;
+import net.neoforged.fml.util.ObfuscationReflectionHelper;
+import net.neoforged.fml.util.ObfuscationReflectionHelper.UnableToAccessFieldException;
+import net.neoforged.fml.util.ObfuscationReflectionHelper.UnableToFindMethodException;
 
 /**
  * This class acts as a wrapper for {@link ServerLevel} to increase consistency between Minecraft
@@ -49,7 +46,7 @@ import net.minecraftforge.fml.util.ObfuscationReflectionHelper.UnableToFindMetho
  */
 public class ServerLevelWrapper extends Wrapper<ServerLevel> {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     // Store classes at the top to minimize file changes between Minecraft versions.
     private static final Class<ServerLevel> levelClass = ServerLevel.class;
@@ -68,14 +65,19 @@ public class ServerLevelWrapper extends Wrapper<ServerLevel> {
         this.levelData = levelDataClass.cast(this.get().getLevelData());
     }
 
+    /** {@return the game rules object} */
+    public GameRules getGameRules() {
+        return this.get().getGameRules();
+    }
+
     /** {@return true if the 'daylight cycle' game rule is enabled in this level} */
     public boolean daylightRuleEnabled() {
-        return this.get().getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
+        return this.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
     }
 
     /** {@return true if the 'weather cycle' game rule is enabled in this level} */
     public boolean weatherRuleEnabled() {
-        return this.get().getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE);
+        return this.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE);
     }
 
     /**
@@ -83,7 +85,7 @@ public class ServerLevelWrapper extends Wrapper<ServerLevel> {
      * @param speed  the new random tick speed
      */
     public void setRandomTickSpeed(int speed) {
-        this.get().getGameRules().getRule(GameRules.RULE_RANDOMTICKING)
+        this.getGameRules().getRule(GameRules.RULE_RANDOMTICKING)
                 .set(speed, this.get().getServer());
     }
 
@@ -114,11 +116,11 @@ public class ServerLevelWrapper extends Wrapper<ServerLevel> {
      */
     public void setSleepStatus(SleepStatus newStatus) {
         try {
-            Field sleepStatus = ObfuscationReflectionHelper.findField(levelClass, "f_143245_");
+            Field sleepStatus = ObfuscationReflectionHelper.findField(levelClass, "sleepStatus");
             sleepStatus.setAccessible(true);
             sleepStatus.set(this.get(), newStatus);
         } catch (IllegalArgumentException | IllegalAccessException | SecurityException | UnableToAccessFieldException e) {
-            LOGGER.warn(Hourglass.MARKER, "Error setting sleep status.", e);
+            LOGGER.warn("Error setting sleep status.", e);
             return;
         }
     }
@@ -136,11 +138,11 @@ public class ServerLevelWrapper extends Wrapper<ServerLevel> {
     /** Ticks all loaded block entities in this level. */
     public void tickBlockEntities() {
         try {
-            Method tickBlockEntitiesMethod = ObfuscationReflectionHelper.findMethod(Level.class, "m_46463_");
+            Method tickBlockEntitiesMethod = ObfuscationReflectionHelper.findMethod(Level.class, "tickBlockEntities");
             tickBlockEntitiesMethod.setAccessible(true);
             tickBlockEntitiesMethod.invoke(get());
         } catch (IllegalArgumentException | SecurityException | UnableToFindMethodException | IllegalAccessException | InvocationTargetException e) {
-            LOGGER.warn(Hourglass.MARKER, "Error ticking block entities.", e);
+            LOGGER.warn("Error ticking block entities.", e);
             return;
         }
     }

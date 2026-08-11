@@ -22,7 +22,7 @@ package net.lavabucket.hourglass.command.config;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
-
+import org.slf4j.Logger;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.BoolArgumentType;
@@ -30,18 +30,15 @@ import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import com.mojang.logging.LogUtils;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
-import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
-import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-import net.minecraftforge.server.command.EnumArgument;
+import net.neoforged.neoforge.common.ModConfigSpec.BooleanValue;
+import net.neoforged.neoforge.common.ModConfigSpec.ConfigValue;
+import net.neoforged.neoforge.common.ModConfigSpec.DoubleValue;
+import net.neoforged.neoforge.common.ModConfigSpec.EnumValue;
+import net.neoforged.neoforge.common.ModConfigSpec.IntValue;
+import net.neoforged.neoforge.server.command.EnumArgument;
 
 /**
  * This class is used to create command trees for accessing and modifying Forge configuration values
@@ -51,7 +48,7 @@ import net.minecraftforge.server.command.EnumArgument;
  */
 public class ConfigCommand {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     /** The config entries registered to this command. */
     protected final Map<String, ConfigCommandEntry<?>> entries;
@@ -290,6 +287,7 @@ public class ConfigCommand {
 
         try {
             entry.getConfigValue().set(argument);
+            entry.getConfigValue().save();
         } catch(Exception e) {
             if (this.modifyFailureHandler != null) {
                 LOGGER.error("Command failed to set config to value: " + argument, e);

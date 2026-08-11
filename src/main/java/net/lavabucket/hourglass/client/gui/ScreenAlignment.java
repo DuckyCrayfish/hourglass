@@ -19,28 +19,31 @@
 
 package net.lavabucket.hourglass.client.gui;
 
+import net.minecraft.network.chat.Component;
+import net.neoforged.neoforge.common.TranslatableEnum;
+
 /**
  * Alignment of a GUI item on the screen.
  */
-public enum ScreenAlignment {
+public enum ScreenAlignment implements TranslatableEnum {
     /** Top left of screen. */
-    TOP_LEFT("hourglass.configgui.screenAlignment.topLeft"),
+    TOP_LEFT("hourglass.configuration.screenAlignment.topLeft"),
     /** Top center of screen. */
-    TOP_CENTER("hourglass.configgui.screenAlignment.topCenter"),
+    TOP_CENTER("hourglass.configuration.screenAlignment.topCenter"),
     /** Top right of screen. */
-    TOP_RIGHT("hourglass.configgui.screenAlignment.topRight"),
+    TOP_RIGHT("hourglass.configuration.screenAlignment.topRight"),
     /** Left center of screen. */
-    CENTER_LEFT("hourglass.configgui.screenAlignment.centerLeft"),
+    CENTER_LEFT("hourglass.configuration.screenAlignment.centerLeft"),
     /** Center of screen. */
-    CENTER_CENTER("hourglass.configgui.screenAlignment.centerCenter"),
+    CENTER_CENTER("hourglass.configuration.screenAlignment.centerCenter"),
     /** Right center of screen. */
-    CENTER_RIGHT("hourglass.configgui.screenAlignment.centerRight"),
+    CENTER_RIGHT("hourglass.configuration.screenAlignment.centerRight"),
     /** Bottom left of screen. */
-    BOTTOM_LEFT("hourglass.configgui.screenAlignment.bottomLeft"),
+    BOTTOM_LEFT("hourglass.configuration.screenAlignment.bottomLeft"),
     /** Bottom center of screen. */
-    BOTTOM_CENTER("hourglass.configgui.screenAlignment.bottomCenter"),
+    BOTTOM_CENTER("hourglass.configuration.screenAlignment.bottomCenter"),
     /** Bottom right of screen. */
-    BOTTOM_RIGHT("hourglass.configgui.screenAlignment.bottomRight");
+    BOTTOM_RIGHT("hourglass.configuration.screenAlignment.bottomRight");
 
     private final String translationKey;
 
@@ -48,8 +51,8 @@ public enum ScreenAlignment {
         this.translationKey = translationKey;
     }
 
-    /** {@return the translation key used to display this enum's value} */
-    public String getKey() {
-        return translationKey;
+    /** {@return the message component used to display this enum's value} */
+    public Component getTranslatedName() {
+        return Component.translatable(translationKey);
     }
 }

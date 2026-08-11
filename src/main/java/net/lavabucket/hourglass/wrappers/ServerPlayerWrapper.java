@@ -21,13 +21,12 @@ package net.lavabucket.hourglass.wrappers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
 import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
+import net.neoforged.fml.util.ObfuscationReflectionHelper;
 
 /**
  * This class acts as a wrapper for {@link ServerPlayer} to increase the consistency of the
@@ -40,7 +39,7 @@ import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
  */
 public class ServerPlayerWrapper extends Wrapper<ServerPlayer> {
 
-    private static Method tickEffectsMethod = ObfuscationReflectionHelper.findMethod(LivingEntity.class, "m_21217_");
+    private static Method tickEffectsMethod = ObfuscationReflectionHelper.findMethod(LivingEntity.class, "tickEffects");
     static { tickEffectsMethod.setAccessible(true); }
 
     /** The class that this {@code Wrapper} wraps. */
@@ -92,7 +91,7 @@ public class ServerPlayerWrapper extends Wrapper<ServerPlayer> {
     public void sendMobEffectUpdatePackets() {
         for (MobEffectInstance e : get().getActiveEffects()) {
             int id = get().getId();
-            ClientboundUpdateMobEffectPacket packet = new ClientboundUpdateMobEffectPacket(id, e);
+            ClientboundUpdateMobEffectPacket packet = new ClientboundUpdateMobEffectPacket(id, e, false);
             get().connection.send(packet);
         }
     }

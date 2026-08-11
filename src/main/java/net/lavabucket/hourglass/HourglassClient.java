@@ -20,11 +20,14 @@
 package net.lavabucket.hourglass;
 
 import net.lavabucket.hourglass.client.TimeInterpolator;
-import net.lavabucket.hourglass.client.gui.ConfigScreen;
 import net.lavabucket.hourglass.client.gui.SleepGui;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.common.NeoForge;
 
 /**
  * Entry point for client-specific features.
@@ -33,17 +36,17 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
  * client/server distribution separation. Failure to do this could crash a Minecraft server
  * distribution on startup as Java tries to load classes that do not exist.
  */
+@Mod(value = Hourglass.MOD_ID, dist = Dist.CLIENT)
 public class HourglassClient {
 
     /** Client-specific entry point. */
-    public HourglassClient() {
-        final IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
-        final IEventBus forgeBus = MinecraftForge.EVENT_BUS;
+    public HourglassClient(IEventBus modBus, ModContainer modContainer) {
+        final IEventBus gameBus = NeoForge.EVENT_BUS;
 
-        modBus.register(ConfigScreen.class);
+        modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
 
-        forgeBus.register(SleepGui.class);
-        forgeBus.register(TimeInterpolator.class);
+        gameBus.register(SleepGui.class);
+        gameBus.register(TimeInterpolator.class);
     }
 
 }
